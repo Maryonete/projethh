@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+
+
+<div class="example-wrapper">
+    <h1>Hello tableau XLSX</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>#</th> {# Ajout de la colonne pour le numéro de ligne #}
+                {% for header in data[0] %}
+                    <th>{{ header }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for key, row in data %}
+                <tr>
+                    <td>{{ key + 1 }}</td> {# Affichage du numéro de ligne (index + 1) #}
+                    {% for cell in row %}
+                        <td>{{ cell }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+      
+</div>
+{% endblock %}
