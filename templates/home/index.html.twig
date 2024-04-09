@@ -5,29 +5,32 @@
 {% block body %}
 
 
-<div class="example-wrapper">
+<div>
     <h1>Hello tableau XLSX</h1>
 
     <table border="1">
         <thead>
-            <tr>
-                <th>#</th> {# Ajout de la colonne pour le numéro de ligne #}
-                {% for header in data[0] %}
-                    <th>{{ header }}</th>
-                {% endfor %}
-            </tr>
+          <tr>
+            <th>#</th>  {# Ajout de la colonne pour le numéro de ligne #}
+            {% for header in data[0] %}
+              <th>{{ header }}</th>
+            {% endfor %}
+          </tr>
         </thead>
         <tbody>
-            {% for key, row in data %}
-                <tr>
-                    <td>{{ key + 1 }}</td> {# Affichage du numéro de ligne (index + 1) #}
-                    {% for cell in row %}
-                        <td>{{ cell }}</td>
-                    {% endfor %}
-                </tr>
+          {% for key, row in data %}
+          {% if key != 0 %} {# Vérification si ce n'est pas la première ligne #}
+          <tr>
+            <td>{{ key }}</td> <!-- Affichage du numéro de ligne -->
+            {% for cell in row %}
+              <td>{{ cell }}</td>
             {% endfor %}
+          </tr>
+        {% endif %}
+          {% endfor %}
         </tbody>
-    </table>
+      </table>
+      
     
       
 </div>
