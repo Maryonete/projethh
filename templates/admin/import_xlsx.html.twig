@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %} {% block title %}Habitat et Humanisme{% endblock
+%} {% block body %}
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-10 bordercolor rounded-5 p-5">
+      <h1>
+        Importer une nouvelle liste d'associations<br />
+        à partir d'un fichier xlsx
+      </h1>
+      <b> Attention toutes les données présentes seront effacées </b>
+
+      {% if form_errors(form.file) %}
+      <div class="alert alert-danger my-5">
+        {{ form_errors(form.file) }}
+      </div>
+      {% endif %}
+
+      {{ form_start(form) }}
+      {{- form_errors(form) -}}
+      <div class="mb-3">
+        {{ form_label(form.file, 'Fichier', {'label_attr': {'class': 'form-label'
+
+        }}) }} {{ form_widget(form.file, {'attr': {'class': 'form-control'}}) }}
+      </div>
+      <div class="mb-3">
+        {{ form_label(form.name, 'Nom *', {'label_attr': {'class': 'form-label'
+        }}) }} {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+      </div>
+      <div class="mb-3 text-center">
+        {{ form_row(form.save, {'attr': {'class': 'btn btn-primary text-white'
+
+
+
+
+
+
+
+        }}) }}
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

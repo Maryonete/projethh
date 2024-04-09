@@ -1,0 +1,15 @@
+$primary: #009ee0;
+$secondary: #253a6d;
+$tertiary: #ec751a;
+h1 {
+  color: $secondary;
+}
+.bordercolor {
+  border: $tertiary solid 1px;
+}
+.alert ul {
+  list-style: none;
+}
+
+// the ~ allows you to reference things in node_modules
+@import "~bootstrap/scss/bootstrap";

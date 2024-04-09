@@ -10,7 +10,6 @@ class FileUploader
 {
     public function __construct(private SluggerInterface $slugger, private string $upload_directory)
     {
-
     }
 
     public function upload(UploadedFile $file, ?string $directory = null): string
@@ -21,10 +20,13 @@ class FileUploader
         $explode = explode('.', $file->getClientOriginalName());
         $extension = '' !== $file->getExtension() ? $file->getExtension() : end($explode);
 
-        $filename = $safe_filename.'-'.uniqid().'.'.$extension;
+        $dateTime = new \DateTime();
+        $formattedDateTime = $dateTime->format('Y-m-d-H-i-s');
+
+        $filename = $formattedDateTime . '.' . $extension;
 
         try {
-            $full_dir = $this->upload_directory.($directory ? '/'.$directory : '');
+            $full_dir = $this->upload_directory . ($directory ? '/' . $directory : '');
             $fs = new Filesystem();
 
             if (!$fs->exists($full_dir)) {
