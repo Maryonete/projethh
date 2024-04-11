@@ -1,7 +1,8 @@
 $primary: #009ee0;
 $secondary: #253a6d;
 $tertiary: #ec751a;
-h1 {
+h1,
+h2 {
   color: $secondary;
 }
 .bordercolor {
@@ -9,6 +10,12 @@ h1 {
 }
 .alert ul {
   list-style: none;
+}
+#scroll-top {
+  position: fixed;
+  bottom: 10px; /* Adjust the spacing from the bottom as needed */
+  right: 10px; /* Adjust the horizontal spacing as needed */
+  z-index: 100; /* Ensure button appears above other elements */
 }
 
 // the ~ allows you to reference things in node_modules

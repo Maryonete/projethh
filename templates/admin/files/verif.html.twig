@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %} {% block title %} Habitat et Humanisme {%
+endblock %} {% block body %}
+<div class="container">
+  <div class="row justify-content-center">
+    <h2>
+      Vérifier le fichier importé<br />
+      {{ file.name }}
+    </h2>
+  </div>
+
+  <div class="row justify-content-center mt-3">
+    <div class="col-md-12">
+      <p class="text-danger">En rouge les colonnes attendues</p>
+      <table class="table table-striped bordercolor">
+        <thead class="thead-dark">
+          <tr class="table-danger">
+            <th>#</th>
+            <th>Participe</th>
+            <th>Participation</th>
+            <th>Code asso</th>
+            <th>Association</th>
+            <th>Adresse</th>
+            <th>CP</th>
+            <th>Ville</th>
+            <th>Tél</th>
+            <th>Email</th>
+            <th>Ville 2</th>
+            <th>Choix lettre</th>
+            <th>Nos équipes de</th>
+            <th>Président : prénom nom fonction</th>
+            <th>Signature</th>
+            <th>Personnalisation locale année -2</th>
+            <th>Personnalisation locale année -1</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key, row in data %} {% if key != 0 and row[2] is not empty %}
+          <tr>
+            <td>{{ key }}</td>
+            {% for cell in row %} {% if loop.last or loop.revindex == 2 %}
+            <td class="text-center align-middle">
+              {% if cell is not null %}
+              <a
+                href="#"
+                class="btn btn-secondary"
+                data-toggle="tooltip"
+                title="{{ cell }}"
+              >
+                <i class="fa-solid fa-info text-primary"></i>
+              </a>
+              {% endif %}
+            </td>
+            {% else %}
+            <td>{{ cell }}</td>
+            {% endif %} {% endfor %}
+          </tr>
+          {% endif %} {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row justify-content-center mt-3">
+    <div class="col-md-3">
+      <form action="{{ path('file_ok', { id: file.id }) }}" method="post">
+        <button class="btn btn-primary text-white btn-block">
+          Valider le tableau
+        </button>
+      </form>
+    </div>
+    <div class="col-md-3">
+      <a href="{{ path('file_import') }}" class="btn btn-secondary btn-block"
+        >Télécharger un nouveau fichier</a
+      >
+    </div>
+  </div>
+</div>
+
+<button id="scroll-top" class="btn btn-primary text-white">Remonter</button>
+<script>
+  const scrollTopButton = document.getElementById("scroll-top");
+
+  window.addEventListener("scroll", () => {
+    if (window.pageYOffset > 100) {
+      scrollTopButton.classList.add("visible");
+    } else {
+      scrollTopButton.classList.remove("visible");
+    }
+  });
+
+  scrollTopButton.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+</script>
+{% endblock %}

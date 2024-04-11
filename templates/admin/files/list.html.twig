@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %} {% block title %}Habitat et Humanisme{% endblock
+%} {% block body %}
+
+<div class="container">
+    <h2>Historique</h2>
+    {% if files is not empty %}
+    <div class="row justify-content-center mt-3">
+      <div class="col-md-12 bordercolor rounded-3 p-5">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Nom</th>
+              <th scope="col">date de dépôt</th>
+              <th scope="col">Validé</th>
+              <th scope="col">date validation</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for file in files %}
+            <tr>
+              <td>{{ file.name }}</td>
+              <td>{{ file.createdat|date('d-m-Y \\à H:i:s') }}</td>
+              {% if file.validate %}
+                <td><i class="fa-solid fa-check text-success" ></i></td>
+                <td>{{ file.validate_at|date('d-m-Y \\à H:i:s') }}</td>
+                <td text-center><a href="{{ path('file_import', {'id' : file.id}) }}" alt="verifier le fichier"><i class="fa-solid fa-arrows-rotate"></i> importer dans la BD</a>
+                </td>
+  
+              {% else %}
+                <td></td><td></td>
+              
+              <td text-center><a href="{{ path('file_verif', {'id' : file.id}) }}" alt="verifier le fichier"><i class="fa-solid fa-arrows-rotate"></i> vérifier le fichier</a>
+              </td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %} Pas de fichier enregistré {% endif %}
+  </div>
+</div>
+{% endblock %}

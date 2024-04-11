@@ -20,10 +20,7 @@ class FileUploader
         $explode = explode('.', $file->getClientOriginalName());
         $extension = '' !== $file->getExtension() ? $file->getExtension() : end($explode);
 
-        $dateTime = new \DateTime();
-        $formattedDateTime = $dateTime->format('Y-m-d-H-i-s');
-
-        $filename = $formattedDateTime . '.' . $extension;
+        $filename = $safe_filename . '-' . uniqid() . '.' . $extension;
 
         try {
             $full_dir = $this->upload_directory . ($directory ? '/' . $directory : '');
