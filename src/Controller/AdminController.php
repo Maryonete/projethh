@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\File;
-use App\File\FileUploader;
 use App\Form\FileType;
 use App\Repository\FileRepository;
 use Doctrine\ORM\EntityManagerInterface;

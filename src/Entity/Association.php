@@ -38,6 +38,10 @@ class Association
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $donation_call_text = null;
 
+    #[ORM\ManyToOne(inversedBy: 'associations')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Person $person = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -135,6 +139,18 @@ class Association
     public function setDonationCallText(?string $donation_call_text): static
     {
         $this->donation_call_text = $donation_call_text;
+
+        return $this;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
+    }
+
+    public function setPerson(?Person $person): static
+    {
+        $this->person = $person;
 
         return $this;
     }

@@ -11,28 +11,40 @@
             <tr>
               <th scope="col">Nom</th>
               <th scope="col">date de dépôt</th>
+              <th scope="col">Xlsx</th>
               <th scope="col">Validé</th>
               <th scope="col">date validation</th>
+              <th scope="col">Importé dans la BD</th>
               <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
             {% for file in files %}
             <tr>
-              <td>{{ file.name }}</td>
+              <td>{{ file.name }} </td>
               <td>{{ file.createdat|date('d-m-Y \\à H:i:s') }}</td>
+              <td><a href="{{ path('file_download', {'filepath' : file.filename}) }}" download=""><i class="fa-solid fa-file-export"></i></a></td>
               {% if file.validate %}
                 <td><i class="fa-solid fa-check text-success" ></i></td>
                 <td>{{ file.validate_at|date('d-m-Y \\à H:i:s') }}</td>
                 <td text-center><a href="{{ path('file_import', {'id' : file.id}) }}" alt="verifier le fichier"><i class="fa-solid fa-arrows-rotate"></i> importer dans la BD</a>
                 </td>
+                <td>
+                {% if file.validate %}
+                  {{ file.importat|date('d-m-Y \\à H:i:s') }}
+                {% endif %}
+              </td>
   
               {% else %}
                 <td></td><td></td>
+                <td></td>
               
               <td text-center><a href="{{ path('file_verif', {'id' : file.id}) }}" alt="verifier le fichier"><i class="fa-solid fa-arrows-rotate"></i> vérifier le fichier</a>
               </td>
               {% endif %}
+              <td class="text-center"><a href="{{ path('file_delete', {'id' : file.id}) }}" alt="verifier le fichier"><i class="fa-solid fa-trash"></i></a>
+                
+              </td>
             </tr>
             {% endfor %}
           </tbody>

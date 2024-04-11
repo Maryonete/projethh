@@ -6,16 +6,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\File;
-use App\File\FileUploader;
 use App\Form\FileType;
 use App\Repository\FileRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-
-use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use PhpOffice\PhpSpreadsheet\Reader\Exception as ReaderException;
 use App\Service\MessageGenerator;
 use App\Service\FileService;
 
@@ -27,14 +22,14 @@ class FileController extends AbstractController
      *
      * @param EntityManagerInterface $em
      * @param Request $request
-     * @param FileUploader $uploader
+     * @param FileService $uploader
      * @return Response
      */
     #[Route('new', name: 'new')]
     public function new_file(
         EntityManagerInterface $em,
         Request $request,
-        FileUploader $uploader,
+        FileService $fileService,
         MessageGenerator $messageGenerator
     ): Response {
 
@@ -50,18 +45,19 @@ class FileController extends AbstractController
             $file = $form->getData();
 
             if ($uploadedFile = $form->get('file')->getData()) {
-                $filename = $uploader->upload($uploadedFile);
+                $filename = $fileService->upload($uploadedFile);
                 $file->setFilename($filename);
             }
 
             $em->persist($file);
             $em->flush();
+
             $message = $messageGenerator->getHappyMessage();
             $this->addFlash('success', $message);
             // Récupérer l'ID du fichier nouvellement créé
             $fileId = $file->getId();
 
-            return $this->redirectToRoute('admin_verif_file', ['id' => $fileId], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('file_verif', ['id' => $fileId], Response::HTTP_SEE_OTHER);
         }
         $files = $em->getRepository(File::class)->findAll();
         return $this->render('admin/files/import.html.twig', [
@@ -115,7 +111,8 @@ class FileController extends AbstractController
     public function file_ok(
         EntityManagerInterface $em,
         FileRepository $fileRepo,
-        int $id
+        int $id,
+        MessageGenerator $messageGenerator
     ): Response {
         /** @var File $file */
         $file = $fileRepo->find($id);
@@ -128,13 +125,15 @@ class FileController extends AbstractController
         $file->setValidate_at(new \DateTime());
         $em->persist($file);
         $em->flush();
+        $message = $messageGenerator->getHappyMessage();
+        $this->addFlash('success', $message);
 
         return $this->redirectToRoute('file_list');
     }
     #[Route('import/{id<\d+>}', name: 'import')]
     public function file_import(
-        EntityManagerInterface $em,
         FileRepository $fileRepo,
+        EntityManagerInterface $em,
         int $id,
         FileService $fileService
     ): Response {
@@ -146,12 +145,46 @@ class FileController extends AbstractController
             throw $this->createNotFoundException('Fichier non trouvé');
         }
         $fileService->importDataFromFile($file);
+        $file->setImportAt(new \DateTime());
+        $em->persist($file);
+        $em->flush();
+        return $this->redirectToRoute('file_list');
+    }
 
-        // $file->setValidate(true);
-        // $file->setValidate_at(new \DateTime());
-        // $em->persist($file);
-        // $em->flush();
+    /**
+     * delete le fichier selectionne
+     *
+     * @param EntityManagerInterface $em
+     * @return Response
+     */
+    #[Route('delete/{id<\d+>}', name: 'delete')]
+    public function delete_file(
+        FileRepository $fileRepo,
+        FileService $fileService,
+        int $id,
+    ): Response {
+        /** @var File $file */
+        $file = $fileRepo->find($id);
+
+        // Vérifier si le fichier existe
+        if (!$file) {
+            throw $this->createNotFoundException('Fichier non trouvé');
+        }
+
+        $fileService->deleteFile($file);
+
 
         return $this->redirectToRoute('file_list');
+    }
+    /**
+     * telechargement fichier xlsx
+     */
+    #[Route('download/{filepath}', name: 'download')]
+    public function download_file(String $filepath, FileService $fileService): Response
+    {
+
+        $fileService->downloadFile($filepath);
+
+        return new Response();
     }
 }

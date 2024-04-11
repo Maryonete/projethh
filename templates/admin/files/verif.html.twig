@@ -68,14 +68,16 @@ endblock %} {% block body %}
       </form>
     </div>
     <div class="col-md-3">
-      <a href="{{ path('file_import') }}" class="btn btn-secondary btn-block"
+      <a href="{{ path('file_new') }}" class="btn btn-secondary btn-block"
         >Télécharger un nouveau fichier</a
       >
     </div>
   </div>
 </div>
 
-<button id="scroll-top" class="btn btn-primary text-white">Remonter</button>
+<button id="scroll-top" class="btn btn-primary text-white">
+  <i class="fa-solid fa-up-long"></i>
+</button>
 <script>
   const scrollTopButton = document.getElementById("scroll-top");
 
