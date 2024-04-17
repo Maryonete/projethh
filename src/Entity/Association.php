@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AssociationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -35,12 +37,16 @@ class Association
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $donation_call_text = null;
+    /**
+     * @var Collection<int, CampainAssociation>
+     */
+    #[ORM\OneToMany(targetEntity: CampainAssociation::class, mappedBy: 'association')]
+    private Collection $campainAssociations;
 
-    #[ORM\ManyToOne(inversedBy: 'associations')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Person $person = null;
+    public function __construct()
+    {
+        $this->campainAssociations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -131,26 +137,32 @@ class Association
         return $this;
     }
 
-    public function getDonationCallText(): ?string
+    /**
+     * @return Collection<int, CampainAssociation>
+     */
+    public function getCampainAssociations(): Collection
     {
-        return $this->donation_call_text;
+        return $this->campainAssociations;
     }
 
-    public function setDonationCallText(?string $donation_call_text): static
+    public function addCampainAssociation(CampainAssociation $campainAssociation): static
     {
-        $this->donation_call_text = $donation_call_text;
+        if (!$this->campainAssociations->contains($campainAssociation)) {
+            $this->campainAssociations->add($campainAssociation);
+            $campainAssociation->setAssociation($this);
+        }
 
         return $this;
     }
 
-    public function getPerson(): ?Person
+    public function removeCampainAssociation(CampainAssociation $campainAssociation): static
     {
-        return $this->person;
-    }
-
-    public function setPerson(?Person $person): static
-    {
-        $this->person = $person;
+        if ($this->campainAssociations->removeElement($campainAssociation)) {
+            // set the owning side to null (unless already changed)
+            if ($campainAssociation->getAssociation() === $this) {
+                $campainAssociation->setAssociation(null);
+            }
+        }
 
         return $this;
     }

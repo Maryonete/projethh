@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %} {% block title %}Habitat Humanisme{% endblock %}
+{% block body %}
+<div class="container">
+  <h1>Liste des associations</h1>
+  <table class="table table-striped table-hover sortTable">
+    <caption>
+      Liste des associations
+    </caption>
+    <thead>
+      <tr class="text-center">
+        <th scope="col">Id interne</th>
+        <th scope="col">Code</th>
+        <th scope="col">Libellé</th>
+        <th scope="col">Adresse</th>
+        <th scope="col">CP</th>
+        <th scope="col">Ville</th>
+        <th scope="col">Tél</th>
+        <th scope="col">Email</th>
+        <th scope="col">Président : prénom nom fonction</th>
+        <th scope="col">Signature</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for asso in listAsso %}
+      <tr>
+        <th scope="row">{{ asso.id }}</th>
+
+        <td>{{ asso.code }}</td>
+        <td>{{ asso.libelle }}</td>
+        <td>{{ asso.adress }}</td>
+        <td>{{ asso.cp }}</td>
+        <td>{{ asso.city }}</td>
+        <td>{{ asso.tel }}</td>
+        <td>{{ asso.email }}</td>
+        <td>{{ asso.person.nameAndFunction }}</td>
+        <td>{{ asso.person.signatureImg }}</td>
+        <td>
+          <a href="{{ path('asso_show', { id: asso.id }) }}"
+            ><i class="fa-solid fa-eye"></i
+          ></a>
+          <a href="{{ path('asso_edit', { id: asso.id }) }}"
+            ><i class="fa-solid fa-pen"></i
+          ></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

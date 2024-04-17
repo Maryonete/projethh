@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %} {% block title %}Association{% endblock %} {%
+block body %}
+<div class="container">
+  <div class="col-md-12">
+    <h1>Associations</h1>
+
+    <table class="table">
+      <tbody>
+        <tr>
+          <th>Id</th>
+          <td>{{ association.id }}</td>
+        </tr>
+        <tr>
+          <th>Code</th>
+          <td>{{ association.code }}</td>
+        </tr>
+        <tr>
+          <th>Libelle</th>
+          <td>{{ association.libelle }}</td>
+        </tr>
+        <tr>
+          <th>Adress</th>
+          <td>{{ association.adress }}</td>
+        </tr>
+        <tr>
+          <th>Cp</th>
+          <td>{{ association.cp }}</td>
+        </tr>
+        <tr>
+          <th>City</th>
+          <td>{{ association.city }}</td>
+        </tr>
+        <tr>
+          <th>Tel</th>
+          <td>{{ association.tel }}</td>
+        </tr>
+        <tr>
+          <th>Email</th>
+          <td>{{ association.email }}</td>
+        </tr>
+        <tr>
+          <th>Donation_call_text</th>
+          <td>{{ association.donationCallText }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-12">
+    <div class="d-flex justify-content-between">
+      <a href="{{ path('asso_list') }}" class="btn btn-primary btn-block"
+        >retour à la liste</a
+      >
+      <a
+        href="{{ path('asso_edit', { id: association.id }) }}"
+        class="btn btn-primary btn-block"
+        >Modifier</a
+      >
+      {{ include("admin/association/_delete_form.html.twig") }}
+    </div>
+  </div>
+</div>
+{% endblock %}

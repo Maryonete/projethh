@@ -14,9 +14,12 @@
     {% if app.user %}
     <ul class="nav col-12 col-md-auto mb-2 mb-md-0 text-start">
       <li>
-        <a href="{{ path('admin_home') }}" class="nav-link px-2 link-secondary"
+        <a href="{{ path('asso_home') }}" class="nav-link px-2 link-secondary"
           >Accueil</a
         >
+      </li>
+      <li>
+        <a href="{{ path('asso_list') }}" class="nav-link px-2">Associations</a>
       </li>
       <li>
         <a href="{{ path('file_new') }}" class="nav-link px-2">Import Files</a>

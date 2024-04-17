@@ -17,6 +17,9 @@ h2 {
   right: 30px; /* Adjust the horizontal spacing as needed */
   z-index: 100; /* Ensure button appears above other elements */
 }
-
+a.btn,
+button.btn {
+  color: white;
+}
 // the ~ allows you to reference things in node_modules
 @import "~bootstrap/scss/bootstrap";
