@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ReferentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ReferentRepository::class)]
@@ -22,6 +24,17 @@ class Referent
     #[ORM\ManyToOne(inversedBy: 'referents')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    /**
+     * @var Collection<int, Association>
+     */
+    #[ORM\ManyToMany(targetEntity: Association::class, mappedBy: 'referent')]
+    private Collection $associations;
+
+    public function __construct()
+    {
+        $this->associations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -60,6 +73,33 @@ class Referent
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Association>
+     */
+    public function getAssociations(): Collection
+    {
+        return $this->associations;
+    }
+
+    public function addAssociation(Association $association): static
+    {
+        if (!$this->associations->contains($association)) {
+            $this->associations->add($association);
+            $association->addReferent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAssociation(Association $association): static
+    {
+        if ($this->associations->removeElement($association)) {
+            $association->removeReferent($this);
+        }
 
         return $this;
     }

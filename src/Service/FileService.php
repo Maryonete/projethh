@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\Entity\{File, Association, Person};
+use App\Entity\{File, Association, Person, President, Referent, User};
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -10,6 +10,7 @@ use Doctrine\DBAL\Connection;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class FileService
 {
@@ -19,7 +20,8 @@ class FileService
         private Connection $connection,
         private string $upload_directory,
         private Filesystem $filesystem,
-        private SluggerInterface $slugger
+        private SluggerInterface $slugger,
+        private UserPasswordHasherInterface $encoder
     ) {
     }
     public function upload(UploadedFile $file, ?string $directory = null): string
@@ -46,21 +48,7 @@ class FileService
 
         return $filename;
     }
-    public function deleteFile(File $file): bool
-    {
-        try {
-            // Supprimer le fichier
-            $this->filesystem->remove($this->upload_directory  . '/' . $file->getFileName());
-            $this->entityManager->remove($file);
-            $this->entityManager->flush();
 
-            return true;
-        } catch (\Exception $e) {
-            // Gérer les erreurs, par exemple, en journalisant l'erreur
-            // ou en retournant false pour indiquer que la suppression a échoué
-            return false;
-        }
-    }
     /**
      * Vide la table passée en parametre
      *
@@ -72,39 +60,79 @@ class FileService
         $sql = "TRUNCATE TABLE $tableName";
         $this->connection->executeStatement($sql);
     }
-    public function importDataFromFile(File $file): void
+    public function importDataFromFile(String $file): void
     {
-
+        dump($file);
         // Lire le contenu du fichier
-        $data = $this->getDataFile($file->getFilename());
+        $data = $this->getDataFile($file);
 
         // Vider la table avant l'importation des nouvelles données
         // Supprimer les enregistrements de la table "Association"
         $this->entityManager->createQuery('DELETE FROM App\Entity\Association')->execute();
 
         // Supprimer les enregistrements de la table "Person"
-        $this->entityManager->createQuery('DELETE FROM App\Entity\Person')->execute();
+        // $this->entityManager->createQuery('DELETE FROM App\Entity\President')->execute();
+        // $this->entityManager->createQuery('DELETE FROM App\Entity\Referent')->execute();
+        // $this->entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
 
-        // la premiere ligne d tableau conteint les entetes
+        # #TODO creation admin !!
+        $admin = new User();
+        $admin->setEmail('test@test.fr');
+        $admin->setPassword($this->encoder->hashPassword($admin, 'test'));
+        $admin->setRoles(['ROLE_ADMIN']);
+        $this->entityManager->flush();
+
+        // la premiere ligne d tableau contient les entetes
         for ($i = 1; $i < count($data); $i++) {
             $assoData = $data[$i];
             if ($assoData[2] == null) {
                 continue;
             }
-            $person = new Person();
-            $person->setNameAndFunction($assoData[12]);
-            $this->entityManager->persist($person);
+            $user = new User();
+            $user->setPassword($this->encoder->hashPassword($user, 'test'));
+            $user->setFirstname($assoData[7]);
+            $user->setLastname($assoData[8]);
+            $user->setEmail($assoData[10]);
+            $this->entityManager->persist($user);
+
+            $president = new President();
+            $president->setFonction($assoData[9]);
+            $president->setActif(true);
+            $president->setUser($user);
+            $this->entityManager->persist($president);
+            $this->entityManager->flush();
 
             $asso = new Association();
-            $asso->setPerson($person);
-            $asso->setCode($assoData[2]);
-            $asso->setLibelle($assoData[3]);
-            $asso->setAdress($assoData[4]);
-            $asso->setCp($assoData[5]);
-            $asso->setCity($assoData[6]);
-            $asso->setTel(isset($assoData[7]) ? $assoData[7] : "");
-            $asso->setEmail($assoData[8]);
-            $asso->setDonationCallText($assoData[15]);
+
+            // Referent
+            if ($assoData[13]) {
+                $user = new User();
+                $user->setPassword($this->encoder->hashPassword($user, 'test'));
+                $user->setFirstname($assoData[11]);
+                $user->setLastname($assoData[12]);
+                $user->setEmail($assoData[13]);
+                $this->entityManager->persist($user);
+
+                $referent = new Referent();
+                $referent->setTel($assoData[14]);
+                $referent->setUser($user);
+                $referent->setActif(true);
+                $this->entityManager->persist($referent);
+
+                $asso->addReferent($referent);
+                $this->entityManager->flush();
+            }
+
+            $asso->setPresident($president);
+            $asso->setCode((int)$assoData[0]);
+
+            $asso->setLibelle($assoData[1]);
+            $asso->setAdress($assoData[2]);
+            $asso->setCp($assoData[3]);
+            $asso->setCity($assoData[4]);
+            $asso->setTel(isset($assoData[5]) ? $assoData[5] : "");
+            $asso->setEmail($assoData[6]);
+            // $asso->setDonationCallText($assoData[15]);
             $this->entityManager->persist($asso);
         }
 
@@ -120,7 +148,7 @@ class FileService
      */
     public function getDataFile(String $filePath): array
     {
-        dump($this->upload_directory);
+        dump($filePath);
         // Chargement du fichier
         $spreadsheet = IOFactory::load($this->upload_directory  . '/' . $filePath);
 

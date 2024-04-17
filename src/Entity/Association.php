@@ -43,9 +43,20 @@ class Association
     #[ORM\OneToMany(targetEntity: CampainAssociation::class, mappedBy: 'association')]
     private Collection $campainAssociations;
 
+    #[ORM\ManyToOne(inversedBy: 'associations')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?President $president = null;
+
+    /**
+     * @var Collection<int, Referent>
+     */
+    #[ORM\ManyToMany(targetEntity: Referent::class, inversedBy: 'associations')]
+    private Collection $referent;
+
     public function __construct()
     {
         $this->campainAssociations = new ArrayCollection();
+        $this->referent = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -163,6 +174,42 @@ class Association
                 $campainAssociation->setAssociation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPresident(): ?President
+    {
+        return $this->president;
+    }
+
+    public function setPresident(?President $president): static
+    {
+        $this->president = $president;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Referent>
+     */
+    public function getReferent(): Collection
+    {
+        return $this->referent;
+    }
+
+    public function addReferent(Referent $referent): static
+    {
+        if (!$this->referent->contains($referent)) {
+            $this->referent->add($referent);
+        }
+
+        return $this;
+    }
+
+    public function removeReferent(Referent $referent): static
+    {
+        $this->referent->removeElement($referent);
 
         return $this;
     }

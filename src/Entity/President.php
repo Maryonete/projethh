@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PresidentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PresidentRepository::class)]
@@ -22,6 +24,17 @@ class President
     #[ORM\ManyToOne(inversedBy: 'presidents')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    /**
+     * @var Collection<int, Association>
+     */
+    #[ORM\OneToMany(targetEntity: Association::class, mappedBy: 'president')]
+    private Collection $associations;
+
+    public function __construct()
+    {
+        $this->associations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -60,6 +73,36 @@ class President
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Association>
+     */
+    public function getAssociations(): Collection
+    {
+        return $this->associations;
+    }
+
+    public function addAssociation(Association $association): static
+    {
+        if (!$this->associations->contains($association)) {
+            $this->associations->add($association);
+            $association->setPresident($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAssociation(Association $association): static
+    {
+        if ($this->associations->removeElement($association)) {
+            // set the owning side to null (unless already changed)
+            if ($association->getPresident() === $this) {
+                $association->setPresident(null);
+            }
+        }
 
         return $this;
     }

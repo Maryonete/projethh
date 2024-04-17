@@ -13,7 +13,6 @@ class AdminController extends AbstractController
     #[Route('', name: 'home')]
     public function index(AssociationRepository $assoRepo): Response
     {
-
         return $this->render('admin/index.html.twig', [
             'listAsso'  =>  $assoRepo->findBy([], ['code' => 'ASC'])
         ]);

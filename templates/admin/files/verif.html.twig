@@ -2,10 +2,7 @@
 endblock %} {% block body %}
 <div class="container">
   <div class="row justify-content-center">
-    <h2>
-      Vérifier le fichier importé<br />
-      {{ file.name }}
-    </h2>
+    <h2>Vérifier le fichier importé<br /></h2>
   </div>
 
   <div class="row justify-content-center mt-3">
@@ -14,9 +11,7 @@ endblock %} {% block body %}
       <table class="table table-striped bordercolor">
         <thead class="thead-dark">
           <tr class="table-danger">
-            <th>#</th>
-            <th>Participe</th>
-            <th>Participation</th>
+            <th>N° ligne</th>
             <th>Code asso</th>
             <th>Association</th>
             <th>Adresse</th>
@@ -24,20 +19,22 @@ endblock %} {% block body %}
             <th>Ville</th>
             <th>Tél</th>
             <th>Email</th>
-            <th>Ville 2</th>
-            <th>Choix lettre</th>
-            <th>Nos équipes de</th>
-            <th>Président : prénom nom fonction</th>
-            <th>Signature</th>
-            <th>Personnalisation locale année -2</th>
-            <th>Personnalisation locale année -1</th>
+            <th>Prénom du président</th>
+            <th>Nom du président</th>
+            <th>Fonction du président</th>
+            <th>Email du président</th>
+            <th>Prénom du référent</th>
+            <th>Nom du Référent</th>
+            <th>Email du référent</th>
+            <th>Téléphone du référent</th>
+            <th>Exemple du texte utilisé lors du précédent appel aux don</th>
           </tr>
         </thead>
         <tbody>
           {% for key, row in data %} {% if key != 0 and row[2] is not empty %}
           <tr>
             <td>{{ key }}</td>
-            {% for cell in row %} {% if loop.last or loop.revindex == 2 %}
+            {% for cell in row %} {% if loop.last %}
             <td class="text-center align-middle">
               {% if cell is not null %}
               <a
@@ -61,15 +58,18 @@ endblock %} {% block body %}
   </div>
   <div class="row justify-content-center mt-3">
     <div class="col-md-3">
-      <form action="{{ path('file_ok', { id: file.id }) }}" method="post">
-        <button class="btn btn-primary text-white btn-block">
-          Valider le tableau
-        </button>
-      </form>
-    </div>
-    <div class="col-md-3">
       <a href="{{ path('file_new') }}" class="btn btn-secondary btn-block"
         >Télécharger un nouveau fichier</a
+      >
+    </div>
+  </div>
+  <div class="row justify-content-center mt-3">
+    <div class="col-md-3">
+      <a
+        href="{{ path('file_import', { filepath: filepath }) }}"
+        class="btn btn-secondary btn-block"
+        onclick="return confirm('Toutes les données de la base seront écrasées, voulez-vous continuer ?');"
+        >Importer dans la BD le fichier</a
       >
     </div>
   </div>
