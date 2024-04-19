@@ -62,7 +62,6 @@ class FileService
     }
     public function importDataFromFile(String $file): void
     {
-        dump($file);
         // Lire le contenu du fichier
         $data = $this->getDataFile($file);
 
@@ -71,56 +70,71 @@ class FileService
         $this->entityManager->createQuery('DELETE FROM App\Entity\Association')->execute();
 
         // Supprimer les enregistrements de la table "Person"
-        // $this->entityManager->createQuery('DELETE FROM App\Entity\President')->execute();
-        // $this->entityManager->createQuery('DELETE FROM App\Entity\Referent')->execute();
-        // $this->entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
+        $this->entityManager->createQuery('DELETE FROM App\Entity\President')->execute();
+        $this->entityManager->createQuery('DELETE FROM App\Entity\Referent')->execute();
+        $this->entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
+
+        // tableau d'user par email
+        $listeEmailUser     = [];
 
         # #TODO creation admin !!
         $admin = new User();
         $admin->setEmail('test@test.fr');
         $admin->setPassword($this->encoder->hashPassword($admin, 'test'));
         $admin->setRoles(['ROLE_ADMIN']);
-        $this->entityManager->flush();
+        $admin->setFirstname('test');
+        $admin->setLastname('test');
+        $this->entityManager->persist($admin);
 
         // la premiere ligne d tableau contient les entetes
         for ($i = 1; $i < count($data); $i++) {
             $assoData = $data[$i];
-            if ($assoData[2] == null) {
+            // enleve espace 
+            foreach ($assoData as &$element) {
+                $element = $element !== null ? trim($element) : null;
+            }
+            if ($assoData[1] == null) {
                 continue;
             }
-            $user = new User();
-            $user->setPassword($this->encoder->hashPassword($user, 'test'));
-            $user->setFirstname($assoData[7]);
-            $user->setLastname($assoData[8]);
-            $user->setEmail($assoData[10]);
-            $this->entityManager->persist($user);
+            if (array_key_exists($assoData[10], $listeEmailUser)) {
+                $user = $listeEmailUser[$assoData[10]];
+            } else {
+                $user = new User();
+                $user->setPassword($this->encoder->hashPassword($user, 'test'));
+                $user->setFirstname($assoData[7]);
+                $user->setLastname($assoData[8]);
+                $user->setEmail($assoData[10]);
+                $listeEmailUser[$assoData[10]] = $user;
+                $this->entityManager->persist($user);
+            }
 
             $president = new President();
             $president->setFonction($assoData[9]);
-            $president->setActif(true);
             $president->setUser($user);
             $this->entityManager->persist($president);
-            $this->entityManager->flush();
 
             $asso = new Association();
 
             // Referent
             if ($assoData[13]) {
-                $user = new User();
-                $user->setPassword($this->encoder->hashPassword($user, 'test'));
-                $user->setFirstname($assoData[11]);
-                $user->setLastname($assoData[12]);
-                $user->setEmail($assoData[13]);
-                $this->entityManager->persist($user);
-
+                if (array_key_exists($assoData[13], $listeEmailUser)) {
+                    $user = $listeEmailUser[$assoData[13]];
+                } else {
+                    $user = new User();
+                    $user->setPassword($this->encoder->hashPassword($user, 'test'));
+                    $user->setFirstname($assoData[11]);
+                    $user->setLastname($assoData[12]);
+                    $user->setEmail($assoData[13]);
+                    $listeEmailUser[$assoData[13]] = $user;
+                    $this->entityManager->persist($user);
+                }
                 $referent = new Referent();
                 $referent->setTel($assoData[14]);
                 $referent->setUser($user);
-                $referent->setActif(true);
+                $referent->setAssociation($asso);
                 $this->entityManager->persist($referent);
 
-                $asso->addReferent($referent);
-                $this->entityManager->flush();
+                $asso->setReferent($referent);
             }
 
             $asso->setPresident($president);
@@ -148,7 +162,6 @@ class FileService
      */
     public function getDataFile(String $filePath): array
     {
-        dump($filePath);
         // Chargement du fichier
         $spreadsheet = IOFactory::load($this->upload_directory  . '/' . $filePath);
 

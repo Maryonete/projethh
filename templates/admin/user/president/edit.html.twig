@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %} {% block title %}President{% endblock %} {% block
+body %}
+
+<div class="container">
+  <div class="row g-5">
+    {% if president.user is not empty %}
+    <h1>Mise à jour président(e)</h1>
+    {% else %}
+    <h1>Création président(e)</h1>
+    {% endif %}
+    <div class="col-md-6">
+      {{ form_start(form) }}
+
+      <div class="form-group mb-3">
+        {{ form_label(form.user.lastname, "Nom") }}
+        {{ form_widget(form.user.lastname) }}
+        <div class="invalid-feedback">
+          {{ form_errors(form.user.lastname) }}
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        {{ form_label(form.user.firstname, "Prénom") }}
+        {{ form_widget(form.user.firstname) }}
+        <div class="invalid-feedback">
+          {{ form_errors(form.user.firstname) }}
+        </div>
+      </div>
+      <div class="form-group mb-3">
+        {{ form_label(form.user.email, "E-mail") }}
+        {{ form_widget(form.user.email) }}
+        <div class="invalid-feedback">
+          {{ form_errors(form.user.email) }}
+        </div>
+      </div>
+      <div class="form-group mb-3">
+        {{ form_label(form.fonction, "Fonction") }}
+        {{ form_widget(form.fonction) }}
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-12">
+          <div class="d-flex justify-content-between">
+            <a href="{{ path('user') }}" class="btn btn-primary"
+              >Retour à la liste</a
+            >
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+          </div>
+        </div>
+      </div>
+
+      {{ form_end(form) }}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

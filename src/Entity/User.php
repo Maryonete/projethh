@@ -8,9 +8,14 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\Table(name: 'user')]
+#[ORM\UniqueConstraint(
+    name: 'UNIQ_IDENTIFIER_EMAIL',
+    fields: ['email']
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -18,7 +23,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180)]
+    #[ORM\Column(length: 180, unique: true)]
+    #[Assert\Length(min: 2, max: 180)]
+    #[Assert\Email(
+        message: 'Cet email {{ value }} n\'est pas valide',
+    )]
     private ?string $email = null;
 
     /**
@@ -33,26 +42,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 60)]
+    #[Assert\Length(min: 2, max: 60)]
     private ?string $firstname = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 60)]
+    #[Assert\Length(min: 2, max: 60)]
     private ?string $lastname = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $last_login_at = null;
 
-    /**
-     * @var Collection<int, President>
-     */
-    #[ORM\OneToMany(targetEntity: President::class, mappedBy: 'user')]
-    private Collection $presidents;
+    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[ORM\Column(nullable: true)]
+    private ?President $president = null;
 
-    /**
-     * @var Collection<int, Referent>
-     */
-    #[ORM\OneToMany(targetEntity: Referent::class, mappedBy: 'user')]
-    private Collection $referents;
+    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[ORM\Column(nullable: true)]
+    private Collection $referent;
 
     /**
      * @var Collection<int, Logs>
@@ -60,13 +67,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Logs::class, mappedBy: 'user')]
     private Collection $logs;
 
+
+
     public function __construct()
     {
-        $this->presidents = new ArrayCollection();
-        $this->referents = new ArrayCollection();
         $this->logs = new ArrayCollection();
     }
-
+    public function __toString()
+    {
+        return $this->getFirstname() . ' ' . $this->getLastname();
+    }
     public function getId(): ?int
     {
         return $this->id;
@@ -178,65 +188,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, President>
-     */
-    public function getPresidents(): Collection
-    {
-        return $this->presidents;
-    }
 
-    public function addPresident(President $president): static
-    {
-        if (!$this->presidents->contains($president)) {
-            $this->presidents->add($president);
-            $president->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removePresident(President $president): static
-    {
-        if ($this->presidents->removeElement($president)) {
-            // set the owning side to null (unless already changed)
-            if ($president->getUser() === $this) {
-                $president->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Referent>
-     */
-    public function getReferents(): Collection
-    {
-        return $this->referents;
-    }
-
-    public function addReferent(Referent $referent): static
-    {
-        if (!$this->referents->contains($referent)) {
-            $this->referents->add($referent);
-            $referent->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeReferent(Referent $referent): static
-    {
-        if ($this->referents->removeElement($referent)) {
-            // set the owning side to null (unless already changed)
-            if ($referent->getUser() === $this) {
-                $referent->setUser(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Logs>
@@ -264,6 +216,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $log->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPresident(): ?President
+    {
+        return $this->president;
+    }
+
+    public function setPresident(?President $president): static
+    {
+        // set the owning side of the relation if necessary
+        if ($president->getUser() !== $this) {
+            $president->setUser($this);
+        }
+        $this->president = $president;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of referent
+     */
+    public function getReferent()
+    {
+        return $this->referent;
+    }
+
+    /**
+     * Set the value of referent
+     *
+     * @return  self
+     */
+    public function setReferent($referent)
+    {
+        $this->referent = $referent;
 
         return $this;
     }

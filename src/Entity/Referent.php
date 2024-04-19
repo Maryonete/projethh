@@ -2,10 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\ReferentRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Association;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ReferentRepository;
 
 #[ORM\Entity(repositoryClass: ReferentRepository::class)]
 class Referent
@@ -18,24 +17,19 @@ class Referent
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tel = null;
 
-    #[ORM\Column]
-    private ?bool $actif = null;
-
-    #[ORM\ManyToOne(inversedBy: 'referents')]
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    /**
-     * @var Collection<int, Association>
-     */
-    #[ORM\ManyToMany(targetEntity: Association::class, mappedBy: 'referent')]
-    private Collection $associations;
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    private Association $association;
 
-    public function __construct()
+
+    public function __toString()
     {
-        $this->associations = new ArrayCollection();
+        return $this->getUser()->getFirstname() . ' ' . $this->getUser()->getLastname();
     }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -53,18 +47,6 @@ class Referent
         return $this;
     }
 
-    public function isActif(): ?bool
-    {
-        return $this->actif;
-    }
-
-    public function setActif(bool $actif): static
-    {
-        $this->actif = $actif;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -76,30 +58,23 @@ class Referent
 
         return $this;
     }
+    /**
+     * Get the value of association
+     */
+    public function getAssociation(): ?Association
+    {
+        return $this->association;
+    }
 
     /**
-     * @return Collection<int, Association>
+     * Set the value of association
+     *
+     * @return  self
      */
-    public function getAssociations(): Collection
+    public function setAssociation(Association $association)
     {
-        return $this->associations;
-    }
-
-    public function addAssociation(Association $association): static
-    {
-        if (!$this->associations->contains($association)) {
-            $this->associations->add($association);
-            $association->addReferent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAssociation(Association $association): static
-    {
-        if ($this->associations->removeElement($association)) {
-            $association->removeReferent($this);
-        }
+        $this->association = $association;
+        #TODO : enleve ancien referent
 
         return $this;
     }

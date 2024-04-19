@@ -17,16 +17,28 @@ class AssociationController extends AbstractController
     #[Route('', name: 'list')]
     public function listAsso(AssociationRepository $assoRepo): Response
     {
-
         return $this->render('admin/association/list.html.twig', [
-            'listAsso'  =>  $assoRepo->findBy([], ['code' => 'ASC'])
+            'listAsso'  =>  $assoRepo->findAll([], ['code' => 'ASC'])
         ]);
     }
 
-    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/{id<[0-9]+>}', name: 'show', methods: ['GET'])]
+    public function show(Association $association): Response
     {
-        $association = new Association();
+        return $this->render('admin/association/show.html.twig', [
+            'association' => $association,
+        ]);
+    }
+    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
+    #[Route('/{id<[0-9]+>}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    public function new_update(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Association $association = null
+    ): Response {
+        if ($association === null) {
+            $association = new Association();
+        }
         $form = $this->createForm(AssociationType::class, $association);
         $form->handleRequest($request);
 
@@ -37,39 +49,13 @@ class AssociationController extends AbstractController
             return $this->redirectToRoute('asso_list', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('admin/association/new.html.twig', [
-            'association' => $association,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
-    public function show(Association $association): Response
-    {
-        return $this->render('admin/association/show.html.twig', [
-            'association' => $association,
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Association $association, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(AssociationType::class, $association);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('asso_list', [], Response::HTTP_SEE_OTHER);
-        }
-
         return $this->render('admin/association/edit.html.twig', [
-            'association' => $association,
-            'form' => $form,
+            'association'   => $association,
+            'form'          => $form,
         ]);
     }
 
-    #[Route('/{id}', name: 'delete', methods: ['POST'])]
+    #[Route('/{id<[0-9]+>}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Association $association, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $association->getId(), $request->getPayload()->get('_token'))) {

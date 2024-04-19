@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %} {% block title %}Referent{% endblock %} {% block
+body %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <h1>Référent(e)</h1>
+
+      <table class="table">
+        <tbody>
+          <tr>
+            <th>Id</th>
+            <td>{{ referent.id }}</td>
+          </tr>
+          <tr>
+            <th>Prénom Nom</th>
+            <td>{{ referent.user.firstname }} {{ referent.user.lastname }}</td>
+          </tr>
+          {% if referent.user.email is not empty %}
+          <tr>
+            <th>Email</th>
+            <td>
+              {{ referent.user.email }}
+            </td>
+          </tr>
+          {% endif %}
+          <tr>
+            <th>Tel</th>
+            <td>{{ referent.tel }}</td>
+          </tr>
+          <tr>
+            <th>Actif</th>
+            <td>{{ referent.actif ? "Yes" : "No" }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-6">
+      <div class="d-flex justify-content-between">
+        <a href="{{ path('user') }}" class="btn btn-primary"
+          >Retour à la liste</a
+        >
+        <a
+          href="{{ path('referent_edit', { id: referent.id }) }}"
+          class="btn btn-primary"
+          >Modifier</a
+        >
+
+        {{ include("admin/user/referent/_delete_form.html.twig") }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

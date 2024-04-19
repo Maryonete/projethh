@@ -20,7 +20,14 @@ class AssociationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Association::class);
     }
-
+    public function findAllByReferentNonAttachAsso(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->leftJoin('a.referent', 'r')
+            ->where('a. IS NULL')
+            ->getQuery()
+            ->getResult();
+    }
     //    /**
     //     * @return Association[] Returns an array of Association objects
     //     */

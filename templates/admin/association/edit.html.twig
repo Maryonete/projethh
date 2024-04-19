@@ -1,14 +1,272 @@
 {% extends 'base.html.twig' %} {% block title %}Edit Association{% endblock %}
 {% block body %}
 <div class="container">
-  <h1>Edit Association</h1>
+  {% if association.code is not empty %}
+  <h1>Mise à jour de l'association</h1>
+  {% else %}
+  <h1>Création d'une association</h1>
+  {% endif %}
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-md-6">
+        {{ form_start(form) }}
 
-  {{ include("admin/association/_form.html.twig", { button_label: "Update" }) }}
+        <div class="form-group mb-3">
+          {{ form_label(form.code) }}
+          {{ form_widget(form.code) }}
+          <div class="form-error">{{ form_errors(form.code) }}</div>
+        </div>
 
-  <a href="{{ path('asso_list') }}" class="btn btn-primary"
-    >retour à la liste</a
-  >
+        <div class="form-group mb-3">
+          {{ form_label(form.libelle) }}
+          {{ form_widget(form.libelle) }}
+          <div class="form-error">{{ form_errors(form.libelle) }}</div>
+        </div>
 
-  {{ include("admin/association/_delete_form.html.twig") }}
+        <div class="form-group mb-3">
+          {{ form_label(form.adress) }}
+          {{ form_widget(form.adress) }}
+          <div class="form-error">{{ form_errors(form.adress) }}</div>
+        </div>
+
+        <div class="form-group mb-3">
+          {{ form_label(form.cp) }}
+          {{ form_widget(form.cp) }}
+          <div class="form-error">{{ form_errors(form.cp) }}</div>
+        </div>
+
+        <div class="form-group mb-3">
+          {{ form_label(form.city) }}
+          {{ form_widget(form.city) }}
+          <div class="form-error">{{ form_errors(form.city) }}</div>
+        </div>
+
+        <div class="form-group mb-3">
+          {{ form_label(form.tel) }}
+          {{ form_widget(form.tel) }}
+          <div class="form-error">{{ form_errors(form.tel) }}</div>
+        </div>
+
+        <div class="form-group mb-3">
+          {{ form_label(form.email) }}
+          {{ form_widget(form.email) }}
+          <div class="form-error">{{ form_errors(form.email) }}</div>
+        </div>
+
+        <div class="form-group mb-3">
+          {{ form_label(form.president) }}
+          <div class="input-group">
+            {{ form_widget(form.president) }}
+            <span class="input-group-append">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="handleAddPresident()"
+              >
+                <i class="fas fa-plus"></i>
+              </button>
+            </span>
+          </div>
+          <div class="form-error">{{ form_errors(form.president) }}</div>
+        </div>
+        <div class="form-group mb-3">
+          {{ form_label(form.referent) }}
+          <div class="input-group">
+            {{ form_widget(form.referent) }}
+            <span class="input-group-append">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                id="clickAddReferent"
+                onclick="handleAddReferent()"
+              >
+                <i class="fas fa-plus"></i>
+              </button>
+            </span>
+          </div>
+          <div class="form-error">{{ form_errors(form.referent) }}</div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div
+          class="p-4 bg-light border rounded-3 mb-2"
+          id="createPresidentForm"
+          style="display: none"
+        >
+          <h2>Nouveau président(e)</h2>
+
+          <div class="form-group mb-3">
+            <label
+              class="col-form-label mt-2 required"
+              for="president_user_lastname"
+              >Nom</label
+            >
+            <input
+              type="text"
+              id="president_user_lastname"
+              name="president[user][lastname]"
+              required="required"
+              class="form-control"
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+          <div class="form-group mb-3">
+            <label
+              class="col-form-label mt-2 required"
+              for="president_user_firstname"
+              >Prénom</label
+            >
+            <input
+              type="text"
+              id="president_user_firstname"
+              name="president[user][firstname]"
+              required="required"
+              class="form-control"
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+          <div class="form-group mb-3">
+            <label
+              class="col-form-label mt-2 required"
+              for="president_user_email"
+              >E-mail</label
+            >
+            <input
+              type="email"
+              id="president_user_email"
+              name="president[user][email]"
+              required="required"
+              class="form-control"
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+          <div class="form-group mb-3">
+            <label class="col-form-label mt-2 required" for="president_fonction"
+              >Fonction</label
+            >
+            <input
+              type="text"
+              id="president_fonction"
+              name="president[fonction]"
+              required="required"
+              class="form-control"
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+        </div>
+
+        <div
+          class="p-4 bg-light border rounded-3"
+          id="createReferentForm"
+          style="display: none"
+        >
+          <h2>Nouveau référent(e)</h2>
+
+          <div class="form-group mb-3">
+            <label
+              class="col-form-label mt-2 required"
+              for="referent_user_lastname"
+              >Nom</label
+            >
+            <input
+              type="text"
+              id="referent_user_lastname"
+              name="referent[user][lastname]"
+              required="required"
+              class="form-control"
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+          <div class="form-group mb-3">
+            <label
+              class="col-form-label mt-2 required"
+              for="referent_user_firstname"
+              >Prénom</label
+            >
+            <input
+              type="text"
+              id="referent_user_firstname"
+              name="referent[user][firstname]"
+              required="required"
+              class="form-control"
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+          <div class="form-group mb-3">
+            <label
+              class="col-form-label mt-2 required"
+              for="referent_user_email"
+              >E-mail</label
+            >
+            <input
+              type="email"
+              id="referent_user_email"
+              name="referent[user][email]"
+              required="required"
+              class="form-control"
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+          <div class="form-group mb-3">
+            <label class="col-form-label mt-2 required" for="referent_tel"
+              >Téléphone</label
+            >
+            <input
+              type="text"
+              id="referent_tel"
+              name="referent[tel]"
+              required="required"
+              class="form-control"
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="row mt-3">
+          <div class="col-12">
+            <div class="d-flex justify-content-between">
+              <a href="{{ path('asso_list') }}" class="btn btn-primary"
+                >Retour à la liste</a
+              >
+              <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+          </div>
+        </div>
+
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </div>
 </div>
+<script>
+  function handleAddReferent() {
+    const createReferentForm = document.querySelector("#createReferentForm");
+    createReferentForm.style.display = "block";
+    $("#association_referent").prop("selectedIndex", 0);
+  }
+  const selectReferent = document.querySelector("#association_referent");
+  selectReferent.addEventListener("change", function () {
+    const createReferentForm = document.querySelector("#createReferentForm");
+    createReferentForm.style.display = "none";
+  });
+  function handleAddPresident() {
+    const createPresidentForm = document.querySelector("#createPresidentForm");
+    createPresidentForm.style.display = "block";
+    $("#association_president").prop("selectedIndex", 0);
+  }
+  const selectPresident = document.querySelector("#association_president");
+  selectPresident.addEventListener("change", function () {
+    const createPresidentForm = document.querySelector("#createPresidentForm");
+    createPresidentForm.style.display = "none";
+  });
+</script>
 {% endblock %}

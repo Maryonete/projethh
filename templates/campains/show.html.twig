@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Campains{% endblock %}
+
+{% block body %}
+    <h1>Campains</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ campain.id }}</td>
+            </tr>
+            <tr>
+                <th>Libelle</th>
+                <td>{{ campain.libelle }}</td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td>{{ campain.date ? campain.date|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_campains_index') }}">back to list</a>
+
+    <a href="{{ path('app_campains_edit', {'id': campain.id}) }}">edit</a>
+
+    {{ include('campains/_delete_form.html.twig') }}
+{% endblock %}

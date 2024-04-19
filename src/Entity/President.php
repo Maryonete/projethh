@@ -18,24 +18,19 @@ class President
     #[ORM\Column(length: 255)]
     private ?string $fonction = null;
 
-    #[ORM\Column]
-    private ?bool $actif = null;
 
-    #[ORM\ManyToOne(inversedBy: 'presidents')]
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    private Association $association;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    /**
-     * @var Collection<int, Association>
-     */
-    #[ORM\OneToMany(targetEntity: Association::class, mappedBy: 'president')]
-    private Collection $associations;
-
-    public function __construct()
+    public function __toString()
     {
-        $this->associations = new ArrayCollection();
+        return $this->getUser()->getFirstname() . ' ' . $this->getUser()->getLastname();
     }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -53,17 +48,7 @@ class President
         return $this;
     }
 
-    public function isActif(): ?bool
-    {
-        return $this->actif;
-    }
 
-    public function setActif(bool $actif): static
-    {
-        $this->actif = $actif;
-
-        return $this;
-    }
 
     public function getUser(): ?User
     {
@@ -72,37 +57,39 @@ class President
 
     public function setUser(?User $user): static
     {
+        // // unset the owning side of the relation if necessary
+        // if ($user === null && $this->user !== null) {
+        //     $this->user->setPresident(null);
+        // }
+
+        // // set the owning side of the relation if necessary
+        // if ($user !== null && $user->getPresident() !== $this) {
+        //     $user->setPresident($this);
+        // }
+
         $this->user = $user;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Association>
+     * Get the value of association
      */
-    public function getAssociations(): Collection
+    public function getAssociation(): ?Association
     {
-        return $this->associations;
+
+        return $this->association;
     }
 
-    public function addAssociation(Association $association): static
+    /**
+     * Set the value of association
+     *
+     * @return  self
+     */
+    public function setAssociation($association)
     {
-        if (!$this->associations->contains($association)) {
-            $this->associations->add($association);
-            $association->setPresident($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAssociation(Association $association): static
-    {
-        if ($this->associations->removeElement($association)) {
-            // set the owning side to null (unless already changed)
-            if ($association->getPresident() === $this) {
-                $association->setPresident(null);
-            }
-        }
+        #TODO enleve ancien president + ajout date dans historique
+        $this->association = $association;
 
         return $this;
     }

@@ -32,11 +32,21 @@
       property="article:publisher"
       content="https://www.facebook.com/HabitatetHumanisme/"
     />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css"
+    />
+    <!-- Include Bootstrap styles if using Bootstrap -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/2.0.5/css/dataTables.bootstrap5.min.css"
+    />
 
-    {% block stylesheets %}
-    {{
-      encore_entry_link_tags("app")
-    }}
+    {% block stylesheets %} {% for file in encore_entry_css_files('app') %}
+    <link rel="stylesheet" href="{{ file }}" media="screen" />
+    {% endfor %}
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       rel="stylesheet"
@@ -46,9 +56,7 @@
     {{
       encore_entry_script_tags("app")
     }}
-    {% block importmap %}{{
-      importmap("app")
-    }}{% endblock %} {% endblock %}
+    {% endblock %}
   </head>
   <body>
     {% include 'partials/_header.html.twig' %} {% block body %}{% endblock %} {%

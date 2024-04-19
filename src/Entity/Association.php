@@ -43,20 +43,24 @@ class Association
     #[ORM\OneToMany(targetEntity: CampainAssociation::class, mappedBy: 'association')]
     private Collection $campainAssociations;
 
-    #[ORM\ManyToOne(inversedBy: 'associations')]
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?President $president = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Referent $referent;
+
     /**
-     * @var Collection<int, Referent>
+     * @var Collection<int, History>
      */
-    #[ORM\ManyToMany(targetEntity: Referent::class, inversedBy: 'associations')]
-    private Collection $referent;
+    #[ORM\OneToMany(targetEntity: History::class, mappedBy: 'association', orphanRemoval: true)]
+    private Collection $histories;
 
     public function __construct()
     {
         $this->campainAssociations = new ArrayCollection();
-        $this->referent = new ArrayCollection();
+        $this->histories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -190,26 +194,54 @@ class Association
         return $this;
     }
 
+
+
     /**
-     * @return Collection<int, Referent>
+     * @return Collection<int, History>
      */
-    public function getReferent(): Collection
+    public function getHistories(): Collection
     {
-        return $this->referent;
+        return $this->histories;
     }
 
-    public function addReferent(Referent $referent): static
+    public function addHistory(History $history): static
     {
-        if (!$this->referent->contains($referent)) {
-            $this->referent->add($referent);
+        if (!$this->histories->contains($history)) {
+            $this->histories->add($history);
+            $history->setAssociation($this);
         }
 
         return $this;
     }
 
-    public function removeReferent(Referent $referent): static
+    public function removeHistory(History $history): static
     {
-        $this->referent->removeElement($referent);
+        if ($this->histories->removeElement($history)) {
+            // set the owning side to null (unless already changed)
+            if ($history->getAssociation() === $this) {
+                $history->setAssociation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the value of referent
+     */
+    public function getReferent(): ?Referent
+    {
+        return $this->referent;
+    }
+
+    /**
+     * Set the value of referent
+     *
+     * @return  self
+     */
+    public function setReferent($referent)
+    {
+        $this->referent = $referent;
 
         return $this;
     }

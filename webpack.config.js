@@ -20,7 +20,8 @@ Encore
    * Each entry will result in one JavaScript file (e.g. app.js)
    * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
    */
-  .addEntry("app", "./assets/app.js")
+  .addEntry("app", "./assets/js/app.js")
+  .addEntry("datatables", "./node_modules/datatables.net/js/dataTables.min.js")
 
   // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
   .splitEntryChunks()
@@ -66,12 +67,15 @@ Encore
   // requires WebpackEncoreBundle 1.4 or higher
   //.enableIntegrityHashes(Encore.isProduction())
 
-  // uncomment if you're having problems with a jQuery plugin
-  //.autoProvidejQuery()
   .copyFiles({
     from: "./assets/images",
-
     to: "images/[path][name].[ext]",
-  });
+  })
+  .copyFiles({
+    from: "./assets/js",
+    to: "js/[path][name].[ext]",
+  })
+  // uncomment if you're having problems with a jQuery plugin
+  .autoProvidejQuery();
 
 module.exports = Encore.getWebpackConfig();
