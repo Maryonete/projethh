@@ -11,7 +11,15 @@ h2 {
 .alert ul {
   list-style: none;
 }
+.ml-5 {
+  display: flex; /* Enable flexbox layout */
+  margin-left: 1rem; /* Existing margin */
+  margin-bottom: 10px; /* Optional margin below */
+}
 
+.ml-5 input[type="checkbox"] {
+  margin-right: 5px; /* Spacing between checkboxes */
+}
 #scroll-top {
   position: fixed;
   bottom: 30px; /* Adjust the spacing from the bottom as needed */

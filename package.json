@@ -28,7 +28,8 @@
     "jquery": "^3.7.1",
     "jquery-datatables": "^1.10.18",
     "sass": "^1.71.0",
-    "sass-loader": "^14.1.0"
+    "sass-loader": "^14.1.0",
+    "tinymce": "^6"
   },
   "engines": {
     "node": "20.7.*",

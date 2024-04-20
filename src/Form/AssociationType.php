@@ -12,7 +12,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class AssociationType extends AbstractType

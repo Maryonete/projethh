@@ -105,7 +105,6 @@ class AssociationController extends AbstractController
             // if ($association->getReferent() == null) {
             //     $association->setReferent($request->get('referent'));
             // }
-            dump($association);
             $entityManager->persist($association);
             $entityManager->flush();
 

@@ -7,14 +7,18 @@
   <thead>
     <tr>
       <th>Prénom Nom</th>
-      <th>Fonction</th>
+      <th>Association</th>
     </tr>
   </thead>
   <tbody>
     {% for president in presidents %}
     <tr>
       <td>{{ president.user.firstname }} {{ president.user.lastname }}</td>
-      <td>{{ president.fonction }}</td>
+      <td>
+        {% if president.association is not empty %}
+        {{ president.association.libelle }}
+        {% endif %}
+      </td>
       <td>
         <a href="{{ path('president_show', { id: president.id }) }}"
           ><i class="fa-solid fa-eye"></i

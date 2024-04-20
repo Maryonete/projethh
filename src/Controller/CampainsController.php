@@ -4,28 +4,43 @@ namespace App\Controller;
 
 use App\Entity\Campains;
 use App\Form\CampainsType;
+use App\Entity\CampainAssociation;
+use App\Form\CampainAssociationType;
 use App\Repository\CampainsRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/campains')]
+#[Route('/campains', name: 'campains_')]
 class CampainsController extends AbstractController
 {
-    #[Route('/', name: 'app_campains_index', methods: ['GET'])]
+    #[Route('/', name: 'index', methods: ['GET'])]
     public function index(CampainsRepository $campainsRepository): Response
     {
-        return $this->render('campains/index.html.twig', [
+        return $this->render('admin/campains/index.html.twig', [
             'campains' => $campainsRepository->findAll(),
         ]);
     }
 
-    #[Route('/new', name: 'app_campains_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/{id<[0-9]+>}', name: 'show', methods: ['GET'])]
+    public function show(Campains $campain): Response
     {
-        $campain = new Campains();
+        return $this->render('admin/campains/show.html.twig', [
+            'campain' => $campain,
+        ]);
+    }
+    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
+    #[Route('/{id<[0-9]+>}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    public function edit(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Campains $campain = null
+    ): Response {
+        if ($campain === null) {
+            $campain = new Campains();
+        }
         $form = $this->createForm(CampainsType::class, $campain);
         $form->handleRequest($request);
 
@@ -33,49 +48,39 @@ class CampainsController extends AbstractController
             $entityManager->persist($campain);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_campains_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('campains_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('campains/new.html.twig', [
-            'campain' => $campain,
-            'form' => $form,
+        return $this->render('admin/campains/edit.html.twig', [
+            'campain'   => $campain,
+            'form'      => $form,
         ]);
     }
 
-    #[Route('/{id}', name: 'app_campains_show', methods: ['GET'])]
-    public function show(Campains $campain): Response
-    {
-        return $this->render('campains/show.html.twig', [
-            'campain' => $campain,
-        ]);
-    }
+    #[Route('/play/{id<[0-9]+>}', name: 'play', methods: ['GET', 'POST'])]
+    public function campains_play(
+        Request $request,
+        Campains $campain,
 
-    #[Route('/{id}/edit', name: 'app_campains_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Campains $campain, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(CampainsType::class, $campain);
+        EntityManagerInterface $entityManager
+    ): Response {
+        $campainAsso = new CampainAssociation();
+        $form = $this->createForm(CampainAssociationType::class, $campainAsso);
         $form->handleRequest($request);
+        return $this->render('admin/campains/play.html.twig', [
+            'form'      => $form,
+            'campain'   =>  $campain,
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_campains_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('campains/edit.html.twig', [
-            'campain' => $campain,
-            'form' => $form,
         ]);
     }
-
-    #[Route('/{id}', name: 'app_campains_delete', methods: ['POST'])]
+    #[Route('/{id<[0-9]+>}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Campains $campain, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$campain->getId(), $request->getPayload()->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $campain->getId(), $request->getPayload()->get('_token'))) {
             $entityManager->remove($campain);
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_campains_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('admin/index', [], Response::HTTP_SEE_OTHER);
     }
 }
