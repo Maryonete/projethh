@@ -17,17 +17,7 @@ class CampainAssociation
     #[ORM\Column(length: 255)]
     private ?string $statut = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $date_send = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $objet_email = null;
-
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $texte_email = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $destinataire = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $texte_personnalise = null;
@@ -60,53 +50,6 @@ class CampainAssociation
         return $this;
     }
 
-    public function getDateSend(): ?\DateTimeInterface
-    {
-        return $this->date_send;
-    }
-
-    public function setDateSend(\DateTimeInterface $date_send): static
-    {
-        $this->date_send = $date_send;
-
-        return $this;
-    }
-
-    public function getObjetEmail(): ?string
-    {
-        return $this->objet_email;
-    }
-
-    public function setObjetEmail(string $objet_email): static
-    {
-        $this->objet_email = $objet_email;
-
-        return $this;
-    }
-
-    public function getTexteEmail(): ?string
-    {
-        return $this->texte_email;
-    }
-
-    public function setTexteEmail(string $texte_email): static
-    {
-        $this->texte_email = $texte_email;
-
-        return $this;
-    }
-
-    public function getDestinataire(): ?string
-    {
-        return $this->destinataire;
-    }
-
-    public function setDestinataire(string $destinataire): static
-    {
-        $this->destinataire = $destinataire;
-
-        return $this;
-    }
 
     public function getTextePersonnalise(): ?string
     {

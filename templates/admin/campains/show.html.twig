@@ -14,14 +14,34 @@ body %}
                 <td>{{ campain.id }}</td>
               </tr>
               <tr>
-                <th>Libelle</th>
+                <th>Libellé</th>
                 <td>{{ campain.libelle }}</td>
               </tr>
               <tr>
-                <th>Date</th>
+                <th>Date de début</th>
                 <td>
                   {{ campain.date ? campain.date|date('d-m-Y') : '' }}
                 </td>
+              </tr>
+              <tr>
+                <th>Destinataire</th>
+                <td>{{ campain.destinataire ?: '-' }}</td>
+              </tr>
+              <tr>
+                <th>Email de l'expéditeur</th>
+                <td>{{ campain.email_from ?: '-' }}</td>
+              </tr>
+              <tr>
+                <th>Email en copie</th>
+                <td>{{ campain.email_cc ?: '-' }}</td>
+              </tr>
+              <tr>
+                <th>Objet de l'email</th>
+                <td>{{ campain.objet_email ?: '-' }}</td>
+              </tr>
+              <tr>
+                <th>Texte de l'email</th>
+                <td>{{ campain.texte_email ?: '-' }}</td>
               </tr>
             </tbody>
           </table>

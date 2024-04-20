@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240420090722 extends AbstractMigration
+final class Version20240420162902 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,8 +21,8 @@ final class Version20240420090722 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE association (id INT AUTO_INCREMENT NOT NULL, president_id INT NOT NULL, referent_id INT DEFAULT NULL, code INT NOT NULL, libelle VARCHAR(255) NOT NULL, adress LONGTEXT NOT NULL, cp VARCHAR(255) NOT NULL, city VARCHAR(255) NOT NULL, tel VARCHAR(255) DEFAULT NULL, email VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_FD8521CCB40A33C7 (president_id), UNIQUE INDEX UNIQ_FD8521CC35E47E35 (referent_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE campain_association (id INT AUTO_INCREMENT NOT NULL, campains_id INT NOT NULL, association_id INT NOT NULL, statut VARCHAR(255) NOT NULL, date_send DATE NOT NULL, objet_email VARCHAR(255) NOT NULL, texte_email LONGTEXT NOT NULL, destinataire VARCHAR(255) NOT NULL, texte_personnalise LONGTEXT DEFAULT NULL, updated_text_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', INDEX IDX_51C0819F595A1A47 (campains_id), INDEX IDX_51C0819FEFB9C8A5 (association_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE campains (id INT AUTO_INCREMENT NOT NULL, libelle VARCHAR(255) NOT NULL, date DATETIME NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE campain_association (id INT AUTO_INCREMENT NOT NULL, campains_id INT NOT NULL, association_id INT NOT NULL, statut VARCHAR(255) NOT NULL, texte_personnalise LONGTEXT DEFAULT NULL, updated_text_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', INDEX IDX_51C0819F595A1A47 (campains_id), INDEX IDX_51C0819FEFB9C8A5 (association_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE campains (id INT AUTO_INCREMENT NOT NULL, libelle VARCHAR(255) NOT NULL, date DATE NOT NULL, date_send DATE NOT NULL, objet_email VARCHAR(255) NOT NULL, texte_email LONGTEXT NOT NULL, destinataire VARCHAR(255) NOT NULL, email_from VARCHAR(255) NOT NULL, email_cc VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE history (id INT AUTO_INCREMENT NOT NULL, association_id INT NOT NULL, table_name VARCHAR(255) NOT NULL, row_id INT NOT NULL, start_date DATE NOT NULL, end_date DATE DEFAULT NULL, INDEX IDX_27BA704BEFB9C8A5 (association_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE logs (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, table_name VARCHAR(255) NOT NULL, row_id INT NOT NULL, action VARCHAR(255) NOT NULL, date DATETIME NOT NULL, old_data LONGTEXT DEFAULT NULL, new_data LONGTEXT DEFAULT NULL, INDEX IDX_F08FC65CA76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE president (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, fonction VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_6E8BD214A76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');

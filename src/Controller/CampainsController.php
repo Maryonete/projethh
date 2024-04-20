@@ -41,10 +41,12 @@ class CampainsController extends AbstractController
         if ($campain === null) {
             $campain = new Campains();
         }
+
         $form = $this->createForm(CampainsType::class, $campain);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $entityManager->persist($campain);
             $entityManager->flush();
 
@@ -64,6 +66,8 @@ class CampainsController extends AbstractController
 
         EntityManagerInterface $entityManager
     ): Response {
+
+
         $campainAsso = new CampainAssociation();
         $form = $this->createForm(CampainAssociationType::class, $campainAsso);
         $form->handleRequest($request);

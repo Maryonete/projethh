@@ -22,6 +22,24 @@ class Campains
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $date_send = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $objet_email = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $texte_email = null;
+
+    #[ORM\Column(type: "array", length: 255, nullable: true)]
+    private ?array  $destinataire = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $email_from = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $email_cc = null;
+
     /**
      * @var Collection<int, CampainAssociation>
      */
@@ -31,6 +49,10 @@ class Campains
     public function __construct()
     {
         $this->campainAssociations = new ArrayCollection();
+    }
+    public function __init()
+    {
+        $this->setEmailFrom($_ENV['EMAIL_DEFAULT']);
     }
 
     public function getId(): ?int
@@ -88,6 +110,95 @@ class Campains
                 $campainAssociation->setCampains(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDateSend(): ?\DateTimeInterface
+    {
+        return $this->date_send;
+    }
+
+    public function setDateSend(\DateTimeInterface $date_send): static
+    {
+        $this->date_send = $date_send;
+
+        return $this;
+    }
+
+    public function getObjetEmail(): ?string
+    {
+        return $this->objet_email;
+    }
+
+    public function setObjetEmail(string $objet_email): static
+    {
+        $this->objet_email = $objet_email;
+
+        return $this;
+    }
+
+    public function getTexteEmail(): ?string
+    {
+        return $this->texte_email;
+    }
+
+    public function setTexteEmail(string $texte_email): static
+    {
+        $this->texte_email = $texte_email;
+
+        return $this;
+    }
+
+    public function getDestinataire(): ?array
+    {
+        return $this->destinataire;
+    }
+
+    public function setDestinataire(?array $destinataire): self
+    {
+        $this->destinataire = $destinataire;
+
+        return $this;
+    }
+
+
+    /**
+     * Get the value of email_from
+     */
+    public function getEmailFrom()
+    {
+        return $this->email_from;
+    }
+
+    /**
+     * Set the value of email_from
+     *
+     * @return  self
+     */
+    public function setEmailFrom($email_from)
+    {
+        $this->email_from = $email_from;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of email_cc
+     */
+    public function getEmailCc()
+    {
+        return $this->email_cc;
+    }
+
+    /**
+     * Set the value of email_cc
+     *
+     * @return  self
+     */
+    public function setEmailCc($email_cc)
+    {
+        $this->email_cc = $email_cc;
 
         return $this;
     }

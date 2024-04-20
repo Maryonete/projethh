@@ -30,20 +30,6 @@ class CampainAssociationType extends AbstractType
                     'rows' => 20,
                     'placeholder' => 'Texte de l\'email'
                 ]
-            ])
-            ->add('destinataire', ChoiceType::class, [
-                'choices' => [
-                    'Président(e)s' => 'presidents',
-                    'Référent(e)s'  => 'referents',
-                ],
-                'expanded' => true, // Afficher les choix sous forme de cases à cocher
-                'multiple' => true, // Permettre la sélection de plusieurs destinataires
-                'required' => true, // Le champ n'est pas obligatoire
-                'label' => 'Destinataires', // Libellé du champ
-                'choice_attr' => [
-                    'Président(e)s' => ['class' => 'mx-2'],
-                    'Référent(e)s' => ['class' => 'mx-2'],
-                ],
             ]);
     }
 

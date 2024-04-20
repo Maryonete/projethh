@@ -2,15 +2,17 @@
 
 namespace App\Service;
 
-use App\Entity\{File, Association, Person, President, Referent, User};
+use DateTime;
+use Doctrine\DBAL\Connection;
+use App\Entity\CampainAssociation;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Doctrine\DBAL\Connection;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use App\Entity\{File, Association, Campains, Person, President, Referent, User};
 
 class FileService
 {
@@ -71,6 +73,9 @@ class FileService
             $this->entityManager->createQuery('DELETE FROM App\Entity\Referent')->execute();
             $this->entityManager->createQuery('DELETE FROM App\Entity\President')->execute();
             $this->entityManager->createQuery('DELETE FROM App\Entity\Association')->execute();
+
+            $this->entityManager->createQuery('DELETE FROM App\Entity\Campains')->execute();
+            $this->entityManager->createQuery('DELETE FROM App\Entity\CampainAssociation')->execute();
             $this->entityManager->flush();
             $this->entityManager->commit();
         } catch (\Exception $e) {
@@ -93,6 +98,12 @@ class FileService
         $admin->setFirstname('test');
         $admin->setLastname('test');
         $this->entityManager->persist($admin);
+
+        // création premiere campagne
+        $campain = new Campains();
+        $campain->setLibelle('Campagne printemps 2024');
+        $campain->setDate(DateTime::createFromFormat('Y-m-d', '2024-03-01'));
+        $this->entityManager->persist($campain);
 
         // la premiere ligne d tableau contient les entetes
         for ($i = 1; $i < count($data); $i++) {
@@ -150,11 +161,14 @@ class FileService
             $asso->setCity($assoData[4]);
             $asso->setTel(isset($assoData[5]) ? $assoData[5] : "");
             $asso->setEmail($assoData[6]);
-            // $asso->setDonationCallText($assoData[15]);
-
-            // $president->setAssociation($asso);
-
             $this->entityManager->persist($asso);
+
+            $campainAssociation = new CampainAssociation();
+            $campainAssociation->setCampains($campain);
+            $campainAssociation->setAssociation($asso);
+            $campainAssociation->setTextePersonnalise($assoData[15]);
+            $campainAssociation->setStatut('finish');
+            $this->entityManager->persist($campainAssociation);
         }
 
         $this->entityManager->flush();

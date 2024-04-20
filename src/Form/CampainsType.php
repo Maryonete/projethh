@@ -6,8 +6,7 @@ use App\Entity\Campains;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\{TextType, DateType, ChoiceType, EmailType, TextareaType};
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CampainsType extends AbstractType
@@ -38,13 +37,57 @@ class CampainsType extends AbstractType
                 'attr' => [
                     'class' => 'form-control', // Classe CSS pour le champ de date
                 ],
-                'label' => 'Date', // Libellé du champ
+                'label' => 'Date du début de la campagne', // Libellé du champ
                 'label_attr' => [
                     'class' => 'col-form-label mt-2', // Classe CSS pour le libellé
                 ],
                 'constraints' => [
                     // Ajoutez ici vos contraintes de validation si nécessaire
                 ],
+            ])
+
+            ->add('objet_email', TextType::class, [
+                'label' => 'Objet de l\'email',
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-control'
+                ]
+            ])
+            ->add('texte_email', TextareaType::class, [
+                'label' => 'Texte de l\'email par défaut',
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-control',
+                    'rows' => 5 // Ajustez le nombre de lignes en fonction de vos besoins
+                ]
+            ])
+            ->add('destinataire', ChoiceType::class, [
+                'choices' => [
+                    'Président(e)s' => 'presidents',
+                    'Référent(e)s'  => 'referents',
+                ],
+                'expanded' => true, // Afficher les choix sous forme de cases à cocher
+                'multiple' => true, // Permettre la sélection de plusieurs destinataires
+                'required' => true, // Le champ n'est pas obligatoire
+                'label' => 'Destinataires', // Libellé du champ
+                'choice_attr' => [
+                    'Président(e)s' => ['class' => 'mx-2'],
+                    'Référent(e)s' => ['class' => 'mx-2'],
+                ],
+            ])
+            ->add('email_from', EmailType::class, [
+                'label' => 'Email de l\'expéditeur',
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-control'
+                ]
+            ])
+            ->add('email_cc', EmailType::class, [
+                'label' => 'Email en copie',
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-control'
+                ]
             ]);
     }
 
