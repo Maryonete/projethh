@@ -8,6 +8,7 @@ use App\Entity\President;
 use App\Form\PresidentType;
 use App\Repository\PresidentRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\AssociationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -52,6 +53,7 @@ class PresidentController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $userPasswordHasher,
+        AssociationRepository $associationRepository,
         President $president = null
     ): Response {
         if (null === $president) {
@@ -71,6 +73,7 @@ class PresidentController extends AbstractController
                 'success',
                 'Opération effectuée avec succès !'
             );
+
             $entityManager->persist($president);
             $entityManager->flush();
 

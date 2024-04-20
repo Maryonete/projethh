@@ -15,8 +15,6 @@
         <th scope="col">Code</th>
         <th scope="col">Libellé</th>
         <th scope="col">Adresse</th>
-        <th scope="col">CP</th>
-        <th scope="col">Ville</th>
         <th scope="col">Tél</th>
         <th scope="col">Email</th>
         <th scope="col">Président</th>
@@ -30,30 +28,27 @@
 
         <td>{{ asso.code }}</td>
         <td>{{ asso.libelle }}</td>
-        <td>{{ asso.adress }}</td>
-        <td>{{ asso.cp }}</td>
-        <td>{{ asso.city }}</td>
+        <td>{{ asso.adress }}<br />{{ asso.cp }} {{ asso.city }}</td>
         <td>{{ asso.tel }}</td>
         <td>{{ asso.email }}</td>
         <td>
           {% if asso.president is not empty %}
           {{ asso.president.user.firstname }}
           {{ asso.president.user.lastname }}
-          {{ asso.president.fonction }}
           {% endif %}
         </td>
         <td>
-          {% if asso.referent is not empty %} {% for referent in asso.referent
-          %}
-          {{ referent.user.firstname }}
-          {{ referent.user.lastname }}
-          {{ referent.tel }}
-          {% endfor %} {% endif %}
+          {% if asso.referent is not empty %}
+          {{ asso.referent.user.firstname }}
+          {{ asso.referent.user.lastname }}
+          {% endif %}
         </td>
         <td>
           <a href="{{ path('asso_show', { id: asso.id }) }}"
             ><i class="fa-solid fa-eye"></i
           ></a>
+        </td>
+        <td>
           <a href="{{ path('asso_edit', { id: asso.id }) }}"
             ><i class="fa-solid fa-pen"></i
           ></a>
@@ -82,9 +77,8 @@
         null,
         null,
         null,
-        null,
-        null,
-        { orderable: false }, // Cinquième colonne (Actions)
+        { orderable: false },
+        { orderable: false },
       ],
       // searchDelay: 300, // Délai avant la prise en compte de la recherche pour éviter un filtrage excessif
     });

@@ -55,24 +55,32 @@ class FileService
      * @param string $tableName
      * @return void
      */
-    private function truncateTable(string $tableName): void
-    {
-        $sql = "TRUNCATE TABLE $tableName";
-        $this->connection->executeStatement($sql);
-    }
+
     public function importDataFromFile(String $file): void
     {
         // Lire le contenu du fichier
         $data = $this->getDataFile($file);
 
         // Vider la table avant l'importation des nouvelles données
-        // Supprimer les enregistrements de la table "Association"
-        $this->entityManager->createQuery('DELETE FROM App\Entity\Association')->execute();
+        $this->entityManager->getConnection()->exec('SET FOREIGN_KEY_CHECKS=0');
 
-        // Supprimer les enregistrements de la table "Person"
-        $this->entityManager->createQuery('DELETE FROM App\Entity\President')->execute();
-        $this->entityManager->createQuery('DELETE FROM App\Entity\Referent')->execute();
-        $this->entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
+        $this->entityManager->beginTransaction();
+
+        try {
+            $this->entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
+            $this->entityManager->createQuery('DELETE FROM App\Entity\Referent')->execute();
+            $this->entityManager->createQuery('DELETE FROM App\Entity\President')->execute();
+            $this->entityManager->createQuery('DELETE FROM App\Entity\Association')->execute();
+            $this->entityManager->flush();
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->entityManager->rollback();
+            throw $e;
+        }
+
+        $this->entityManager->getConnection()->exec('SET FOREIGN_KEY_CHECKS=1'); // Re-enable foreign key checks
+
+
 
         // tableau d'user par email
         $listeEmailUser     = [];
@@ -107,14 +115,12 @@ class FileService
                 $listeEmailUser[$assoData[10]] = $user;
                 $this->entityManager->persist($user);
             }
-
+            $asso = new Association();
             $president = new President();
             $president->setFonction($assoData[9]);
             $president->setUser($user);
             $this->entityManager->persist($president);
-
-            $asso = new Association();
-
+            $asso->setPresident($president);
             // Referent
             if ($assoData[13]) {
                 if (array_key_exists($assoData[13], $listeEmailUser)) {
@@ -131,13 +137,11 @@ class FileService
                 $referent = new Referent();
                 $referent->setTel($assoData[14]);
                 $referent->setUser($user);
-                $referent->setAssociation($asso);
-                $this->entityManager->persist($referent);
-
                 $asso->setReferent($referent);
+                $this->entityManager->persist($referent);
             }
 
-            $asso->setPresident($president);
+
             $asso->setCode((int)$assoData[0]);
 
             $asso->setLibelle($assoData[1]);
@@ -147,6 +151,9 @@ class FileService
             $asso->setTel(isset($assoData[5]) ? $assoData[5] : "");
             $asso->setEmail($assoData[6]);
             // $asso->setDonationCallText($assoData[15]);
+
+            // $president->setAssociation($asso);
+
             $this->entityManager->persist($asso);
         }
 

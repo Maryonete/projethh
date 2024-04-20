@@ -138,22 +138,21 @@ class AssociationType extends AbstractType
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('p')
                         ->leftJoin('p.user', 'u') // Jointure avec la table User associée
-                        ->where('p.association IS NULL')
                         ->orderBy('u.lastname', 'ASC') // Tri par nom de famille de l'utilisateur
                         ->addOrderBy('u.firstname', 'ASC'); // Puis tri par prénom de l'utilisateur
                 },
                 'choice_label' => function ($president) {
                     return $president;
                 },
-                'placeholder' => 'Sélectionner un référent',
+                'placeholder' => 'Sélectionner un(e) président(e)',
                 'attr' => ['class' => 'form-select'],
+
             ])
             ->add('referent', EntityType::class, [
                 'class'         => Referent::class,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('r')
                         ->leftJoin('r.user', 'u') // Jointure avec la table User associée
-                        ->where('r.association IS NULL')
                         ->orderBy('u.lastname', 'ASC') // Tri par nom de famille de l'utilisateur
                         ->addOrderBy('u.firstname', 'ASC');
                 },
@@ -161,7 +160,8 @@ class AssociationType extends AbstractType
                     return $referent;
                 },
                 'attr'          => ['class' => 'form-select'],
-                'placeholder' => 'Sélectionner un référent',
+                'placeholder' => 'Sélectionner un(e) référent(e)',
+                'required' => false,
 
             ]);
     }

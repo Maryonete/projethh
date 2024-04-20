@@ -19,6 +19,7 @@
           <th scope="col">Code</th>
           <th scope="col">Libellé</th>
           <th scope="col">Président.e</th>
+          <th scope="col">Référent.e</th>
         </tr>
       </thead>
       <tbody>
@@ -31,10 +32,22 @@
             {{ asso.president.user.lastname }}
           </td>
           <td>
-            <a href="{{ path('asso_show', { id: asso.id }) }}"
+            {% if asso.referent is not empty %}
+            {{ asso.referent.user.firstname }}
+            {{ asso.referent.user.lastname }}
+            {% endif %}
+          </td>
+          <td>
+            <a
+              href="{{ path('asso_show', { id: asso.id }) }}"
+              title="Visualiser"
               ><i class="fa-solid fa-eye"></i
             ></a>
-            <a href="{{ path('asso_edit', { id: asso.id }) }}"
+          </td>
+          <td>
+            <a
+              href="{{ path('asso_edit', { id: asso.id }) }}"
+              title="Mise à jour"
               ><i class="fa-solid fa-pen"></i
             ></a>
           </td>
@@ -57,6 +70,8 @@
         null, // Deuxième colonne (Code)
         null, // Troisième colonne (Libellé)
         null, // Quatrième colonne (Président.e)
+        null, // Quatrième colonne (Référent.e)
+        { orderable: false }, // Cinquième colonne (Actions)
         { orderable: false }, // Cinquième colonne (Actions)
       ],
       // searchDelay: 300, // Délai avant la prise en compte de la recherche pour éviter un filtrage excessif

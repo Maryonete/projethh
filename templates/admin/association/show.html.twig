@@ -74,6 +74,18 @@ block body %}
           <div class="row mb-3">
             <div class="col-md-3">
               <strong>Président(e):</strong>
+              <br /><a
+                href="{{
+                  path('president_show', { id: association.president.id })
+                }}"
+                ><i class="fa-solid fa-eye"></i
+              ></a>
+              <a
+                href="{{
+                  path('president_edit', { id: association.president.id })
+                }}"
+                ><i class="fa-solid fa-pen"></i
+              ></a>
             </div>
             <div class="col-md-9">
               {{ association.president.user.firstname }}
@@ -86,16 +98,25 @@ block body %}
           <div class="row mb-3">
             <div class="col-md-3">
               <strong>Référent(e):</strong>
+              <br /><a
+                href="{{
+                  path('referent_show', { id: association.referent.id })
+                }}"
+                ><i class="fa-solid fa-eye"></i
+              ></a>
+              <a
+                href="{{
+                  path('referent_edit', { id: association.referent.id })
+                }}"
+                ><i class="fa-solid fa-pen"></i
+              ></a>
             </div>
             <div class="col-md-9">
-              {% for referent in association.referent %}
-              {{ referent.user.firstname }}
-              {{ referent.user.lastname }}
-              {% if referent.tel is not empty %}
-              <br />{{ referent.tel }}
+              {{ association.referent.user.firstname }}
+              {{ association.referent.user.lastname }}
+              {% if association.referent.tel is not empty %}
+              <br />{{ association.referent.tel }}
               {% endif %}
-              <br />{% if referent.actif %} Actif {% else %} Non Actif {% endif
-              %} {% endfor %}
             </div>
           </div>
           {% endif %}

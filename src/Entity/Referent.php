@@ -21,9 +21,8 @@ class Referent
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: true)]
-    private Association $association;
+    #[ORM\OneToOne(targetEntity: "App\Entity\Association", mappedBy: "referent", cascade: ['persist', 'remove'])]
+    private ?Association $association = null;
 
 
     public function __toString()

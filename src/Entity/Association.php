@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AssociationRepository::class)]
 class Association
@@ -37,19 +38,21 @@ class Association
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
+    #[ORM\OneToOne(targetEntity: "App\Entity\President", inversedBy: "association", cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: "Une association doit avoir un président.")]
+    private ?President $president = null;
+
+    #[ORM\OneToOne(targetEntity: "App\Entity\Referent", inversedBy: "association", cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Referent $referent;
+
     /**
      * @var Collection<int, CampainAssociation>
      */
     #[ORM\OneToMany(targetEntity: CampainAssociation::class, mappedBy: 'association')]
     private Collection $campainAssociations;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?President $president = null;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Referent $referent;
 
     /**
      * @var Collection<int, History>
@@ -189,6 +192,9 @@ class Association
 
     public function setPresident(?President $president): static
     {
+        // if ($president !== null) {
+        //     $president->setAssociation($this);
+        // }
         $this->president = $president;
 
         return $this;
@@ -239,9 +245,12 @@ class Association
      *
      * @return  self
      */
-    public function setReferent($referent)
+    public function setReferent($referent): self
     {
         $this->referent = $referent;
+        if ($referent !== null) {
+            $referent->setAssociation($this);
+        }
 
         return $this;
     }

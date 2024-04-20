@@ -2,14 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Entity\Referent;
+use App\Entity\President;
 use App\Entity\Association;
 use App\Form\AssociationType;
-use App\Repository\AssociationRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\AssociationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('/association', name: 'asso_')]
 class AssociationController extends AbstractController
@@ -34,6 +38,7 @@ class AssociationController extends AbstractController
     public function new_update(
         Request $request,
         EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $userPasswordHasher,
         Association $association = null
     ): Response {
         if ($association === null) {
@@ -43,6 +48,64 @@ class AssociationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $requestData = $request->request->all();
+            if ($association->getPresident() == null) {
+                $presidentData = $requestData['president_new'];
+
+                if ($presidentData) {
+                    $user = new User();
+                    $user->setFirstname($presidentData['user']['firstname']);
+                    $user->setLastname($presidentData['user']['lastname']);
+                    $user->setEmail($presidentData['user']['email']);
+
+                    $user->setPassword(
+                        $userPasswordHasher->hashPassword(
+                            $user,
+                            'tttttttt'
+                        )
+                    );
+                    $entityManager->persist($user);
+                    $president = new President();
+                    $president->setUser($user);
+                    $president->setFonction($presidentData['fonction']);
+                    $entityManager->persist($president);
+                    // Ajout du président à l'association
+                    $association->setPresident($president);
+                    $entityManager->flush();
+                }
+            }
+            if ($association->getReferent() == null) {
+
+                if (isset($requestData['referent_new'])) {
+                    $referentData = $requestData['referent_new'];
+
+                    if ($referentData) {
+                        $user = new User();
+                        $user->setFirstname($referentData['user']['firstname']);
+                        $user->setLastname($referentData['user']['lastname']);
+                        $user->setEmail($referentData['user']['email']);
+
+                        $user->setPassword(
+                            $userPasswordHasher->hashPassword(
+                                $user,
+                                'tttttttt'
+                            )
+                        );
+                        $entityManager->persist($user);
+                        $referent = new Referent();
+                        $referent->setUser($user);
+                        $referent->setTel($referentData['tel']);
+                        $entityManager->persist($referent);
+                        // Ajout du referent à l'association
+                        $association->setreferent($referent);
+                        $entityManager->flush();
+                    }
+                }
+            }
+            // if ($association->getReferent() == null) {
+            //     $association->setReferent($request->get('referent'));
+            // }
+            dump($association);
             $entityManager->persist($association);
             $entityManager->flush();
 

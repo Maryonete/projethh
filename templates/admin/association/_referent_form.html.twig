@@ -1,0 +1,70 @@
+<div
+  class="p-4 bg-light border rounded-3"
+  id="createReferentForm"
+  style="display: none"
+>
+  <h2>Nouveau référent(e)</h2>
+
+  <div class="form-group mb-3">
+    <label class="col-form-label mt-2 required" for="referent_new_user_lastname"
+      >Nom</label
+    >
+    <input
+      type="text"
+      id="referent_new_user_lastname"
+      name="referent_new[user][lastname]"
+      required="required"
+      class="form-control js-referent"
+      minlength="2"
+      maxlength="50"
+      disabled
+    />
+  </div>
+  <div class="form-group mb-3">
+    <label
+      class="col-form-label mt-2 required"
+      for="referent_new_user_firstname"
+      >Prénom</label
+    >
+    <input
+      type="text"
+      id="referent_new_user_firstname"
+      name="referent_new[user][firstname]"
+      required="required"
+      class="form-control js-referent"
+      minlength="2"
+      maxlength="50"
+      disabled
+    />
+  </div>
+  <div class="form-group mb-3">
+    <label class="col-form-label mt-2 required" for="referent_new_user_email"
+      >E-mail</label
+    >
+    <input
+      type="email"
+      id="referent_new_user_email"
+      name="referent_new[user][email]"
+      required="required"
+      class="form-control js-referent"
+      minlength="2"
+      maxlength="50"
+      disabled
+    />
+  </div>
+  <div class="form-group mb-3">
+    <label class="col-form-label mt-2 required" for="referent_tel"
+      >Téléphone</label
+    >
+    <input
+      type="text"
+      id="referent_new_tel"
+      name="referent_new[tel]"
+      required="required"
+      class="form-control js-referent"
+      minlength="2"
+      maxlength="50"
+      disabled
+    />
+  </div>
+</div>

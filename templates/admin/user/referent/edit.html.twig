@@ -1,39 +1,44 @@
 {% extends 'base.html.twig' %} {% block title %}Edit Referent{% endblock %} {%
 block body %}
 <div class="container">
-  <div class="row g-5">
-    {% if referent.user is not empty %}
-    <h1>Mise à jour référent(e)</h1>
-    {% else %}
-    <h1>Création référent(e)</h1>
-    {% endif %}
-    <div class="col-md-6">
-      {{ form_start(form) }}
+  <div class="card">
+    <div class="card-body">
+      <div class="row g-5">
+        {% if referent.user is not empty %}
+        <h1>Mise à jour référent(e)</h1>
+        {% else %}
+        <h1>Création référent(e)</h1>
+        {% endif %}
+        <div class="col-md-6">
+          {{ form_start(form) }}
 
-      {{ include("admin/user/referent/_form.html.twig") }}
-      <div class="form-group mb-3">
-        <div class="row">
-          <div class="col-2">{{ form_label(form.association) }}</div>
-          <div class="col">{{ form_widget(form.association) }}</div>
-        </div>
-        <div class="form-error">{{ form_errors(form.association) }}</div>
-      </div>
-
-      <button class="btn">{{ button_label|default('Save') }}</button>
-
-      <div class="row mt-5">
-        <div class="col-12">
-          <div class="d-flex justify-content-between">
-            <a href="{{ path('user') }}" class="btn btn-primary"
-              >Retour à la liste</a
-            >
-            <button type="submit" class="btn btn-primary">Enregistrer</button>
+          {{ include("admin/user/referent/_form.html.twig") }}
+          <div class="form-group mb-3">
+            <div class="row">
+              <div class="col-2">Association</div>
+              <div class="col">{{ referent.association.libelle }}</div>
+            </div>
           </div>
+          <button class="btn">{{ button_label|default('Save') }}</button>
+
+          <div class="row mt-5">
+            <div class="col-12">
+              <div class="d-flex justify-content-between">
+                <a href="{{ path('user') }}" class="btn btn-primary"
+                  >Retour à la liste</a
+                >
+                <button type="submit" class="btn btn-primary">
+                  Enregistrer
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {{ form_end(form) }}
         </div>
       </div>
-
-      {{ form_end(form) }}
     </div>
   </div>
 </div>
+
 {% endblock %}

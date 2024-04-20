@@ -2,11 +2,13 @@
 
 namespace App\Form;
 
-use App\Entity\User;
 use App\Form\UserType;
 use App\Entity\President;
+use App\Entity\Association;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
@@ -18,6 +20,7 @@ class PresidentType extends AbstractType
             ->add('fonction', TextType::class, [
                 'attr' => ['class' => 'form-control'],
             ])
+
             ->add('user', UserType::class, [
                 'label' => false
             ]);

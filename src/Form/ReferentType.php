@@ -9,7 +9,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class ReferentType extends AbstractType
@@ -28,16 +27,7 @@ class ReferentType extends AbstractType
                     'class'     =>  'col-form-label mt-2'
                 ],
             ])
-            ->add('association', EntityType::class, [
-                'class'         => Association::class,
-                'choice_label'  => 'libelle',
-                'label'         => 'Association',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('a')
-                        ->orderBy('a.libelle', 'ASC');
-                },
-                'required'      => false,
-            ])
+
             ->add('user', UserType::class, [
                 'label' => false
             ]);

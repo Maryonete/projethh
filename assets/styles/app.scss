@@ -11,6 +11,7 @@ h2 {
 .alert ul {
   list-style: none;
 }
+
 #scroll-top {
   position: fixed;
   bottom: 30px; /* Adjust the spacing from the bottom as needed */
@@ -20,6 +21,18 @@ h2 {
 a.btn,
 button.btn {
   color: white;
+}
+.btn.btn-primary {
+  color: #fff; /* Couleur du texte */
+  background-color: #007bff; /* Couleur de fond du bouton */
+  border-color: #007bff; /* Couleur de la bordure du bouton */
+}
+
+.btn.btn-primary:hover,
+.btn.btn-primary:focus {
+  color: #fff; /* Couleur du texte au survol */
+  background-color: #0056b3; /* Couleur de fond du bouton au survol */
+  border-color: #0041a2; /* Couleur de la bordure du bouton au survol */
 }
 .form-widget-wrapper {
   margin-top: 10px; /* Ajoute de la marge en haut */

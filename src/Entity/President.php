@@ -3,8 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\PresidentRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PresidentRepository::class)]
@@ -18,10 +17,8 @@ class President
     #[ORM\Column(length: 255)]
     private ?string $fonction = null;
 
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: true)]
-    private Association $association;
+    #[ORM\OneToOne(targetEntity: "App\Entity\Association", mappedBy: "president", cascade: ['persist', 'remove'])]
+    private ?Association $association;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -86,10 +83,22 @@ class President
      *
      * @return  self
      */
-    public function setAssociation($association)
+    public function setAssociation($association): President
     {
+        dump('setAssociation');
         #TODO enleve ancien president + ajout date dans historique
         $this->association = $association;
+
+        if ($association !== null) {
+            $association->setPresident($this);
+        }
+
+        return $this;
+    }
+    public function removeAssociation(): President
+    {
+        #TODO enleve ancien president + ajout date dans historique
+        $this->association = null;
 
         return $this;
     }
