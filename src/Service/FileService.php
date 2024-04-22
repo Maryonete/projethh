@@ -101,7 +101,9 @@ class FileService
 
         // création premiere campagne
         $campain = new Campains();
+        $campain->isValid(true);
         $campain->setLibelle('Campagne printemps 2024');
+        $campain->setEmailFrom($_ENV['EMAIL_DEFAULT']);
         $campain->setDate(DateTime::createFromFormat('Y-m-d', '2024-03-01'));
         $this->entityManager->persist($campain);
 

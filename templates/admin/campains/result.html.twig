@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %} {% block title %}Campains{% endblock %} {% block
+body %}
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        {{ include("admin/campains/_buttons.html.twig") }}
+        <div class="col-md-12">
+          <h1>Détails de la Campagne {{ campain.libelle }}</h1>
+          <table
+            class="table table-striped table-hover sortTable"
+            id="assoList"
+          >
+            <caption>
+              Liste des associations
+            </caption>
+            <thead>
+              <tr class="text-center">
+                <th scope="col">Association</th>
+                <th scope="col">Statut</th>
+                <th scope="col">Envoyé le</th>
+                <th scope="col">Email(s)</th>
+                <th scope="col">Texte personnalisé</th>
+
+                <th scope="col">Mis à jour le</th>
+
+                <th scope="col">
+                  ancien texte personnalisé ({{ campain.oldcampain }} )
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for campainAssociation in campainAssociations %}
+              <tr>
+                <td>
+                  {{
+                    campainAssociation.association
+                      ? campainAssociation.association.libelle
+                      : "Aucune association associée"
+                  }}
+                </td>
+                <td>
+                  {% if campainAssociation.statut == 'send' %} envoyé {% else %}
+                  {{ campainAssociation.statut }}
+                  {% endif %}
+                </td>
+                <td>
+                  {{ campainAssociation.sendAt ? campainAssociation.sendAt|date('d/m/Y H:i:s') : 'Non envoyé' }}
+                </td>
+                <td>
+                  {{
+                    campainAssociation.emails
+                      ? campainAssociation.emails
+                      : "Aucun"
+                  }}
+                </td>
+                <td>
+                  {{ campainAssociation.textepersonnalise ? campainAssociation.textepersonnalise|nl2br : '' }}
+                </td>
+                <td>
+                  {{ campainAssociation.updatedTextAt ? campainAssociation.updatedTextAt|date('d/m/Y H:i:s') : ' - ' }}
+                </td>
+                <td>
+                  {% if oldCampainAssociations is not empty %} {% for
+                  oldCampainAssociation in oldCampainAssociations %} {% if
+                  oldCampainAssociation.getAssociation() ==
+                  campainAssociation.getAssociation() %}
+                  <p>{{ oldCampainAssociation.getTextePersonnalise() }}</p>
+                  {% endif %} {% endfor %} {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          {{ include("admin/campains/_buttons.html.twig") }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

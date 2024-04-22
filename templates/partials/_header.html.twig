@@ -48,3 +48,12 @@
     </div>
   </header>
 </div>
+{% if app.flashes is not empty %}
+<div class="container">
+  {% for type, messages in app.flashes %} {% for message in messages %}
+  <div class="alert alert-{{ type }}" role="alert">
+    {{ message }}
+  </div>
+  {% endfor %} {% endfor %}
+</div>
+{% endif %}

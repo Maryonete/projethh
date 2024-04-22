@@ -37,7 +37,7 @@ class AppAuthentificatorAuthenticator extends AbstractLoginFormAuthenticator
             new PasswordCredentials($request->getPayload()->getString('password')),
             [
                 new CsrfTokenBadge('authenticate', $request->getPayload()->getString('_csrf_token')),
-                new RememberMeBadge(),
+                // new RememberMeBadge(),
             ]
         );
     }
@@ -49,6 +49,10 @@ class AppAuthentificatorAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         return new RedirectResponse('/asso');
+    }
+    public function supports(Request $request): bool
+    {
+        return $request->isMethod('POST') && $this->getLoginUrl($request) === $request->getRequestUri();
     }
 
     protected function getLoginUrl(Request $request): string

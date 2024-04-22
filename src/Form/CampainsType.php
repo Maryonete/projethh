@@ -5,9 +5,10 @@ namespace App\Form;
 use App\Entity\Campains;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\{TextType, DateType, ChoiceType, EmailType, TextareaType};
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Form\Extension\Core\Type\{TextType, DateType, ChoiceType, EmailType, TextareaType};
 
 class CampainsType extends AbstractType
 {
@@ -88,6 +89,11 @@ class CampainsType extends AbstractType
                 'attr' => [
                     'class' => 'form-control'
                 ]
+            ])
+            ->add('oldcampain', EntityType::class, [
+                'class' => Campains::class,
+                'label' => 'Ancienne campagne',
+                'required' => true,
             ]);
     }
 

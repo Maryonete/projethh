@@ -4,7 +4,7 @@ body %}
   <div class="card">
     <div class="card-body">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-10 offset-md-1">
           <h1>Campagne</h1>
 
           <table class="table">
@@ -23,49 +23,69 @@ body %}
                   {{ campain.date ? campain.date|date('d-m-Y') : '' }}
                 </td>
               </tr>
-              <tr>
-                <th>Destinataire</th>
-                <td>{{ campain.destinataire ?: '-' }}</td>
-              </tr>
+
               <tr>
                 <th>Email de l'expéditeur</th>
-                <td>{{ campain.email_from ?: '-' }}</td>
+                <td>{{ campain.emailfrom ?: '-' }}</td>
               </tr>
               <tr>
                 <th>Email en copie</th>
-                <td>{{ campain.email_cc ?: '-' }}</td>
+                <td>{{ campain.emailcc ?: '-' }}</td>
+              </tr>
+              <tr>
+                <th>Destinataires</th>
+                <td>
+                  {% set destinataires = campain.destinataire %} {% if
+                  destinataires %}
+                  <ul>
+                    {% for destinataire in destinataires %}
+                    <li>{{ destinataire }}</li>
+                    {% endfor %}
+                  </ul>
+                  {% else %} Aucun destinataire sélectionné {% endif %}
+                </td>
               </tr>
               <tr>
                 <th>Objet de l'email</th>
-                <td>{{ campain.objet_email ?: '-' }}</td>
+                <td>{{ campain.objetemail ?: '-' }}</td>
               </tr>
               <tr>
                 <th>Texte de l'email</th>
-                <td>{{ campain.texte_email ?: '-' }}</td>
+                <td class="text-justify">
+                  {{ campain.texteemail | raw ?: '-' }}
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-6">
-          <div class="d-flex justify-content-between">
-            <a href="{{ path('campains_index') }}" class="btn btn-primary"
-              >Retour à la liste</a
-            >
-            <a
-              href="{{ path('campains_edit', { id: campain.id }) }}"
-              class="btn btn-primary"
-              >Modifier</a
-            >
-            <a
-              href="{{ path('campains_play', { id: campain.id }) }}"
-              class="btn btn-primary"
-            >
-              <i class="fas fa-play"></i>Lancer la campagne</a
-            >
-            <!-- {{ include("admin/campains/_delete_form.html.twig") }} -->
-          </div>
+        <div class="d-flex justify-content-between col">
+          <a
+            href="{{ path('campains_index') }}"
+            class="btn btn-primary flex-grow-1 mx-2"
+            >Retour à la liste</a
+          >
+          {% if campain.valid == true %}
+          <a
+            href="{{ path('campains_edit', { id: campain.id }) }}"
+            class="btn btn-primary flex-grow-1 mx-2"
+            >Modifier</a
+          >
+          <a
+            href="{{ path('campains_play', { id: campain.id }) }}"
+            class="btn btn-primary flex-grow-1 mx-2"
+            onclick="return confirm('L\'email sera envoyé à toutes les associations, voulez-vous continuer ?');"
+            ><i class="fas fa-play"></i> Lancer la campagne</a
+          >
+          {% endif %} {% if campain.datesend is not empty %}
+          <a
+            href="{{ path('campains_result', { id: campain.id }) }}"
+            class="btn btn-primary flex-grow-1 mx-2"
+            ><i class="fas fa-chart-bar"></i> Résultat de la campagne</a
+          >
+          {% endif %}
+          <!-- {{ include("admin/campains/_delete_form.html.twig") }} -->
         </div>
       </div>
     </div>

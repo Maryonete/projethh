@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\CampainAssociation;
+use App\Entity\Campains;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -20,7 +21,15 @@ class CampainAssociationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, CampainAssociation::class);
     }
-
+    public function findByCampains(Campains $campain): array
+    {
+        return $this->createQueryBuilder('ca')
+            ->join('ca.campains', 'c') // Join avec Campains
+            ->andWhere('ca.campains = :val')
+            ->setParameter('val', $campain->getId())
+            ->getQuery()
+            ->getResult();
+    }
     //    /**
     //     * @return CampainAssociation[] Returns an array of CampainAssociation objects
     //     */

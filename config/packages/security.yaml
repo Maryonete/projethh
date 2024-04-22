@@ -22,13 +22,13 @@ security:
         # where to redirect after logout
         # target: app_any_route
 
-      remember_me:
-        secret: "%kernel.secret%"
-        lifetime: 604800
-        path: /
-        # by default, the feature is enabled by checking a checkbox in the
-        # login form, uncomment the following line to always enable it.
-        #always_remember_me: true
+      # remember_me:
+      #   secret: "%kernel.secret%"
+      #   lifetime: 604800
+      #   path: /
+      # by default, the feature is enabled by checking a checkbox in the
+      # login form, uncomment the following line to always enable it.
+      #always_remember_me: true
 
       # activate different ways to authenticate
       # https://symfony.com/doc/current/security.html#the-firewall
@@ -41,6 +41,7 @@ security:
   access_control:
     - { path: ^/asso, roles: ROLE_ADMIN }
     - { path: ^/file, roles: ROLE_ADMIN }
+    - { path: ^/campains, roles: ROLE_ADMIN }
     # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:

@@ -20,13 +20,39 @@ class AssociationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Association::class);
     }
-    public function findAllByReferentNonAttachAsso(): array
+    public function findAllAssociationReferentEmails(): array
     {
-        return $this->createQueryBuilder('a')
-            ->leftJoin('a.referent', 'r')
-            ->where('a. IS NULL')
-            ->getQuery()
-            ->getResult();
+        $query = $this->createQueryBuilder('a')
+            ->select('a.id, u.email')
+            ->join('a.referent', 'r')
+            ->join('r.user', 'u')
+            ->getQuery();
+
+        $results = $query->getResult();
+
+        $emailsReferents = [];
+
+        foreach ($results as $result) {
+            $emailsReferents[$result['id']] = $result['email'];
+        }
+        return $emailsReferents;
+    }
+    public function findAllAssociationPresidentEmail(): array
+    {
+        $query = $this->createQueryBuilder('a')
+            ->select('a.id, u.email')
+            ->join('a.president', 'p')
+            ->join('p.user', 'u')
+            ->getQuery();
+
+        $results = $query->getResult();
+
+        $emailsPresidents = [];
+
+        foreach ($results as $result) {
+            $emailsPresidents[$result['id']] = $result['email'];
+        }
+        return $emailsPresidents;
     }
     //    /**
     //     * @return Association[] Returns an array of Association objects

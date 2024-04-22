@@ -21,6 +21,18 @@ class CampainsRepository extends ServiceEntityRepository
         parent::__construct($registry, Campains::class);
     }
 
+    public function setAllValidToFalseExcept(Campains $campain): void
+    {
+        $this->createQueryBuilder('c')
+            ->update()
+            ->set('c.valid', ':valid')
+            ->andWhere('c != :campain')
+            ->setParameter('valid', false)
+            ->setParameter('campain', $campain)
+            ->getQuery()
+            ->execute();
+    }
+
     //    /**
     //     * @return Campains[] Returns an array of Campains objects
     //     */

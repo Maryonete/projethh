@@ -11,7 +11,8 @@ block body %}
       <tr>
         <th>Id</th>
         <th>Libelle</th>
-        <th>Date</th>
+        <th>Date de début</th>
+        <th>Etat</th>
       </tr>
     </thead>
     <tbody>
@@ -21,14 +22,51 @@ block body %}
         <td>{{ campain.libelle }}</td>
         <td>{{ campain.date ? campain.date|date('d-m-Y') : '' }}</td>
         <td>
-          <a href="{{ path('campains_show', { id: campain.id }) }}"
+          {% if campain.valid %}
+          <i class="fas fa-check-circle text-success"></i>
+          <!-- Icône pour true -->
+          {% else %}
+          <i class="fas fa-times-circle text-danger"></i>
+          <!-- Icône pour false -->
+          {% endif %}
+        </td>
+        <td>
+          <a
+            href="{{ path('campains_show', { id: campain.id }) }}"
+            title="Infos"
             ><i class="fa-solid fa-eye"></i
           ></a>
         </td>
         <td>
-          <a href="{{ path('campains_edit', { id: campain.id }) }}"
-            ><i class="fa-solid fa-pen"></i
+          {% if campain.datesend is not empty %}
+          <a
+            href="{{ path('campains_result', { id: campain.id }) }}"
+            class="btn flex-grow-1 mx-2"
+            title="Résultat"
+            ><i class="fas fa-chart-bar text-primary"></i
           ></a>
+          {% endif %}
+        </td>
+        <td>
+          {% if campain.valid %}
+          <a
+            href="{{ path('campains_edit', { id: campain.id }) }}"
+            class="btn flex-grow-1 mx-2"
+            title="Modifier"
+            ><i class="fas fa-pen text-primary"></i
+          ></a>
+          {% endif %}
+        </td>
+        <td>
+          {% if campain.valid and campain.datesend is empty %}
+          <a
+            href="{{ path('campains_play', { id: campain.id }) }}"
+            class="btn flex-grow-1 mx-2"
+            title="Lancer la campagne"
+            onclick="return confirm('L\'email sera envoyé à toutes les associations, voulez-vous continuer ?');"
+            ><i class="fa-solid fa-play text-primary"></i
+          ></a>
+          {% endif %}
         </td>
       </tr>
       {% endfor %}
@@ -44,7 +82,16 @@ block body %}
         language: {
           sSearch: "<i class='fas fa-search'></i>",
         },
-        columns: [null, null, null, { orderable: false }, { orderable: false }],
+        columns: [
+          null,
+          null,
+          null,
+          { orderable: false },
+          { orderable: false },
+          { orderable: false },
+          { orderable: false },
+          { orderable: false },
+        ],
         // searchDelay: 300, // Délai avant la prise en compte de la recherche pour éviter un filtrage excessif
       });
     });

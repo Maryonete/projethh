@@ -46,13 +46,20 @@ class Campains
     #[ORM\OneToMany(targetEntity: CampainAssociation::class, mappedBy: 'campains')]
     private Collection $campainAssociations;
 
+    #[ORM\OneToOne(targetEntity: self::class, cascade: ['persist', 'remove'])]
+    private ?self $oldcampain = null;
+
+    #[ORM\Column]
+    private ?bool $valid = false;
+
     public function __construct()
     {
         $this->campainAssociations = new ArrayCollection();
-    }
-    public function __init()
-    {
         $this->setEmailFrom($_ENV['EMAIL_DEFAULT']);
+    }
+    public function __toString(): String
+    {
+        return $this->getLibelle();
     }
 
     public function getId(): ?int
@@ -125,6 +132,7 @@ class Campains
 
         return $this;
     }
+
 
     public function getObjetEmail(): ?string
     {
@@ -199,6 +207,30 @@ class Campains
     public function setEmailCc($email_cc)
     {
         $this->email_cc = $email_cc;
+
+        return $this;
+    }
+
+    public function getOldcampain(): ?self
+    {
+        return $this->oldcampain;
+    }
+
+    public function setOldcampain(?self $oldcampain): static
+    {
+        $this->oldcampain = $oldcampain;
+
+        return $this;
+    }
+
+    public function isValid(): ?bool
+    {
+        return $this->valid;
+    }
+
+    public function setValid(bool $valid): static
+    {
+        $this->valid = $valid;
 
         return $this;
     }

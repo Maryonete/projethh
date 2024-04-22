@@ -2,11 +2,17 @@
 
 namespace App\Entity;
 
-use App\Repository\CampainAssociationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\CampainAssociationRepository;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: CampainAssociationRepository::class)]
+#[UniqueEntity(
+    fields: ['campains', 'association'],
+    message: 'Une seule instance de CampainAssociation est autorisée 
+    pour chaque association et campagne.'
+)]
 class CampainAssociation
 {
     #[ORM\Id]
@@ -17,7 +23,11 @@ class CampainAssociation
     #[ORM\Column(length: 255)]
     private ?string $statut = null;
 
+    #[ORM\Column(type: "datetime", nullable: true)]
+    private ?\DateTime  $sendAt = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $emails = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $texte_personnalise = null;
@@ -32,6 +42,8 @@ class CampainAssociation
     #[ORM\ManyToOne(inversedBy: 'campainAssociations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Association $association = null;
+
+
 
     public function getId(): ?int
     {
@@ -95,6 +107,46 @@ class CampainAssociation
     public function setAssociation(?Association $association): static
     {
         $this->association = $association;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of emails
+     */
+    public function getEmails()
+    {
+        return $this->emails;
+    }
+
+    /**
+     * Set the value of emails
+     *
+     * @return  self
+     */
+    public function setEmails($emails)
+    {
+        $this->emails = $emails;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of sendAt
+     */
+    public function getSendAt()
+    {
+        return $this->sendAt;
+    }
+
+    /**
+     * Set the value of sendAt
+     *
+     * @return  self
+     */
+    public function setSendAt($sendAt)
+    {
+        $this->sendAt = $sendAt;
 
         return $this;
     }

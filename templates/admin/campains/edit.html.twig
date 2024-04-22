@@ -56,6 +56,21 @@ block javascripts %}
                 </div>
               </div>
             </div>
+            <div class="form-group row mb-3">
+              <div class="col-md-3">
+                {{ form_label(form.oldcampain) }}
+              </div>
+              <div class="col-md-9">
+                {{ form_widget(form.oldcampain) }}
+                <i
+                  >Texte personnalisé visible par les associations pour
+                  exemple</i
+                >
+                <div class="form-error">
+                  {{ form_errors(form.oldcampain) }}
+                </div>
+              </div>
+            </div>
 
             <div class="form-group row mb-3">
               <div class="col-md-3">
