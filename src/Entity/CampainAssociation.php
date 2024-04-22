@@ -35,13 +35,16 @@ class CampainAssociation
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedTextAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'campainAssociations')]
+    #[ORM\ManyToOne(targetEntity: Campains::class, inversedBy: 'campainAssociations', fetch: "EAGER")]
     #[ORM\JoinColumn(nullable: false)]
     private ?Campains $campains = null;
 
-    #[ORM\ManyToOne(inversedBy: 'campainAssociations')]
+    #[ORM\ManyToOne(targetEntity: Association::class, inversedBy: 'campainAssociations', fetch: "EAGER")]
     #[ORM\JoinColumn(nullable: false)]
     private ?Association $association = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $token = null;
 
 
 
@@ -147,6 +150,18 @@ class CampainAssociation
     public function setSendAt($sendAt)
     {
         $this->sendAt = $sendAt;
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): static
+    {
+        $this->token = $token;
 
         return $this;
     }

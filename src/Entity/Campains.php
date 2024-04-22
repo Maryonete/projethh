@@ -46,7 +46,7 @@ class Campains
     #[ORM\OneToMany(targetEntity: CampainAssociation::class, mappedBy: 'campains')]
     private Collection $campainAssociations;
 
-    #[ORM\OneToOne(targetEntity: self::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(targetEntity: self::class, cascade: ['persist', 'remove'],  fetch: "EAGER")]
     private ?self $oldcampain = null;
 
     #[ORM\Column]

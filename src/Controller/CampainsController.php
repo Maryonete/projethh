@@ -96,7 +96,15 @@ class CampainsController extends AbstractController
         EntityManagerInterface $entityManager,
         CampainEmailSender $campainEmailSender
     ): Response {
-
+        // verifie si toutes les données necessaires à l'email sont renseignees
+        if (
+            $campain->getObjetEmail() === null
+            or $campain->getTexteEmail() === null
+            or $campain->getDestinataire() === null
+        ) {
+            $this->addFlash('warning', 'Vous devez renseigner tous les champs nécessaires');
+            return $this->redirectToRoute('campains_edit', ['id' => $campain->getId()]);
+        }
 
         // Vérifier si la campagne a déjà été envoyée
         // if ($campain->getDateSend() !== null) {
@@ -111,12 +119,8 @@ class CampainsController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'La campagne a été envoyée avec succès.');
-        return $this->render('admin/campains/recap_email.html.twig', [
-            'campain' => $campain,
-        ]);
-        // }
 
-        // return $this->redirectToRoute('campains_show', ['id' => $campain->getId()]);
+        return $this->redirectToRoute('campains_result', ['id' => $campain->getId()], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/envoyer-email-test', name: 'envoyer_email_test', methods: ['GET', 'POST'])]

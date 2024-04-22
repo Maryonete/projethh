@@ -20,6 +20,7 @@ body %}
                 <th scope="col">Statut</th>
                 <th scope="col">Envoyé le</th>
                 <th scope="col">Email(s)</th>
+                <th scope="col">Lien</th>
                 <th scope="col">Texte personnalisé</th>
 
                 <th scope="col">Mis à jour le</th>
@@ -53,6 +54,21 @@ body %}
                       ? campainAssociation.emails
                       : "Aucun"
                   }}
+                </td>
+                <td>
+                  {% if campainAssociation.token is not empty %}
+                  <a
+                    href="{{
+                      path('associationdata', {
+                        token: campainAssociation.token
+                      })
+                    }}"
+                    class="flex-grow-1 mx-2"
+                    title="Update data"
+                    target="_blank"
+                    ><i class="fa-solid fa-link"></i
+                  ></a>
+                  {% endif %}
                 </td>
                 <td>
                   {{ campainAssociation.textepersonnalise ? campainAssociation.textepersonnalise|nl2br : '' }}

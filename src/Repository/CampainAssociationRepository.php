@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Association;
 use App\Entity\CampainAssociation;
 use App\Entity\Campains;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -29,6 +30,18 @@ class CampainAssociationRepository extends ServiceEntityRepository
             ->setParameter('val', $campain->getId())
             ->getQuery()
             ->getResult();
+    }
+    public function findOneByCampainsAndAsso(Campains $campain, Association $asso)
+    {
+        return $this->createQueryBuilder('ca')
+            ->join('ca.campains', 'c') // Join avec Campains
+            ->join('ca.association', 'a')
+            ->andWhere('ca.campains = :val')
+            ->andWhere('a.id = :asso')
+            ->setParameter('val', $campain->getId())
+            ->setParameter('asso', $asso->getId())
+            ->getQuery()
+            ->getOneOrNullResult();
     }
     //    /**
     //     * @return CampainAssociation[] Returns an array of CampainAssociation objects

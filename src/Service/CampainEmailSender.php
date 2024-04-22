@@ -2,32 +2,42 @@
 
 namespace App\Service;
 
-use App\Entity\Association;
 use App\Entity\Campains;
+use App\Entity\Association;
 use Symfony\Component\Mime\Email;
 use App\Entity\CampainAssociation;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\AssociationRepository;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CampainEmailSender
 {
-    private $mailer;
 
     public function __construct(
-        MailerInterface $mailer,
+        private MailerInterface $mailer,
         private AssociationRepository $assoRepo,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private UrlGeneratorInterface $urlGenerator
     ) {
-        $this->mailer = $mailer;
     }
-    private function createEmail(Campains $campain): Email
+
+    private function createEmail(Campains $campain, ?String $tokenPersonnalise): Email
     {
+
+        $texteEmail = str_replace(
+            '[Lien_personnalisé_ici_ne_pas_modifier]',
+            $this->urlGenerator->generate(
+                'associationdata',
+                ['token' => $tokenPersonnalise]
+            ),
+            $campain->getTexteEmail()
+        );
         // Créer l'e-mail
         $email = (new Email())
             ->from($campain->getEmailFrom())
             ->subject($campain->getObjetEmail())
-            ->html($campain->getTexteEmail());
+            ->html($texteEmail);
 
         if ($campain->getEmailCc() !== null) {
             $email->cc($campain->getEmailCc());
@@ -35,19 +45,26 @@ class CampainEmailSender
 
         return $email;
     }
+    /**
+     * Lien personnalisé
+     *
+     * @param Association $association
+     * @return string
+     */
+    private function genererLienPersonnalise(Association $association): string
+    {
+        // Générer une chaîne de caractères aléatoire
+        return bin2hex(random_bytes(16)); // Génère une chaîne hexadécimale de 16 octets aléatoires
+    }
+
     public function sendEmailToDestinataires(Campains $campain)
     {
         // Récupérer les destinataires sélectionnés de la campagne
         $destinataires = $campain->getDestinataire();
         $emailsDestinataires = [];
-        dump($destinataires);
         // die;
         // Vérifier s'il y a des destinataires sélectionnés
         if (!empty($destinataires)) {
-
-            // Créer l'e-mail
-            $email = $this->createEmail($campain);
-
             // liste des emails
             foreach ($destinataires as $destinataire) {
                 if ($destinataire === "presidents") {
@@ -57,11 +74,13 @@ class CampainEmailSender
                     $emailsReferents = $this->assoRepo->findAllAssociationReferentEmails();
                 }
             }
-            dump($emailsPresidents);
             // liste de toutes les associations
             $listeAsso = $this->assoRepo->findAll();
             $listeEmails = "";
             foreach ($listeAsso as $association) {
+                // Créer l'e-mail contenenant le token personnalisé pour l'association
+                $token = $this->genererLienPersonnalise($association);
+                $email = $this->createEmail($campain, $token);
                 $destinataire = "";
                 if (in_array('presidents', $destinataires)) {
                     $destinataire = $emailsPresidents[$association->getId()];
@@ -72,7 +91,7 @@ class CampainEmailSender
                     }
                 }
 
-                $this->createCampainAssociation($campain, $destinataire, $association);
+                $this->createCampainAssociation($campain, $destinataire, $association, $token);
 
                 // Envoyer l'e-mail à chaque destinataire sélectionné
                 // $email->to($destinataire);
@@ -82,13 +101,15 @@ class CampainEmailSender
 
             }
             // Envoyer un e-mail récapitulatif
+            //$email = $this->createEmail($campain);
             //$this->createEmailRecap($email, $listeEmails, $campain->getEmailCc());
         }
     }
     private function createCampainAssociation(
         Campains $campain,
         string $email,
-        Association $asso
+        Association $asso,
+        String $token
     ): void {
         $campainAsso = $this->entityManager->getRepository(
             CampainAssociation::class
@@ -105,6 +126,7 @@ class CampainEmailSender
             ->setStatut('send')
             ->setSendAt(new \DateTime())
             ->setCampains($campain)
+            ->setToken($token)
             ->setAssociation($asso);
         // Assurez-vous que votre entité CampainAssociation a une relation appropriée avec la campagne.
         // Puis, vous pouvez ajouter $campainAsso à la campagne :
