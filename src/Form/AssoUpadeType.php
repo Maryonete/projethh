@@ -2,26 +2,26 @@
 # TODO https://yoandev.co/symfony-ux-autocomplete
 namespace App\Form;
 
-use App\Entity\Referent;
-use App\Entity\President;
 use App\Entity\Association;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Form\Extension\Core\Type\{TextType, EmailType, TextareaType};
+use Symfony\Component\Form\Extension\Core\Type\{TextType,  EmailType, TextareaType};
 
 class AssoUpdateType extends AbstractType
 {
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('referent', ReferentType::class, [
                 'label' => false
             ])
+            ->add('president', PresidentType::class, [
+                'label' => false,
+            ])
+
             ->add('adress', TextareaType::class, [
                 'attr'  => [
                     'class'     =>  'form-control',
@@ -73,6 +73,7 @@ class AssoUpdateType extends AbstractType
                 ]
             ])
             ->add('tel', TextType::class, [
+                'required'  =>  false,
                 'attr'  => [
                     'class'     =>  'form-control',
                     'minlength' => '2',
@@ -87,7 +88,7 @@ class AssoUpdateType extends AbstractType
                     new Assert\NotBlank([
                         'message' => 'Veuillez saisir le numéro de téléphone'
                     ])
-                ]
+                ],
             ])
             ->add('email', EmailType::class, [
                 'attr'  => [

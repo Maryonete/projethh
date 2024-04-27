@@ -17,7 +17,7 @@ class President
     #[ORM\Column(length: 255)]
     private ?string $fonction = null;
 
-    #[ORM\OneToOne(targetEntity: "App\Entity\Association", mappedBy: "president", cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(targetEntity: "App\Entity\Association", inversedBy: "presidents", cascade: ['persist', 'remove'])]
     private ?Association $association;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
@@ -83,22 +83,19 @@ class President
      *
      * @return  self
      */
-    public function setAssociation($association): President
+    public function setAssociation(?Association $association): static
     {
-        dump('setAssociation');
-        #TODO enleve ancien president + ajout date dans historique
-        $this->association = $association;
-
+        // Si l'association est différente de null
         if ($association !== null) {
-            $association->setPresident($this);
+            // Vérifie si cette instance de président est déjà associée à l'association
+            if ($association->getPresident() !== $this) {
+                // Si ce n'est pas le cas, mettez cette instance de président comme président de l'association
+                $association->setPresident($this);
+            }
         }
 
-        return $this;
-    }
-    public function removeAssociation(): President
-    {
-        #TODO enleve ancien president + ajout date dans historique
-        $this->association = null;
+        // Met à jour la propriété d'association de ce président
+        $this->association = $association;
 
         return $this;
     }

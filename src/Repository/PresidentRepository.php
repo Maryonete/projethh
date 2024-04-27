@@ -20,7 +20,21 @@ class PresidentRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, President::class);
     }
-
+    /**
+     * Trouve un président par son email.
+     *
+     * @param string $email L'email du président à rechercher.
+     * @return President|null Le président trouvé ou null s'il n'existe pas.
+     */
+    public function findOneByEmail(string $email): ?President
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.user', 'u') // Supposant qu'il y a une relation user dans l'entité président
+            ->andWhere('u.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
     //    /**
     //     * @return President[] Returns an array of President objects
     //     */

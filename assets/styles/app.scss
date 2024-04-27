@@ -1,50 +1,106 @@
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/assets/fonts/Ubuntu-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+// the ~ allows you to reference things in node_modules
+@import "~bootstrap/scss/bootstrap";
+/* Define base colors */
 $primary: #009ee0;
 $secondary: #253a6d;
 $tertiary: #ec751a;
+
+/* Global styles */
+body {
+}
+
+/* Headings */
 h1,
 h2 {
-  color: $secondary;
+  font-family: "Ubuntu", sans-sherif;
 }
+h1 {
+  color: #00a0e9;
+}
+h2 {
+  color: #253a6d;
+}
+
+/* Utility classes */
 .bordercolor {
   border: $tertiary solid 1px;
 }
-.alert ul {
-  list-style: none;
-}
+
 .ml-5 {
   display: flex; /* Enable flexbox layout */
-  margin-left: 1rem; /* Existing margin */
+  margin-left: 1rem;
   margin-bottom: 10px; /* Optional margin below */
 }
 
 .ml-5 input[type="checkbox"] {
   margin-right: 5px; /* Spacing between checkboxes */
 }
-#scroll-top {
-  position: fixed;
-  bottom: 30px; /* Adjust the spacing from the bottom as needed */
-  right: 30px; /* Adjust the horizontal spacing as needed */
-  z-index: 100; /* Ensure button appears above other elements */
+
+.required::after {
+  content: " *";
+  color: red;
 }
+
+/* Buttons */
 a.btn,
 button.btn {
   color: white;
 }
+
 .btn.btn-primary {
-  color: #fff; /* Couleur du texte */
-  background-color: #007bff; /* Couleur de fond du bouton */
-  border-color: #007bff; /* Couleur de la bordure du bouton */
+  color: #fff; /* Text color */
+  background-color: $primary; /* Background color */
+  border-color: $primary; /* Border color */
 }
 
 .btn.btn-primary:hover,
 .btn.btn-primary:focus {
-  color: #fff; /* Couleur du texte au survol */
-  background-color: #0056b3; /* Couleur de fond du bouton au survol */
-  border-color: #0041a2; /* Couleur de la bordure du bouton au survol */
-}
-.form-widget-wrapper {
-  margin-top: 10px; /* Ajoute de la marge en haut */
+  color: #fff; /* Text color on hover */
+  background-color: #0056b3; /* Background color on hover */
+  border-color: #0041a2; /* Border color on hover */
 }
 
-// the ~ allows you to reference things in node_modules
-@import "~bootstrap/scss/bootstrap";
+/* Form styles */
+.form-widget-wrapper {
+  margin-top: 10px; /* Add top margin */
+}
+
+/* Dividers */
+.b-example-divider {
+  height: 3rem;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: solid rgba(0, 0, 0, 0.15);
+  border-top-width: medium;
+  border-right-width: medium;
+  border-bottom-width: medium;
+  border-left-width: medium;
+  border-width: 1px 0;
+  box-shadow: inset 0 0.5em 1.5em rgba(0, 0, 0, 0.1),
+    inset 0 0.125em 0.5em rgba(0, 0, 0, 0.15);
+}
+
+/* Error styles */
+.form-errors {
+  color: red;
+  font-size: 14px;
+}
+
+.form-errors li {
+  list-style-type: none; /* Remove bullets */
+  margin-bottom: 5px; /* Space between errors */
+}
+
+.field-errors {
+  color: red;
+  font-size: 14px;
+}
+
+.field-errors li {
+  list-style-type: none; /* Remove bullets */
+}

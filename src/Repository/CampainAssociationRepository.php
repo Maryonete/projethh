@@ -43,6 +43,17 @@ class CampainAssociationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+    public function countSentEmailsForCampain(int $campainId): int
+    {
+        return $this->createQueryBuilder('ca')
+            ->select('COUNT(ca.id)')
+            ->where('ca.campains = :campainId')
+            // ->andWhere('ca.statut = :statut')
+            ->setParameter('campainId', $campainId)
+            // ->setParameter('statut', 'send')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
     //    /**
     //     * @return CampainAssociation[] Returns an array of CampainAssociation objects
     //     */

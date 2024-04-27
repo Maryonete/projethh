@@ -90,7 +90,14 @@
             </div>
           </div>
           <div class="col-md-6">
-            {{ include("admin/association/_president_form.html.twig") }}
+            <div
+              class="p-4 bg-light border rounded-3 mb-2"
+              id="createPresidentForm"
+              style="display: none"
+            >
+              <h2>Nouveau président(e)</h2>
+              {{ include("admin/association/_president_form.html.twig") }}
+            </div>
             {{ include("admin/association/_referent_form.html.twig") }}
           </div>
           <div class="col-md-6">

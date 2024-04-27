@@ -1,27 +1,4 @@
-<div
-  class="p-4 bg-light border rounded-3 mb-2"
-  id="createPresidentForm"
-  style="display: none"
->
-  <h2>Nouveau président(e)</h2>
-
-  <div class="form-group mb-3">
-    <label
-      class="col-form-label mt-2 required"
-      for="president_new_user_lastname"
-      >Nom</label
-    >
-    <input
-      type="text"
-      id="president_new_user_lastname"
-      name="president_new[user][lastname]"
-      required="required"
-      class="form-control js-president"
-      minlength="2"
-      maxlength="50"
-      disabled
-    />
-  </div>
+<div class="{{ columnSize }}">
   <div class="form-group mb-3">
     <label
       class="col-form-label mt-2 required"
@@ -40,28 +17,15 @@
     />
   </div>
   <div class="form-group mb-3">
-    <label class="col-form-label mt-2 required" for="president_new_user_email"
-      >E-mail</label
-    >
-    <input
-      type="email"
-      id="president_new_user_email"
-      name="president_new[user][email]"
-      required="required"
-      class="form-control js-president"
-      minlength="2"
-      maxlength="50"
-      disabled
-    />
-  </div>
-  <div class="form-group mb-3">
-    <label class="col-form-label mt-2 required" for="president_new_fonction"
-      >Fonction</label
+    <label
+      class="col-form-label mt-2 required"
+      for="president_new_user_lastname"
+      >Nom</label
     >
     <input
       type="text"
-      id="president_new_fonction"
-      name="president_new[fonction]"
+      id="president_new_user_lastname"
+      name="president_new[user][lastname]"
       required="required"
       class="form-control js-president"
       minlength="2"
@@ -69,4 +33,35 @@
       disabled
     />
   </div>
+</div>
+
+<div class="form-group mb-3">
+  <label class="col-form-label mt-2 required" for="president_new_user_email"
+    >E-mail</label
+  >
+  <input
+    type="email"
+    id="president_new_user_email"
+    name="president_new[user][email]"
+    required="required"
+    class="form-control js-president"
+    minlength="2"
+    maxlength="50"
+    disabled
+  />
+</div>
+<div class="form-group mb-3">
+  <label class="col-form-label mt-2 required" for="president_new_fonction"
+    >Fonction</label
+  >
+  <input
+    type="text"
+    id="president_new_fonction"
+    name="president_new[fonction]"
+    required="required"
+    class="form-control js-president"
+    minlength="2"
+    maxlength="50"
+    disabled
+  />
 </div>

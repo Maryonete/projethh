@@ -43,21 +43,6 @@
             "./tests/bootstrap.php"
         ]
     },
-    "symfony/asset-mapper": {
-        "version": "6.4",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "6.4",
-            "ref": "6c28c471640cc2c6e60812ebcb961c526ef8997f"
-        },
-        "files": [
-            "./assets/app.js",
-            "./assets/styles/app.css",
-            "./config/packages/asset_mapper.yaml",
-            "./importmap.php"
-        ]
-    },
     "symfony/console": {
         "version": "6.4",
         "recipe": {
@@ -260,9 +245,6 @@
             "./templates/base.html.twig"
         ]
     },
-    "symfony/ux-turbo": {
-        "version": "v2.16.0"
-    },
     "symfony/validator": {
         "version": "6.4",
         "recipe": {
@@ -303,8 +285,5 @@
             "./package.json",
             "./webpack.config.js"
         ]
-    },
-    "twig/extra-bundle": {
-        "version": "v3.8.0"
     }
 }

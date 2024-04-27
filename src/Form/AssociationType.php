@@ -7,13 +7,11 @@ use App\Entity\President;
 use App\Entity\Association;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\{TextType, EmailType, TextareaType};
 
 class AssociationType extends AbstractType
 {
@@ -26,13 +24,6 @@ class AssociationType extends AbstractType
                     'minlength' => '2',
                     'maxlength' => '10',
                 ],
-                'data' => function (FormInterface $form) {
-                    $association = $form->get('association')->getData();
-                    if ($association) {
-                        return $association->getAdress();
-                    }
-                    return '';
-                },
                 'label'         =>  'Code',
                 'label_attr'    =>  [
                     'class'     =>  'col-form-label mt-2'
@@ -55,22 +46,18 @@ class AssociationType extends AbstractType
                     ])
                 ]
             ])
-            ->add('adress', TextType::class, [
+            ->add('adress', TextareaType::class, [
                 'attr'  => [
                     'class'     =>  'form-control',
-                    'minlength' => '2',
-                    'maxlength' => '250',
+                    'rows' => 5
                 ],
                 'label'         =>  'Adresse',
                 'label_attr'    =>  [
                     'class'     =>  'col-form-label mt-2'
                 ],
-                'constraints'   => [
-                    new Assert\Length(['min' => 2, 'max' => 250]),
-                    new Assert\NotBlank([
-                        'message' => 'Veuillez saisir l\'adresse'
-                    ])
-                ]
+                'label' => 'Texte de l\'email par défaut',
+                'required' => false,
+
             ])
             ->add('cp', TextType::class, [
                 'attr'  => [
@@ -121,7 +108,8 @@ class AssociationType extends AbstractType
                     new Assert\NotBlank([
                         'message' => 'Veuillez saisir le numéro de téléphone'
                     ])
-                ]
+                ],
+                'required'  => false,
             ])
             ->add('email', EmailType::class, [
                 'attr'  => [

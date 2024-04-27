@@ -54,6 +54,18 @@ class AssociationRepository extends ServiceEntityRepository
         }
         return $emailsPresidents;
     }
+    /**
+     * Retourne le nombre d'association enregistrée
+     *
+     * @return integer
+     */
+    public function countAssociations(): int
+    {
+        return $this->createQueryBuilder('a')
+            ->select('COUNT(a.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
     //    /**
     //     * @return Association[] Returns an array of Association objects
     //     */
