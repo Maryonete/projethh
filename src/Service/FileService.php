@@ -105,6 +105,7 @@ class FileService
         $campain->setLibelle('Campagne printemps 2024');
         $campain->setEmailFrom($_ENV['EMAIL_DEFAULT']);
         $campain->setDate(DateTime::createFromFormat('Y-m-d', '2024-03-01'));
+        $campain->setDateSend(DateTime::createFromFormat('Y-m-d', '2024-03-01'));
         $this->entityManager->persist($campain);
 
         // la premiere ligne d tableau contient les entetes
@@ -132,8 +133,9 @@ class FileService
             $president = new President();
             $president->setFonction($assoData[9]);
             $president->setUser($user);
+
+            $president->setAssociation($asso);
             $this->entityManager->persist($president);
-            $asso->setPresident($president);
             // Referent
             if ($assoData[13]) {
                 if (array_key_exists($assoData[13], $listeEmailUser)) {
@@ -151,6 +153,7 @@ class FileService
                 $referent->setTel($assoData[14]);
                 $referent->setUser($user);
                 $asso->setReferent($referent);
+                $referent->setAssociation($asso);
                 $this->entityManager->persist($referent);
             }
 

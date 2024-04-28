@@ -55,7 +55,6 @@ class AssociationType extends AbstractType
                 'label_attr'    =>  [
                     'class'     =>  'col-form-label mt-2'
                 ],
-                'label' => 'Texte de l\'email par défaut',
                 'required' => false,
 
             ])
