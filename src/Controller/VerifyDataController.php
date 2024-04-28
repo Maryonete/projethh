@@ -5,17 +5,13 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Referent;
 use App\Entity\President;
-use App\Entity\Association;
 use App\Form\CampainAssociationType;
-use App\Form\CampainAssociation2Type;
 use App\Repository\ReferentRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\AssociationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\CampainAssociationRepository;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -47,7 +43,7 @@ class VerifyDataController extends AbstractController
             );
         }
 
-        $form = $this->createForm(CampainAssociation2Type::class, $campAsso);
+        $form = $this->createForm(CampainAssociationType::class, $campAsso);
         // Vérifie si l'email du président est le même que celui du référent
         $isPresidentReferent  = $campAsso->getAssociation()->getReferent() !== null
             && $campAsso->getAssociation()->getPresident()->getUser()->getEmail()
@@ -162,7 +158,7 @@ class VerifyDataController extends AbstractController
             $entityManager->flush();
             return new Response('<h1>Merci ma princesse belle !!! <3<3<3<3<3<3<3</h1>');
         }
-        return $this->render('verify2_data.html.twig', [
+        return $this->render('verify_data.html.twig', [
             'campAsso'              =>  $campAsso,
             'form'                  => $form,
             'oldCampainAssociations' => $oldCampainAssociations,

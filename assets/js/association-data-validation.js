@@ -11,7 +11,7 @@ const hiddenFieldRefId = document.querySelector("input[name='refId']");
 
 const formFieldsPresident = document.querySelectorAll(".js-president");
 let presidentIsReferentCheckbox = document.querySelector(
-  "input[id=campain_association2_presidentIsReferent]"
+  "input[id=campain_association_presidentIsReferent]"
 );
 
 // chargement de la page

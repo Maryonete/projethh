@@ -1,6 +1,6 @@
 <div class="row">
-  <div class="col-md-9">
-    <!-- Affichage des informations du président -->
+  <!-- Affichage des informations du référent -->
+  <div class="col-md-8">
     <div class="js-referent_info">
       {% if campAsso.association.referent is not empty %}
       <p>
@@ -9,6 +9,12 @@
           name="refId"
           value="{{ campAsso.association.referent.id }}"
         />
+        <input
+          type="hidden"
+          name="isPresidentReferent"
+          value="{{ isPresidentReferent }}"
+        />
+
         <b
           >{{ campAsso.association.referent.user.firstname }}
           {{ campAsso.association.referent.user.lastname }}</b
@@ -22,193 +28,150 @@
       {% endif %}
     </div>
   </div>
-  <div class="col-md-3 text-end">
-    <!-- Boutons pour modifier et ajouter -->
+  <!-- Boutons pour modifier et ajouter -->
+  <div class="col-md-4 text-end js-referent_button">
     {% if campAsso.association.referent is not empty %}
     <div class="mb-4 d-flex justify-content-between">
-      <button class="btn btn-primary" onclick="modifierReferent(event)">
+      {% if isPresidentReferent is empty %}
+      <button class="btn btn-primary mr-3" onclick="modifierReferent(event)">
         Modifier ce référent
       </button>
-    </div>
-    <div class="mb-4 d-flex justify-content-between">
-      <button class="btn btn-primary" onclick="ajouterNouveauReferent(event)">
+      {% endif %}
+      <button class="btn btn-primary mx-2" onclick="ajouterReferent(event)">
         Ajouter un nouveau référent
       </button>
     </div>
     {% endif %}
+  </div>
+  <!-- Formulaire pour modifier le referent (initiallement caché) -->
+  <input
+    type="hidden"
+    name="refId"
+    value="{{ campAsso.association.referent is empty ? 0 : 1 }}"
+  />
+  <div id="modifierReferent" style="display: none">
     <div class="mb-4 d-flex justify-content-between">
-      <!-- Formulaire pour modifier le président (initiallement caché) -->
-      <div
-        id="modifierReferent"
-        style="display: none"
-        class="js-update_referent"
-      >
-        {{ form_widget(form.association.referent.user.email, {'attr': {'style': 'display: none;', 'class': 'js-referent_update','disabled': campAsso.association.referent is  empty ? 'disabled' : ''
-
-        }}) }}
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              {{ form_label(form.association.referent.user.firstname) }}
-              {{ form_widget(form.association.referent.user.firstname, {'attr': {'class': 'js-referent_update','disabled': campAsso.association.referent is  empty ? 'disabled' : ''
-
-              }}) }}
-              {{ form_errors(form.association.referent.user.firstname) }}
-            </div>
+      {% if campAsso.association.referent is not empty %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            {{
+              form_widget(form.association.referent.user.email, {
+                attr: {
+                  style: "display: none;",
+                  class: "form-control js_referent_update"
+                }
+              })
+            }}
+            {{ form_label(form.association.referent.user.firstname) }}
+            {{ form_widget(form.association.referent.user.firstname, {
+                  attr: {
+                      'class': "form-control js_referent_update",
+                  }
+                }) }}
+            {{ form_errors(form.association.referent.user.firstname) }}
           </div>
-
-          <div class="col-md-6">
-            <div class="form-group">
-              {{ form_label(form.association.referent.user.lastname) }}
-              {{ form_widget(form.association.referent.user.lastname, {'attr': {'class': 'js-referent_update','disabled': campAsso.association.referent is  empty ? 'disabled' : ''
-
-              }}) }}
-              {{ form_errors(form.association.referent.user.lastname) }}
-            </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            {{ form_label(form.association.referent.user.lastname) }}
+            {{ form_widget(form.association.referent.user.lastname, {
+                  attr: {
+                      'class': "form-control js_referent_update",
+                  }
+                }) }}
+            {{ form_errors(form.association.referent.user.lastname) }}
           </div>
-
-          <div class="col-md-6">
-            <div class="form-group">
-              {{ form_label(form.association.referent.tel) }}
-              {{ form_widget(form.association.referent.tel,
-                {'attr': {'class': 'js-referent_update' , 'disabled': campAsso.association.referent is  empty ? 'disabled' : ''
-
-              }}) }}
-              {{ form_errors(form.association.referent.tel) }}
-            </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            {{ form_label(form.association.referent.tel) }}
+            {{ form_widget(form.association.referent.tel, {
+                  attr: {
+                      'class': "form-control js_referent_update",
+                  }
+                }) }}
+            {{ form_errors(form.association.referent.tel) }}
           </div>
         </div>
       </div>
+      {% endif %}
     </div>
   </div>
   <!-- Formulaire pour ajouter un nouveau referent (initiallement caché) -->
-
   <div
     id="createReferentForm"
-    {%
-    if
-    campAsso.association.referent
-    is
-    not
-    empty
-    %}
-    style="display: none"
-    {%
-    endif
-    %}
+    style="display: {% if  campAsso.association.referent is not empty %}none{% endif %}"
   >
-    <div class="row">
-      <div class="col-md-6">
+    <div class="mb-4 d-flex justify-content-between">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label
+              class="col-form-label mt-2 required"
+              for="referent_new_user_firstname"
+              >Prénom</label
+            >
+            <input
+              type="text"
+              id="referent_new_user_firstname"
+              name="referent_new[user][firstname]"
+              required="required"
+              class="form-control js_referent_new"
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label
+              class="col-form-label mt-2 required"
+              for="referent_new_user_lastname"
+              >Nom</label
+            >
+            <input
+              type="text"
+              id="referent_new_user_lastname"
+              name="referent_new[user][lastname]"
+              required="required"
+              class="form-control js_referent_new"
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="form-group">
+            <label
+              class="col-form-label mt-2 required"
+              for="referent_new_user_email"
+              >E-mail</label
+            >
+            <input
+              type="email"
+              id="referent_new_user_email"
+              name="referent_new[user][email]"
+              required="required"
+              class="form-control js_referent_new"
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+        </div>
         <div class="form-group">
-          <label
-            class="col-form-label mt-2 required"
-            for="referent_new_user_firstname"
-            >Prénom</label
+          <label class="col-form-label mt-2 required" for="referent_new_tel"
+            >Téléphone</label
           >
           <input
             type="text"
-            id="referent_new_user_firstname"
-            name="referent_new[user][firstname]"
-            required="required"
-            class="form-control js-referent"
+            id="referent_new_tel"
+            name="referent_new[tel]"
+            class="form-control js_referent_new"
             minlength="2"
             maxlength="50"
-            {%
-            if
-            campAsso.association.referent
-            is
-            not
-            empty
-            %}
-            disabled
-            {%
-            endif
-            %}
           />
         </div>
-      </div>
-      <div class="col-md-6">
-        <div class="form-group">
-          <label
-            class="col-form-label mt-2 required"
-            for="referent_new_user_lastname"
-            >Nom</label
-          >
-          <input
-            type="text"
-            id="referent_new_user_lastname"
-            name="referent_new[user][lastname]"
-            required="required"
-            class="form-control js-referent"
-            minlength="2"
-            maxlength="50"
-            {%
-            if
-            campAsso.association.referent
-            is
-            not
-            empty
-            %}
-            disabled="disabled"
-            {%
-            endif
-            %}
-          />
-        </div>
-      </div>
-      <div class="col-md-8">
-        <div class="form-group">
-          <label
-            class="col-form-label mt-2 required"
-            for="referent_new_user_email"
-            >E-mail</label
-          >
-          <input
-            type="email"
-            id="referent_new_user_email"
-            name="referent_new[user][email]"
-            required="required"
-            class="form-control js-referent"
-            minlength="2"
-            maxlength="50"
-            {%
-            if
-            campAsso.association.referent
-            is
-            not
-            empty
-            %}
-            disabled="disabled"
-            {%
-            endif
-            %}
-          />
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="col-form-label mt-2 required" for="referent_new_tel"
-          >Téléphone</label
-        >
-        <input
-          type="text"
-          id="referent_new_tel"
-          name="referent_new[tel]"
-          class="form-control js-referent"
-          minlength="2"
-          maxlength="50"
-          {%
-          if
-          campAsso.association.referent
-          is
-          not
-          empty
-          %}
-          disabled="disabled"
-          {%
-          endif
-          %}
-        />
       </div>
     </div>
   </div>

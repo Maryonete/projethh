@@ -14,11 +14,9 @@ use Symfony\Component\Form\Extension\Core\Type\{HiddenType, TextareaType, TextTy
 
 class CampainAssociationType extends AbstractType
 {
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-
             ->add(
                 'association',
                 AssoUpdateType::class,
@@ -38,7 +36,6 @@ class CampainAssociationType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        // $resolver->setRequired('entity_manager');
         $resolver->setDefaults([
             'data_class' => CampainAssociation::class,
             'include_fields' => [
