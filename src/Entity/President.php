@@ -17,7 +17,11 @@ class President
     #[ORM\Column(length: 255)]
     private ?string $fonction = null;
 
-    #[ORM\ManyToOne(targetEntity: "App\Entity\Association", inversedBy: "presidents", cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(
+        targetEntity: "App\Entity\Association",
+        inversedBy: "presidents",
+        cascade: ['persist', 'remove']
+    )]
     private ?Association $association;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]

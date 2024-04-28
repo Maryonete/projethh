@@ -7,25 +7,32 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\Valid;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form\Extension\Core\Type\{TextType,  EmailType, TextareaType};
 
-class AssoUpdateType extends AbstractType
+class AssoUpdate2Type extends AbstractType
 {
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('referent', ReferentType::class, [
-                'label'     => false,
-                'required'  => false,
-            ])
+
             ->add('president', PresidentType::class, [
                 'label' => false,
             ])
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+                dump($event->getData());
+                /* @var Association $association */
+                $association = $event->getData();
+                $form = $event->getForm();
 
+                if (null !== $association->getReferent()) {
+                    $form->add('referent', ReferentType::class, [
+                        'label'     => false,
+                        'required'  => false,
+                    ]);
+                }
+            })
             ->add('adress', TextareaType::class, [
                 'attr'  => [
                     'class'     =>  'form-control',

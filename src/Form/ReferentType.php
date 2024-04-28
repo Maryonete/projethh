@@ -38,6 +38,7 @@ class ReferentType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Referent::class,
+
         ]);
     }
 }

@@ -46,7 +46,11 @@ class Association
     #[Assert\NotNull(message: "Une association doit avoir un président.")]
     private ?President $president = null;
 
-    #[ORM\OneToOne(targetEntity: "App\Entity\Referent", inversedBy: "association", cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(
+        targetEntity: Referent::class,
+        inversedBy: "association",
+        cascade: ['persist', 'remove']
+    )]
     #[ORM\JoinColumn(nullable: true)]
     private ?Referent $referent;
 

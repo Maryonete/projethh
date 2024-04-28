@@ -89,6 +89,7 @@ button.btn {
 .form-errors {
   color: red;
   font-size: 14px;
+  background-color: #ffcccc;
 }
 
 .form-errors li {
@@ -96,7 +97,8 @@ button.btn {
   margin-bottom: 5px; /* Space between errors */
 }
 
-.field-errors {
+.field-errors,
+.form-error-message {
   color: red;
   font-size: 14px;
 }

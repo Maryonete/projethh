@@ -21,7 +21,11 @@ class Referent
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\OneToOne(targetEntity: "App\Entity\Association", mappedBy: "referent", cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(
+        targetEntity: "App\Entity\Association",
+        inversedBy: "referent",
+        cascade: ['persist', 'remove']
+    )]
     private ?Association $association = null;
 
 
@@ -70,10 +74,19 @@ class Referent
      *
      * @return  self
      */
-    public function setAssociation(Association $association)
+    public function setAssociation(?Association $association): static
     {
+        // Si l'association est différente de null
+        if ($association !== null) {
+            // Vérifie si cette instance de président est déjà associée à l'association
+            if ($association->getReferent() !== $this) {
+                // Si ce n'est pas le cas, mettez cette instance de président comme président de l'association
+                $association->setReferent($this);
+            }
+        }
+
+        // Met à jour la propriété d'association de ce président
         $this->association = $association;
-        #TODO : enleve ancien referent
 
         return $this;
     }

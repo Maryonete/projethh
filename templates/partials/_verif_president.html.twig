@@ -1,27 +1,39 @@
-<div>
-  <!-- Affichage des informations du président -->
-  <p>
-    <b
-      >{{ campAsso.association.president.user.firstname }}
-      {{ campAsso.association.president.user.lastname }}</b
-    >
-    <br />Email : {{ campAsso.association.president.user.email }} <br />Fonction
-    : {{ campAsso.association.president.fonction }}
-  </p>
-</div>
-<!-- Boutons pour modifier et ajouter -->
-<div class="mb-4">
-  <button class="btn btn-primary" onclick="modifierPresident(event)">
-    Modifier ce président
-  </button>
-  <button class="btn btn-primary" onclick="ajouterNouveauPresident(event)">
-    Ajouter un président
-  </button>
+<div class="row">
+  <div class="col-md-8">
+    <!-- Affichage des informations du président -->
+    <p>
+      <b
+        >{{ campAsso.association.president.user.firstname }}
+        {{ campAsso.association.president.user.lastname }}</b
+      >
+      <br />Email : {{ campAsso.association.president.user.email }}
+      <br />Fonction : {{ campAsso.association.president.fonction }}
+    </p>
+  </div>
+  <div class="col-md-4 text-end">
+    <!-- Boutons pour modifier et ajouter -->
+    <div class="mb-4 d-flex justify-content-between">
+      <button
+        class="btn btn-primary btn-block mr-3"
+        onclick="modifierPresident(event)"
+      >
+        Modifier ce président
+      </button>
+
+      <button
+        class="btn btn-primary btn-block mx-2"
+        onclick="ajouterNouveauPresident(event)"
+      >
+        Ajouter un président
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- Formulaire pour modifier le président (initiallement caché) -->
 <div id="modifierPresidentForm" style="display: none">
   {{ form_widget(form.association.president.user.email, {'attr': {'style': 'display: none;'
+
   }}) }}
 
   <div class="row">
