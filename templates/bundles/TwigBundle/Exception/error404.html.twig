@@ -1,10 +1,35 @@
-{% extends 'base.public.html.twig' %} {% block body %}
-<div class="container mt-5">
-  <h1>Cette page n'existe pas.</h1>
-
-  <p>
-    Pour plus d'information
-    <a href="mailto:marekting@habitat-humanisme.org ">contacter le support</a>
-  </p>
-</div>
-{% endblock %}
+{% extends 'base.public.html.twig' %} {% block title %}Habitat Humanisme{%
+  endblock %} {% block body %} 
+  <div class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="p-5 text-center bg-body-tertiary rounded-3">
+          <img
+            src="{{ asset('build/images/logo.svg') }}"
+            alt="Logo HH"
+            height="40"
+            class=" mb-3"
+          />
+          <h1 class="text-body-emphasis">Cette page n'est pas accessible</h1>
+          
+          <div class=" gap-2 my-5">
+              <div class="mb-3"><strong> Pour plus d'information, merci de contacter</strong></div>
+            <div>
+              <a
+                href="mailto:marketing@habitat-humanisme.org"
+                class="btn btn-primary btn-lg px-4 rounded-pill"
+              >
+                <i class="fas fa-envelope me-2"></i>
+                marketing@habitat-humanisme.org
+              </a>
+            </div>
+            </div>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  {% endblock %}
+  

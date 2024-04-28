@@ -68,6 +68,7 @@ class AssociationController extends AbstractController
                     $president = new President();
                     $president->setUser($user);
                     $president->setFonction($presidentData['fonction']);
+                    $president->setAssociation($association);
                     $entityManager->persist($president);
                     // Ajout du président à l'association
                     $association->setPresident($president);
@@ -94,6 +95,7 @@ class AssociationController extends AbstractController
                         $entityManager->persist($user);
                         $referent = new Referent();
                         $referent->setUser($user);
+                        $referent->setAssociation($association);
                         $referent->setTel($referentData['tel']);
                         $entityManager->persist($referent);
                         // Ajout du referent à l'association

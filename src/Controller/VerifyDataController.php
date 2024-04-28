@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Entity\User;
+use DateTimeImmutable;
 use App\Entity\Referent;
 use App\Entity\President;
 use App\Form\CampainAssociationType;
@@ -30,8 +32,15 @@ class VerifyDataController extends AbstractController
 
     ): Response {
         $campAsso = $campAssoRepo->findOneBy(['token' => $token]);
+        // la campagne n'existe pas pour cette asso
         if (!$campAsso) {
             return $this->render('bundles/TwigBundle/Exception/error404.html.twig');
+        }
+        // l'asso a déjà mis à jour ces données
+        if ($campAsso->getStatut() !== 'send') {
+            return $this->render('verif_ok.html.twig', [
+                'campAsso'                  =>  $campAsso,
+            ]);
         }
         $oldCampainAssociations = "";
         if ($campAsso && $campAsso->getCampains()->getOldcampain()) {
@@ -153,16 +162,20 @@ class VerifyDataController extends AbstractController
                 $referent->setTel($newRef['tel']);
                 $entityManager->persist($referent);
             }
+            $campAsso->setStatut('updated');
+            $campAsso->setUpdatedTextAt(new DateTimeImmutable());
 
             $entityManager->persist($campAsso);
             $entityManager->flush();
-            return new Response('<h1>Merci ma princesse belle !!! <3<3<3<3<3<3<3</h1>');
+            return $this->render('verif_ok.html.twig', [
+                'campAsso'                  =>  $campAsso,
+            ]);
         }
         return $this->render('verify_data.html.twig', [
-            'campAsso'              =>  $campAsso,
-            'form'                  => $form,
-            'oldCampainAssociations' => $oldCampainAssociations,
-            'isPresidentReferent'   =>  $isPresidentReferent,
+            'campAsso'                  =>  $campAsso,
+            'form'                      =>  $form,
+            'oldCampainAssociations'    =>  $oldCampainAssociations,
+            'isPresidentReferent'       =>  $isPresidentReferent,
         ]);
     }
     // #[Route('/associationdata/{token}', name: 'data')]
