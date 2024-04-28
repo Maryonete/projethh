@@ -63,12 +63,6 @@ class PresidentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $president->getUser()->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $president->getUser(),
-                    'tttttttt'
-                )
-            );
             $this->addFlash(
                 'success',
                 'Opération effectuée avec succès !'

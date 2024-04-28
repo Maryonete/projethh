@@ -104,13 +104,6 @@ class VerifyDataController extends AbstractController
                 $user->setFirstname($presidentData['user']['firstname']);
                 $user->setLastname($presidentData['user']['lastname']);
                 $user->setEmail($presidentData['user']['email']);
-
-                $user->setPassword(
-                    $userPasswordHasher->hashPassword(
-                        $user,
-                        'tttttttt'
-                    )
-                );
                 $entityManager->persist($user);
                 $president = new President();
                 $president->setUser($user);
@@ -143,17 +136,11 @@ class VerifyDataController extends AbstractController
                     ['user' => $newRef['user']['email']]
                 );
                 if (!$referent) {
-                    dump('!referent');
                     $user = new User();
                     $user->setFirstname($newRef['user']['firstname']);
                     $user->setLastname($newRef['user']['lastname']);
                     $user->setEmail($newRef['user']['email']);
-                    $user->setPassword(
-                        $userPasswordHasher->hashPassword(
-                            $user,
-                            'tttttttt'
-                        )
-                    );
+
                     $entityManager->persist($user);
                     $referent = (new Referent())
                         ->setUser($user);
@@ -250,12 +237,7 @@ class VerifyDataController extends AbstractController
     //             $user->setLastname($presidentData['user']['lastname']);
     //             $user->setEmail($presidentData['user']['email']);
 
-    //             $user->setPassword(
-    //                 $userPasswordHasher->hashPassword(
-    //                     $user,
-    //                     'tttttttt'
-    //                 )
-    //             );
+    //             
     //             $entityManager->persist($user);
     //             $president = new President();
     //             $president->setUser($user);

@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     name: 'UNIQ_IDENTIFIER_EMAIL',
     fields: ['email']
 )]
+#[ORM\EntityListeners(['App\EntityListener\UserListener'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -23,7 +24,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Assert\Length(min: 2, max: 180)]
     #[Assert\Email(
         message: 'Cet email {{ value }} n\'est pas valide',
@@ -33,14 +34,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var list<string> The user roles
      */
-    #[ORM\Column]
+    #[ORM\Column(type: 'json')]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
-    #[ORM\Column]
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank()]
     private ?string $password = null;
+
+    private ?string $plainPassword = null;
 
     #[ORM\Column(length: 60)]
     #[Assert\Length(min: 2, max: 60)]
@@ -72,6 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->logs = new ArrayCollection();
+        $this->setPlainPassword('tttttttt');
     }
     public function __toString()
     {
@@ -252,6 +257,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setReferent($referent)
     {
         $this->referent = $referent;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of plainPassword
+     */
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * Set the value of plainPassword
+     *
+     * @return  self
+     */
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }

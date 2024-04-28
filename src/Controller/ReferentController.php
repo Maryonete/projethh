@@ -38,12 +38,6 @@ class ReferentController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $referent->getUser()->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $referent->getUser(),
-                    'tttttttt'
-                )
-            );
             $entityManager->persist($referent);
             $entityManager->flush();
             return $this->redirectToRoute('user', [], Response::HTTP_SEE_OTHER);
