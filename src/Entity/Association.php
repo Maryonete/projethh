@@ -43,7 +43,7 @@ class Association
         inversedBy: "association",
         cascade: ['persist', 'remove'],
     )]
-    #[Assert\NotNull(message: "Une association doit avoir un président.")]
+    // #[Assert\NotBlank(message: "Une association doit avoir un président.")]
     private ?President $president = null;
 
     #[ORM\OneToOne(
@@ -201,9 +201,9 @@ class Association
 
     public function setPresident(?President $president): static
     {
-        // if ($president !== null) {
-        //     $president->setAssociation($this);
-        // }
+        if ($this->president !== null and $this->president !== $president) {
+            $this->president->setAssociation(null);
+        }
         $this->president = $president;
 
         return $this;
@@ -256,6 +256,10 @@ class Association
      */
     public function setReferent($referent): self
     {
+        if ($this->referent !== null and $this->referent !== $referent) {
+            $this->referent->setAssociation(null);
+        }
+
         $this->referent = $referent;
         if ($referent !== null) {
             $referent->setAssociation($this);

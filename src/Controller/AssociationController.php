@@ -49,30 +49,53 @@ class AssociationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $requestData = $request->request->all();
+            // ajout president
             if ($association->getPresident() == null) {
                 $presidentData = $requestData['president_new'];
-
                 if ($presidentData) {
-                    $user = new User();
-                    $user->setFirstname($presidentData['user']['firstname']);
-                    $user->setLastname($presidentData['user']['lastname']);
-                    $user->setEmail($presidentData['user']['email']);
+                    // le president existe dejà
+                    $otherPresident = $entityManager->getRepository(President::class)
+                        ->findOneByEmail($presidentData['user']['email']);
+                    if ($otherPresident) {
+                        // le president existe ET n'est pas rattaché à une association
+                        if ($otherPresident->getAssociation() === null) {
+                            $otherPresident->setAssociation($association);
+                            $entityManager->persist($otherPresident);
+                            // Ajout du président à l'association
+                            $association->setPresident($otherPresident);
+                        } elseif ($otherPresident->getAssociation()->getId() !== $association->getId()) {
+                            dump('2');
+                            $this->addFlash(
+                                'warning',
+                                'Une président d\'une autre association existe déjà avec cette adresse e-mail'
+                            );
+                            return $this->redirectToRoute(
+                                'edit',
+                                ['id' => $association],
+                                Response::HTTP_SEE_OTHER
+                            );
+                        }
+                    } else {
+                        //
+                        $user = new User();
+                        $user->setFirstname($presidentData['user']['firstname']);
+                        $user->setLastname($presidentData['user']['lastname']);
+                        $user->setEmail($presidentData['user']['email']);
 
-                    $user->setPassword(
-                        $userPasswordHasher->hashPassword(
-                            $user,
-                            'tttttttt'
-                        )
-                    );
-                    $entityManager->persist($user);
-                    $president = new President();
-                    $president->setUser($user);
-                    $president->setFonction($presidentData['fonction']);
-                    $president->setAssociation($association);
-                    $entityManager->persist($president);
-                    // Ajout du président à l'association
-                    $association->setPresident($president);
-                    $entityManager->flush();
+                        $user->setPassword(
+                            $userPasswordHasher->hashPassword(
+                                $user,
+                                'tttttttt'
+                            )
+                        );
+                        $entityManager->persist($user);
+                        $president = new President();
+                        $president->setUser($user);
+                        $president->setFonction($presidentData['fonction']);
+                        $president->setAssociation($association);
+                        $entityManager->persist($president);
+                        $association->setPresident($president);
+                    }
                 }
             }
             if ($association->getReferent() == null) {

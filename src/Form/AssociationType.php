@@ -140,13 +140,14 @@ class AssociationType extends AbstractType
                 },
                 'placeholder' => 'Sélectionner un(e) président(e)',
                 'attr' => ['class' => 'form-select'],
-
+                'required' => false,
             ])
             ->add('referent', EntityType::class, [
                 'class'         => Referent::class,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('r')
                         ->leftJoin('r.user', 'u') // Jointure avec la table User associée
+                        ->where('r.association IS NULL')
                         ->orderBy('u.lastname', 'ASC') // Tri par nom de famille de l'utilisateur
                         ->addOrderBy('u.firstname', 'ASC');
                 },

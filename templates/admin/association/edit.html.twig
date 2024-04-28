@@ -156,6 +156,7 @@
     const createPresidentForm = document.querySelector("#createPresidentForm");
     createPresidentForm.style.display = "block";
     $("#association_president").prop("selectedIndex", 0);
+    document.querySelector("#association_president").removeAttribute("required")
     const formFields = document.querySelectorAll(".js-president");
 
     // Itérer sur tous les champs et les activer
