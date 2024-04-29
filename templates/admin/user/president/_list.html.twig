@@ -6,19 +6,25 @@
 <table class="table table-striped table-hover sortTable" id="presidentList">
   <thead>
     <tr>
-      <th>Prénom Nom</th>
+      <th>Code asso</th>
       <th>Association</th>
+      <th>Prénom Nom</th>
     </tr>
   </thead>
   <tbody>
     {% for president in presidents %}
     <tr>
-      <td>{{ president.user.firstname }} {{ president.user.lastname }}</td>
+      <td>
+        {% if president.association is not empty %}
+        {{ president.association.code }}
+        {% endif %}
+      </td>
       <td>
         {% if president.association is not empty %}
         {{ president.association.libelle }}
         {% endif %}
       </td>
+      <td>{{ president.user.firstname }} {{ president.user.lastname }}</td>
       <td>
         <a href="{{ path('president_show', { id: president.id }) }}"
           ><i class="fa-solid fa-eye"></i
@@ -48,7 +54,7 @@
       language: {
         sSearch: "<i class='fas fa-search'></i>",
       },
-      columns: [null, null, { orderable: false }, { orderable: false }],
+      columns: [null, null, null, { orderable: false }, { orderable: false }],
       // searchDelay: 300, // Délai avant la prise en compte de la recherche pour éviter un filtrage excessif
     });
   });

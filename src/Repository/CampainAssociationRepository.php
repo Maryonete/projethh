@@ -48,12 +48,23 @@ class CampainAssociationRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('ca')
             ->select('COUNT(ca.id)')
             ->where('ca.campains = :campainId')
-            // ->andWhere('ca.statut = :statut')
             ->setParameter('campainId', $campainId)
             // ->setParameter('statut', 'send')
             ->getQuery()
             ->getSingleScalarResult();
     }
+    public function countNbAssoValidateFormCount(int $campainId): int
+    {
+        return $this->createQueryBuilder('ca')
+            ->select('COUNT(ca.id)')
+            ->where('ca.campains = :campainId')
+            ->andwhere('ca.statut = :statut')
+            ->setParameter('campainId', $campainId)
+            ->setParameter('statut', 'updated')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     //    /**
     //     * @return CampainAssociation[] Returns an array of CampainAssociation objects
     //     */

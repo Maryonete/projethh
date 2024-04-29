@@ -48,13 +48,15 @@ endblock %} {% block javascripts %}
             </h1>
             <h2>{{ campAsso.association.libelle }}</h2>
             {{ form_start(form) }}
-            <div class="row p-5 mb-4 bg-light rounded-3">
-              <h2>Président(e)</h2>
-              {{ include("partials/_verif_president.html.twig") }}
-            </div>
+
             <div class="row p-5 mb-4 bg-light rounded-3">
               <div class="col-md-6">
                 <h2>Référent(e)</h2>
+                <div class="bg-red-100 mb-4 p-2">
+                  Veuillez confirmer les coordonnées du référent(e)
+                  communication / ressources en charge de la validation de ces
+                  informations.
+                </div>
               </div>
               <div
                 class="col-md-6 d-flex justify-content-end align-items-center"
@@ -80,6 +82,10 @@ endblock %} {% block javascripts %}
               </div>
 
               {{ include("partials/_verif_referent.html.twig") }}
+            </div>
+            <div class="row p-5 mb-4 bg-light rounded-3">
+              <h2>Président(e)</h2>
+              {{ include("partials/_verif_president.html.twig") }}
             </div>
             {{ include("partials/_verif_adresse.html.twig") }}
 

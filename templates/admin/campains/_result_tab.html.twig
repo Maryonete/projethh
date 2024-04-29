@@ -9,62 +9,71 @@
       <th scope="col">Envoyé le</th>
       <th scope="col">Email(s)</th>
       <th scope="col">Lien</th>
-      <th scope="col">Texte personnalisé</th>
-
-      <th scope="col">Mis à jour le</th>
-
-      <th scope="col">ancien texte personnalisé ({{ campain.oldcampain }} )</th>
     </tr>
   </thead>
   <tbody>
     {% for campainAssociation in campainAssociations %}
     <tr>
       <td>
-        {{
-          campainAssociation.association
-            ? campainAssociation.association.libelle
-            : "Aucune association associée"
+        <a
+          href="{{
+            path('asso_show', { id: campainAssociation.association.id })
+          }}"
+          title="Visualiser"
+          alt="lien vers l'association"
+        >
+          {{ campainAssociation.association.libelle }}
+        </a>
+      </td>
+      <td>
+        {% if campainAssociation.statut == 'send' %}
+        <i class="fas fa-envelope"></i> Envoyé {% elseif
+        campainAssociation.statut == 'updated' %}
+        <i class="fas fa-sync-alt"></i> Mis à jour <br />
+        {{ campainAssociation.updatedTextAt 
+          ? 
+          campainAssociation.updatedTextAt|date('d/m/Y H:i') 
+          : ' - '
         }}
+        {% if campainAssociation.updatedby is not empty %}
+        <br />
+        {% if campainAssociation.updatedby == 'referent' %} par le référent {%
+        elseif campainAssociation.updatedby == 'administrateur' %} par
+        l'administrateur {% endif %} {% endif %} {% endif %}
       </td>
       <td>
-        {% if campainAssociation.statut == 'send' %} envoyé {% else %}
-        {{ campainAssociation.statut }}
-        {% endif %}
-      </td>
-      <td>
-        {{ campainAssociation.sendAt ? campainAssociation.sendAt|date('d/m/Y H:i:s') : 'Non envoyé' }}
+        {{ campainAssociation.sendAt ? campainAssociation.sendAt|date('d/m/Y H:i') : 'Non envoyé' }}
       </td>
       <td>
         {{ campainAssociation.emails ? campainAssociation.emails : "Aucun" }}
       </td>
       <td>
-        {% if campainAssociation.token is not empty %}
+        {% if campainAssociation.token is not empty and
+        campainAssociation.statut != 'updated' %}
         <a
           href="{{
-            path('associationdata', {
+            path('associationhh', {
               token: campainAssociation.token
             })
           }}"
           class="flex-grow-1 mx-2"
-          title="Update data"
+          title="Lien pour association"
           target="_blank"
           ><i class="fa-solid fa-link"></i
         ></a>
         {% endif %}
       </td>
       <td>
-        {{ campainAssociation.textepersonnalise ? campainAssociation.textepersonnalise|nl2br : '' }}
-      </td>
-      <td>
-        {{ campainAssociation.updatedTextAt ? campainAssociation.updatedTextAt|date('d/m/Y H:i:s') : ' - ' }}
-      </td>
-      <td>
-        {% if oldCampainAssociations is not empty %} {% for
-        oldCampainAssociation in oldCampainAssociations %} {% if
-        oldCampainAssociation.getAssociation() ==
-        campainAssociation.getAssociation() %}
-        <p>{{ oldCampainAssociation.getTextePersonnalise() }}</p>
-        {% endif %} {% endfor %} {% endif %}
+        <a
+          href="{{
+            path('asso_editTextePersonnalise', {
+              id: campainAssociation.id
+            })
+          }}"
+          class="flex-grow-1 mx-2"
+          title="Lien pour association"
+          ><i class="fas fa-pencil-alt"></i
+        ></a>
       </td>
     </tr>
     {% endfor %}

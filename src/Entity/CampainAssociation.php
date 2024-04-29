@@ -46,6 +46,9 @@ class CampainAssociation
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $token = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $updated_by = null;
+
 
 
     public function getId(): ?int
@@ -162,6 +165,18 @@ class CampainAssociation
     public function setToken(?string $token): static
     {
         $this->token = $token;
+
+        return $this;
+    }
+
+    public function getUpdatedBy(): ?string
+    {
+        return $this->updated_by;
+    }
+
+    public function setUpdatedBy(?string $updated_by): static
+    {
+        $this->updated_by = $updated_by;
 
         return $this;
     }

@@ -85,6 +85,7 @@ class AssoUpdateType extends AbstractType
             ])
             ->add('tel', TextType::class, [
                 'required'  =>  false,
+                'empty_data' => '',
                 'attr'  => [
                     'class'     =>  'form-control',
                     'minlength' => '2',
@@ -93,12 +94,6 @@ class AssoUpdateType extends AbstractType
                 'label'         =>  'Téléphone',
                 'label_attr'    =>  [
                     'class'     =>  'col-form-label mt-2'
-                ],
-                'constraints'   => [
-                    new Assert\Length(['min' => 2, 'max' => 50]),
-                    new Assert\NotBlank([
-                        'message' => 'Veuillez saisir le numéro de téléphone'
-                    ])
                 ],
             ])
             ->add('email', EmailType::class, [

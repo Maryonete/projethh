@@ -1,6 +1,6 @@
 <div class="row p-5 mb-4 bg-light rounded-3">
-  <h2>Adresse</h2>
-  <div class="col-md-12">
+  <h2>Coordonnées de l'association</h2>
+  <div class="col-md-10">
     <div class="form-group">
       {{ form_label(form.association.adress) }}
       {{ form_widget(form.association.adress) }}
@@ -8,7 +8,7 @@
     </div>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="form-group">
       {{ form_label(form.association.cp) }}
       {{ form_widget(form.association.cp) }}
@@ -16,7 +16,7 @@
     </div>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-md-8">
     <div class="form-group">
       {{ form_label(form.association.city) }}
       {{ form_widget(form.association.city) }}
@@ -24,14 +24,14 @@
     </div>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="form-group">
       {{ form_label(form.association.tel) }}
       {{ form_widget(form.association.tel) }}
       {{ form_errors(form.association.tel) }}
     </div>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-8">
     <div class="form-group">
       {{ form_label(form.association.email) }}
       {{ form_widget(form.association.email) }}

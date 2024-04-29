@@ -52,8 +52,6 @@ class PresidentController extends AbstractController
     public function new_update(
         Request $request,
         EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $userPasswordHasher,
-        AssociationRepository $associationRepository,
         President $president = null
     ): Response {
         if (null === $president) {
@@ -67,7 +65,6 @@ class PresidentController extends AbstractController
                 'success',
                 'Opération effectuée avec succès !'
             );
-
             $entityManager->persist($president);
             $entityManager->flush();
 

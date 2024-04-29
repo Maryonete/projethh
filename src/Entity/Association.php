@@ -33,7 +33,7 @@ class Association
     private ?string $city = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tel = null;
+    private string $tel = '';
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;

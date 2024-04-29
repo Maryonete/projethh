@@ -2,18 +2,15 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Entity\Referent;
-use App\Entity\President;
-use App\Entity\Association;
+use App\Entity\{User, Referent, President, Association, CampainAssociation, Campains};
 use App\Form\AssociationType;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\AssociationRepository;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use App\Repository\{AssociationRepository, CampainAssociationRepository};
+use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Form\Extension\Core\Type\{TextareaType, SubmitType};
+use Symfony\Component\Form\FormFactoryInterface;
 
 #[Route('/association', name: 'asso_')]
 class AssociationController extends AbstractController
@@ -27,10 +24,11 @@ class AssociationController extends AbstractController
     }
 
     #[Route('/{id<[0-9]+>}', name: 'show', methods: ['GET'])]
-    public function show(Association $association): Response
+    public function show(Association $association, CampainAssociationRepository $campainAssoRepo): Response
     {
         return $this->render('admin/association/show.html.twig', [
-            'association' => $association,
+            'association'   => $association,
+            'campains'      => $campainAssoRepo->findByAssociation($association, ['id' => 'DESC'])
         ]);
     }
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
@@ -38,13 +36,14 @@ class AssociationController extends AbstractController
     public function new_update(
         Request $request,
         EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $userPasswordHasher,
         Association $association = null
     ): Response {
         if ($association === null) {
             $association = new Association();
         }
-        $form = $this->createForm(AssociationType::class, $association);
+        $form = $this->createForm(AssociationType::class, $association, [
+            'current_association_id' => $association->getId(),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -64,7 +63,6 @@ class AssociationController extends AbstractController
                             // Ajout du président à l'association
                             $association->setPresident($otherPresident);
                         } elseif ($otherPresident->getAssociation()->getId() !== $association->getId()) {
-                            dump('2');
                             $this->addFlash(
                                 'warning',
                                 'Une président d\'une autre association existe déjà avec cette adresse e-mail'
@@ -115,9 +113,6 @@ class AssociationController extends AbstractController
                     }
                 }
             }
-            // if ($association->getReferent() == null) {
-            //     $association->setReferent($request->get('referent'));
-            // }
             $entityManager->persist($association);
             $entityManager->flush();
 
@@ -139,5 +134,114 @@ class AssociationController extends AbstractController
         }
 
         return $this->redirectToRoute('asso_list', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/texte/{id<[0-9]+>}', name: 'editTextePersonnalise', methods: ['GET', 'POST'])]
+    /**
+     * Modifier le texte personnalise d'une asso pour une campagne
+     *
+     * @param Request $request
+     * @param FormFactoryInterface $formFactory
+     * @param CampainAssociation $campAsso
+     * @return void
+     */
+    public function editTextePersonnalise(
+        Request $request,
+        FormFactoryInterface $formFactory,
+        EntityManagerInterface $entityManager,
+        CampainAssociation $campAsso
+    ) {
+
+        $form = $formFactory->createBuilder()
+            ->add('texte_personnalise', TextareaType::class, [
+                'label' => 'Texte de présentation pour la campagne ',
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-control',
+                    'rows' => 5
+                ],
+                'data' => $campAsso->getTextePersonnalise()
+            ])
+            ->getForm();
+        $oldCampainAssociations = "";
+        if ($campAsso && $campAsso->getCampains()->getOldcampain()) {
+            $oldCampainAssociations = $entityManager->getRepository(CampainAssociation::class)->findOneBy(
+                [
+                    'campains' => $campAsso->getCampains()->getOldcampain(),
+                    'association' => $campAsso->getAssociation()
+                ]
+            );
+        }
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $textePersonnalise = $form->get('texte_personnalise')->getData();
+
+            // Définir la nouvelle valeur du champ texte personnalisé sur l'objet CampainAssociation
+            $campAsso->setTextePersonnalise($textePersonnalise);
+            $entityManager->persist($campAsso);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('asso_home');
+        }
+
+        return $this->render('/admin/edit_texte_personnalise.html.twig', [
+            'form' => $form->createView(),
+            'campAsso' => $campAsso,
+            'oldCampainAssociations' => $oldCampainAssociations
+        ]);
+    }
+    #[Route('/textes/{id<[0-9]+>}', name: 'editAllTextePersonnalise', methods: ['GET', 'POST'])]
+    public function editAllTextePersonnalise(
+        Request $request,
+        FormFactoryInterface $formFactory,
+        EntityManagerInterface $entityManager,
+        CampainAssociationRepository $campainAssoRepo,
+        Campains $campain
+    ) {
+        $campainAssociations = $entityManager->getRepository(CampainAssociation::class)
+            ->findByCampains($campain);
+
+        $oldCampainAssociations = "";
+        if ($campain->getOldcampain()) {
+            $oldCampainAssociations =
+                $campainAssoRepo->findByCampains($campain->getOldcampain());
+        }
+        $formBuilder = $formFactory->createBuilder();
+        foreach ($campainAssociations as $campAsso) {
+
+
+            $formBuilder->add('texte_personnalise' . $campAsso->getAssociation()->getId(), TextareaType::class, [
+                'label' => '',
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-control',
+                    'rows' => 15
+                ],
+                'data' => $campAsso ? $campAsso->getTextePersonnalise() : null
+            ]);
+        }
+        $form = $formBuilder->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData(); // Récupérer les données soumises du formulaire
+            foreach ($campainAssociations as $campAsso) {
+                $fieldName = 'texte_personnalise' . $campAsso->getAssociation()->getId();
+                $textePersonnalise = $data[$fieldName]; // Récupérer le texte personnalisé pour cette association
+                // Mettre à jour l'objet CampainAssociation avec le nouveau texte personnalisé
+                $campAsso->setTextePersonnalise($textePersonnalise);
+                $entityManager->persist($campAsso);
+            }
+            $entityManager->flush();
+            return $this->redirectToRoute('asso_home');
+        }
+
+        return $this->render('/admin/edit_all_texte_personnalise.html.twig', [
+            'form' => $form->createView(),
+            'campainAssociations' => $campainAssociations,
+            'campain' => $campain,
+            'oldCampainAssociations' => $oldCampainAssociations,
+        ]);
     }
 }

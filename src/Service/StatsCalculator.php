@@ -25,6 +25,11 @@ class StatsCalculator
     {
         return $this->campainAssociationRepository->countSentEmailsForCampain($campainId);
     }
+    public function calculateNbAssoValidateFormCount(int $campainId): int
+    {
+        return $this->campainAssociationRepository->countNbAssoValidateFormCount($campainId);
+    }
+
 
     public function calculateUpdatedAssociationsCount(): int
     {

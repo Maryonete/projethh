@@ -24,7 +24,7 @@ class AssociationType extends AbstractType
                     'minlength' => '2',
                     'maxlength' => '10',
                 ],
-                'label'         =>  'Code',
+                'label'         =>  'Code asso',
                 'label_attr'    =>  [
                     'class'     =>  'col-form-label mt-2'
                 ],
@@ -129,11 +129,25 @@ class AssociationType extends AbstractType
             ])
             ->add('president', EntityType::class, [
                 'class' => President::class,
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('p')
-                        ->leftJoin('p.user', 'u') // Jointure avec la table User associée
-                        ->orderBy('u.lastname', 'ASC') // Tri par nom de famille de l'utilisateur
-                        ->addOrderBy('u.firstname', 'ASC'); // Puis tri par prénom de l'utilisateur
+                'query_builder' => function (EntityRepository $er) use ($options) {
+                    $currentAssociationId = $options['current_association_id'];
+                    if ($currentAssociationId) {
+                        // Utilisez $currentAssociationId dans votre query_builder
+                        return $er->createQueryBuilder('p')
+                            ->leftJoin('p.user', 'u') // Jointure avec la table User associée
+                            // Jointure avec la table Association associée
+                            ->where('p.association IS NULL OR p.association = :currentAssociationId')
+                            ->setParameter('currentAssociationId', $currentAssociationId)
+                            ->orderBy('u.lastname', 'ASC') // Tri par nom de famille de l'utilisateur
+                            ->addOrderBy('u.firstname', 'ASC');
+                    } else {
+                        // Si $currentAssociationId est vide, retournez simplement les référents sans filtrage
+                        return $er->createQueryBuilder('p')
+                            ->leftJoin('p.user', 'u')
+                            ->where('p.association IS NULL ')
+                            ->orderBy('u.lastname', 'ASC') // Tri par nom de famille de l'utilisateur
+                            ->addOrderBy('u.firstname', 'ASC'); // Puis tri par prénom du référent
+                    }
                 },
                 'choice_label' => function ($president) {
                     return $president;
@@ -144,13 +158,28 @@ class AssociationType extends AbstractType
             ])
             ->add('referent', EntityType::class, [
                 'class'         => Referent::class,
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('r')
-                        ->leftJoin('r.user', 'u') // Jointure avec la table User associée
-                        ->where('r.association IS NULL')
-                        ->orderBy('u.lastname', 'ASC') // Tri par nom de famille de l'utilisateur
-                        ->addOrderBy('u.firstname', 'ASC');
+                'query_builder' => function (EntityRepository $er) use ($options) {
+                    $currentAssociationId = $options['current_association_id'];
+                    if ($currentAssociationId) {
+                        // Utilisez $currentAssociationId dans votre query_builder
+                        return $er->createQueryBuilder('r')
+
+                            ->leftJoin('r.user', 'u') // Jointure avec la table User associée
+                            // Jointure avec la table Association associée
+                            ->where('r.association IS NULL OR r.association = :currentAssociationId')
+                            ->setParameter('currentAssociationId', $currentAssociationId)
+                            ->orderBy('u.lastname', 'ASC') // Tri par nom de famille de l'utilisateur
+                            ->addOrderBy('u.firstname', 'ASC');
+                    } else {
+                        // Si $currentAssociationId est vide, retournez simplement les référents sans filtrage
+                        return $er->createQueryBuilder('r')
+                            ->leftJoin('r.user', 'u')
+                            ->where('r.association IS NULL ')
+                            ->orderBy('u.lastname', 'ASC') // Tri par nom de famille de l'utilisateur
+                            ->addOrderBy('u.firstname', 'ASC'); // Puis tri par prénom du référent
+                    }
                 },
+
                 'choice_label' => function ($referent) {
                     return $referent;
                 },
@@ -165,6 +194,7 @@ class AssociationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Association::class,
+            'current_association_id' => null,
         ]);
     }
 }

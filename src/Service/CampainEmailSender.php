@@ -28,7 +28,7 @@ class CampainEmailSender
         $texteEmail = str_replace(
             '[Lien_personnalisé_ici_ne_pas_modifier]',
             $this->urlGenerator->generate(
-                'associationdata',
+                'associationhh',
                 ['token' => $tokenPersonnalise]
             ),
             $campain->getTexteEmail()

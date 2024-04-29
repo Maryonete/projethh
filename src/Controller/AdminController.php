@@ -19,27 +19,32 @@ class AdminController extends AbstractController
         AssociationRepository $assoRepo,
         CampainsRepository $campainRepo,
         CampainAssociationRepository $campainAssoRepo,
-        StatsCalculator $stat
+        StatsCalculator $statsCalculator
 
     ): Response {
         $campain = $campainRepo->findOneByValid(true);
         $campainAssociations = [];
         $oldCampainAssociations = "";
-        $nbSentEmailsCount = "";
+        $stat = [];
+        $stat['nbAssoCount'] = $statsCalculator->calculateNbAssoCount();
         if ($campain) {
             $campainAssociations = $campainAssoRepo->findByCampains($campain);
             if ($campain->getOldcampain()) {
                 $oldCampainAssociations = $campainAssoRepo->findByCampains($campain->getOldcampain());
             }
-            $nbSentEmailsCount = $stat->calculateSentEmailsCount($campain->getId());
+            $stat['nbSentEmailsCount'] = $statsCalculator->calculateSentEmailsCount($campain->getId());
+            $stat['nbAssoValidateFormCount'] = $statsCalculator->calculateNbAssoValidateFormCount($campain->getId());
+            $stat['percentAssoValidateFormCount'] =
+                ($stat['nbSentEmailsCount'] > 0) ?
+                ($stat['nbAssoValidateFormCount'] * 100 / $stat['nbSentEmailsCount'])
+                : 0;
         }
         return $this->render('admin/index.html.twig', [
             'listAsso'              =>  $assoRepo->findAll(),
             'campain'               =>  $campain,
             'campainAssociations'   =>  $campainAssociations,
             'oldCampainAssociations' => $oldCampainAssociations,
-            'nbSentEmailsCount'     => $nbSentEmailsCount,
-            'nbAssoCount'           => $stat->calculateNbAssoCount(),
+            'stat' => $stat,
         ]);
     }
 

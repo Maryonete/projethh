@@ -48,9 +48,17 @@ h2 {
 }
 
 /* Buttons */
+a {
+  text-decoration: none;
+}
 a.btn,
 button.btn {
   color: white;
+}
+a.btn.btn-light,
+button.btn.btn-light {
+  color: #253a6d;
+  border: #253a6d 1px solid;
 }
 
 .btn.btn-primary {
@@ -105,4 +113,7 @@ button.btn {
 
 .field-errors li {
   list-style-type: none; /* Remove bullets */
+}
+.bg-red-100 {
+  background-color: #fee2e2; /* Valeur correspondante à bg-red-100 dans Tailwind CSS */
 }

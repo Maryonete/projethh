@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %} {% block title %} Modifier Texte Personnalisé
+pour Toutes les Associations {% endblock %} {% block javascripts %}
+
+<script src="/bundles/tinymce/ext/tinymce/tinymce.min.js"></script>
+{{ parent() }}
+<script>
+  tinymce.init({
+    selector: "textarea",
+    plugins: "image lists link anchor charmap ",
+    toolbar:
+      "blocks | bold italic bullist numlist | link image charmap | custombutton",
+    menubar: false,
+  });
+</script>
+{% endblock %} {% block body %}
+<div class="container">
+  <h1>
+    Modifier le texte toutes les Associations -
+    {{ campain.libelle }}
+  </h1>
+  {{ form_start(form) }}
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Association</th>
+        <th style="width: 50%">Texte personnalisé (Campagne en cours)</th>
+        <th>Texte personnalisé (Ancienne campagne)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for campainAssociation in campainAssociations %}
+      <tr>
+        <td>{{ campainAssociation.association.libelle }}</td>
+        <td>
+          {{ form_widget(form['texte_personnalise' ~ campainAssociation.association.id]) }}
+        </td>
+        <td>
+          {% for oldCampainAssociation in oldCampainAssociations %} {% if
+          oldCampainAssociation.association == campainAssociation.association %}
+          {{ oldCampainAssociation.textepersonnalise | raw }}
+          {% endif %} {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="col-md-12">
+    <div class="row mt-3">
+      <div class="col-12 text-center">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+{{ form_end(form) }}
+{% endblock %}
