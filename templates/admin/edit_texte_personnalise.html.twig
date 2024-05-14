@@ -30,6 +30,10 @@ javascripts %}
           'referent' %} par le référent {% elseif campAsso.updatedby ==
           'administrateur' %} par l'administrateur {% endif %} {% endif %} {%
           endif %}
+
+          {% if campAsso.emails is not empty %}
+            <br> Email envoyé à : {{campAsso.emails}}
+          {% endif %}
         </div>
         <div class="row p-2 mb-4 bg-light rounded-3">
           {{ form_start(form) }}

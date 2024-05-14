@@ -34,10 +34,12 @@ class AdminController extends AbstractController
             }
             $stat['nbSentEmailsCount'] = $statsCalculator->calculateSentEmailsCount($campain->getId());
             $stat['nbAssoValidateFormCount'] = $statsCalculator->calculateNbAssoValidateFormCount($campain->getId());
+
             $stat['percentAssoValidateFormCount'] =
                 ($stat['nbSentEmailsCount'] > 0) ?
                 ($stat['nbAssoValidateFormCount'] * 100 / $stat['nbSentEmailsCount'])
                 : 0;
+            $stat['nbAssoEnAttenteValidateForm'] = $stat['nbSentEmailsCount'] - $stat['nbAssoValidateFormCount'];
         }
         return $this->render('admin/index.html.twig', [
             'listAsso'              =>  $assoRepo->findAll(),

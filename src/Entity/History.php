@@ -9,6 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: HistoryRepository::class)]
 class History
 {
+    public const CREATED = 'CREATED';
+    public const DELETED = 'DELETED';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

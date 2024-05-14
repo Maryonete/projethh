@@ -52,7 +52,7 @@ class Association
         cascade: ['persist', 'remove']
     )]
     #[ORM\JoinColumn(nullable: true)]
-    private ?Referent $referent;
+    private ?Referent $referent = null;
 
     /**
      * @var Collection<int, CampainAssociation>
@@ -201,11 +201,13 @@ class Association
 
     public function setPresident(?President $president): static
     {
-        if ($this->president !== null and $this->president !== $president) {
+        if ($this->president !== null && $this->president !== $president) {
             $this->president->setAssociation(null);
         }
         $this->president = $president;
-
+        if ($president !== null) {
+            $this->president->setAssociation($this);
+        }
         return $this;
     }
 
@@ -254,9 +256,10 @@ class Association
      *
      * @return  self
      */
+    // Dans votre classe Association
     public function setReferent($referent): self
     {
-        if ($this->referent !== null and $this->referent !== $referent) {
+        if ($this->referent !== null && $this->referent !== $referent) {
             $this->referent->setAssociation(null);
         }
 

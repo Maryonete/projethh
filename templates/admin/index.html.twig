@@ -4,7 +4,7 @@
   <h1>MODULE D'AIDE POUR LA COLLECTE DE DON</h1>
 </div>
 
-<div class="container px-4 py-2" id="featured-3">
+<div class="container px-4 py-2">
   {% if campain is not empty %}
   <div class="row">
     <div class="col-8">
@@ -15,22 +15,9 @@
         {{ campain.libelle }}
       </h2>
     </div>
-    <div class="col-4 text-end">
-      <a
-        href="{{
-          path('asso_editAllTextePersonnalise', {
-            id: campain.id
-          })
-        }}"
-        title="Lien maj textes association"
-        class="btn btn-light btn-sm"
-      >
-        Mise à jour de tous les textes
-      </a>
-    </div>
   </div>
-  <div class="row p-5 mb-4 bg-light rounded-3">
-    <div class="col-md-6 mx-2">
+  <div class="row p-3 mb-4 bg-light rounded-3">
+    <div class="col-md-7 mx-2">
       <b>Emails</b><br />destinataires : {% for destinataire in
       campain.destinataire %} {{ destinataire }}, {% endfor %} <br />envoyés le
       {{ campain.datesend|date('d/m/Y')  }}
@@ -54,16 +41,98 @@
         </div>
       </div>
     </div>
+    <div class="col-4">
+      <a
+        href="{{
+          path('asso_editAllTextePersonnalise', {
+            id: campain.id
+          })
+        }}"
+        title="Lien maj textes association"
+        class=""
+        ><i class="fa-solid fa-caret-right"></i>
+        Mise à jour de tous les textes personnalisés
+      </a>
+      {% if stat.nbAssoEnAttenteValidateForm > 0 %}
+      <br /><a href="#" title="Lien maj textes association" class=""
+        ><i class="fa-solid fa-caret-right"></i>
+        Relancer par mail les associations en attentes
+      </a>
+      {% endif %} {% if stat.nbAssoValidateFormCount > 0 %}
+      <br /><a href="#" title="Lien maj textes association" class=""
+        ><i class="fa-solid fa-caret-right"></i>
+        Visualiser les réponses
+      </a>
+      <br /><a href="#" title="Lien maj textes association" class=""
+        ><i class="fa-solid fa-caret-right"></i> Télécharger les réponses
+        <i class="fa-regular fa-file-excel"></i>
+      </a>
+      {% endif %}
+    </div>
     <!-- <div class="col-md-4 mx-2">
       <b>{{ stat.nbAssoCount }} Associations</b>
     </div> -->
   </div>
 
-  <div class="container">
-    <div class="table-responsive">
-      {{ include("admin/campains/_result_tab.html.twig") }}
+  <div class="container bg-light p-2 mb-4 bg-light rounded-3">
+    <div
+      class="accordion accordion-flush accordion-borderless"
+      id="accordionAsso"
+    >
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button
+            class="accordion-button bg-primary text-white collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseOne"
+            aria-expanded="false"
+            aria-controls="collapseOne"
+          >
+            {{ stat.nbAssoValidateFormCount > 0 ? (stat.nbAssoValidateFormCount > 1 ? stat.nbAssoValidateFormCount ~ ' associations' : stat.nbAssoValidateFormCount ~ ' association') : 'association' }}
+            ayant répondu
+          </button>
+        </h2>
+        <div
+          id="collapseOne"
+          class="accordion-collapse collapse"
+          data-bs-parent="#accordionOK"
+        >
+          <div class="accordion-body">
+            {{
+              include("admin/campains/_result_tab.html.twig", { repondu: "ok" })
+            }}
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button
+            class="accordion-button bg-secondary text-white collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseAttente"
+            aria-expanded="false"
+            aria-controls="collapseAttente"
+          >
+            {{ stat.nbAssoEnAttenteValidateForm > 0 ? (stat.nbAssoEnAttenteValidateForm > 1 ? stat.nbAssoEnAttenteValidateForm ~ ' associations' : stat.nbAssoEnAttenteValidateForm ~ ' association') : 'association' }}
+            en attente
+          </button>
+        </h2>
+        <div
+          id="collapseAttente"
+          class="accordion-collapse collapse"
+          data-bs-parent="#accordionOK"
+        >
+          <div class="accordion-body">
+            {{
+              include("admin/campains/_result_tab.html.twig", { repondu: "" })
+            }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-
 {% else %} pas de campagne en cours {% endif %} {% endblock %}

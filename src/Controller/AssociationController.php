@@ -48,17 +48,21 @@ class AssociationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $requestData = $request->request->all();
+
             // ajout president
             if ($association->getPresident() == null) {
                 $presidentData = $requestData['president_new'];
+                dump($presidentData);
                 if ($presidentData) {
                     // le president existe dejà
                     $otherPresident = $entityManager->getRepository(President::class)
                         ->findOneByEmail($presidentData['user']['email']);
                     if ($otherPresident) {
+                        dump($otherPresident);
                         // le president existe ET n'est pas rattaché à une association
                         if ($otherPresident->getAssociation() === null) {
                             $otherPresident->setAssociation($association);
+                            dump($otherPresident);
                             $entityManager->persist($otherPresident);
                             // Ajout du président à l'association
                             $association->setPresident($otherPresident);
@@ -86,8 +90,8 @@ class AssociationController extends AbstractController
                         $president->setUser($user);
                         $president->setFonction($presidentData['fonction']);
                         $president->setAssociation($association);
-                        $entityManager->persist($president);
                         $association->setPresident($president);
+                        $entityManager->persist($president);
                     }
                 }
             }
@@ -113,6 +117,7 @@ class AssociationController extends AbstractController
                     }
                 }
             }
+            dump($association);
             $entityManager->persist($association);
             $entityManager->flush();
 

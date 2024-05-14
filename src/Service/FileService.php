@@ -12,7 +12,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use App\Entity\{File, Association, Campains, Person, President, Referent, User};
+use App\Entity\{File, Association, Campains, History, Person, President, Referent, User};
 
 class FileService
 {
@@ -86,7 +86,6 @@ class FileService
         $this->entityManager->getConnection()->exec('SET FOREIGN_KEY_CHECKS=1'); // Re-enable foreign key checks
 
 
-
         // tableau d'user par email
         $listeEmailUser     = [];
 
@@ -136,6 +135,7 @@ class FileService
 
             $president->setAssociation($asso);
             $this->entityManager->persist($president);
+
             // Referent
             if ($assoData[13]) {
                 if (array_key_exists($assoData[13], $listeEmailUser)) {
@@ -152,9 +152,9 @@ class FileService
                 $referent = new Referent();
                 $referent->setTel($assoData[14]);
                 $referent->setUser($user);
-                $asso->setReferent($referent);
                 $referent->setAssociation($asso);
                 $this->entityManager->persist($referent);
+                $asso->setReferent($referent);
             }
 
 

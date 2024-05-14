@@ -76,17 +76,19 @@ class Referent
      */
     public function setAssociation(?Association $association): static
     {
-        // Si l'association est différente de null
-        if ($association !== null) {
-            // Vérifie si cette instance de président est déjà associée à l'association
-            if ($association->getReferent() !== $this) {
-                // Si ce n'est pas le cas, mettez cette instance de président comme président de l'association
-                $association->setReferent($this);
-            }
-        }
+
 
         // Met à jour la propriété d'association de ce président
         $this->association = $association;
+
+        // Si l'association est différente de null
+        // if ($association !== null) {
+        //     // Vérifie si cette instance de président est déjà associée à l'association
+        //     // if ($association->getReferent() !== $this) {
+        //     // Si ce n'est pas le cas, mettez cette instance de président comme président de l'association
+        //     $association->setReferent($this);
+        //     // }
+        // }
 
         return $this;
     }
