@@ -31,13 +31,13 @@
         <td>{{ asso.tel }}</td>
         <td>{{ asso.email }}</td>
         <td>
-          {% if asso.president is not empty %}
+          {% if asso.president is not null %}
           {{ asso.president.user.firstname }}
           {{ asso.president.user.lastname }}
           {% endif %}
         </td>
         <td>
-          {% if asso.referent is not empty %}
+          {% if asso.referent is not null %}
           {{ asso.referent.user.firstname }}
           {{ asso.referent.user.lastname }}
           {% endif %}

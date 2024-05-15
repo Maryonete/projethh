@@ -26,21 +26,33 @@ class HistoryListener
         if ($entity instanceof President || $entity instanceof Referent) {
             // Obtient l'ancienne instance de President ou Referent
             $oldEntity = null;
+            $role = "";
             if ($entity instanceof President) {
-                $oldEntity = $this->entityManager->getRepository(History::class)->findOneBy([
-                    'table_name' => 'App\Entity\President',
-                    'endDate' => null
-                ]);
+                $role = History::ROLE_PRESIDENT;
             } elseif ($entity instanceof Referent) {
-                $oldEntity = $this->entityManager->getRepository(History::class)->findOneBy([
-                    'table_name' => 'App\Entity\Referent',
-                    'endDate' => null
-                ]);
+                $role = History::ROLE_REFERENT;
             }
+            $oldEntity = $this->entityManager->getRepository(History::class)->findOneBy([
+                'role'    => $role,
+                'user'        =>  $entity->getUser(),
+                'endDate'       => null,
+            ]);
             // Vérifie s'il existe une ancienne instance
             if ($oldEntity !== null) {
                 $oldEntity->setEndDate(new \DateTime());
                 $this->entityManager->persist($oldEntity);
+                $this->entityManager->flush();
+            }
+            $association = $entity->getAssociation();
+            if ($association) {
+                // Crée une nouvelle instance de l'entité History
+                $history = new History();
+                $history->setRole($role);
+                $history->setStartDate(new \DateTime()); // Enregistrer la date de création
+                $history->setUser($entity->getUser());
+                $history->setAssociation($association);
+                // Enregistre l'entité History dans la base de données
+                $this->entityManager->persist($history);
                 $this->entityManager->flush();
             }
         }
@@ -57,33 +69,33 @@ class HistoryListener
             $association = $entity->getAssociation();
             // Obtient l'ancienne instance de President ou Referent
             $oldEntity = null;
+            $role = "";
             if ($entity instanceof President) {
-                $oldEntity = $this->entityManager->getRepository(History::class)->findOneBy([
-                    'association' => $association,
-                    'table_name' => 'App\Entity\President',
-                    'endDate' => null
-                ]);
+                $role = History::ROLE_PRESIDENT;
             } elseif ($entity instanceof Referent) {
-                $oldEntity = $this->entityManager->getRepository(History::class)->findOneBy([
-                    'association' => $association,
-                    'table_name' => 'App\Entity\Referent',
-                    'endDate' => null
-                ]);
+                $role = History::ROLE_REFERENT;
             }
+            $oldEntity = $this->entityManager->getRepository(History::class)->findOneBy([
+                'association' => $association,
+                'role' => $role,
+                'endDate' => null
+            ]);
             // Vérifie s'il existe une ancienne instance
             if ($oldEntity !== null) {
                 $oldEntity->setEndDate(new \DateTime());
                 $this->entityManager->persist($oldEntity);
             }
-            // Crée une nouvelle instance de l'entité History
-            $history = new History();
-            $history->setTableName(get_class($entity)); // Enregistrer le type d'entité
-            $history->setStartDate(new \DateTime()); // Enregistrer la date de création
-            $history->setRowId($entity->getId());
-            $history->setAssociation($association);
-            // Enregistre l'entité History dans la base de données
-            $this->entityManager->persist($history);
-            $this->entityManager->flush();
+            if ($association) {
+                // Crée une nouvelle instance de l'entité History
+                $history = new History();
+                $history->setRole($role);
+                $history->setStartDate(new \DateTime()); // Enregistrer la date de création
+                $history->setUser($entity->getUser());
+                $history->setAssociation($association);
+                // Enregistre l'entité History dans la base de données
+                $this->entityManager->persist($history);
+                $this->entityManager->flush();
+            }
         }
     }
 }

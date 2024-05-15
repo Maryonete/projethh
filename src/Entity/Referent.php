@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ReferentRepository;
 
 #[ORM\Entity(repositoryClass: ReferentRepository::class)]
+#[ORM\Table(name: 'referent')]
 class Referent
 {
     #[ORM\Id]
@@ -17,9 +18,6 @@ class Referent
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tel = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
 
     #[ORM\ManyToOne(
         targetEntity: "App\Entity\Association",
@@ -28,6 +26,9 @@ class Referent
     )]
     private ?Association $association = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
     public function __toString()
     {
@@ -58,7 +59,9 @@ class Referent
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
+        // if ($user !== null && $user->getReferent() !== $this) {
+        //     $user->setReferent($this);
+        // }
         return $this;
     }
     /**

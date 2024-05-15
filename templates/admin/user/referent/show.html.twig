@@ -38,6 +38,21 @@ body %}
                 <th>Tel</th>
                 <td>{{ referent.tel }}</td>
               </tr>
+              {% if historiesRef is not empty %}
+              <tr>
+                <th>Référent :</th>
+                <td>
+                  {% for history in historiesRef %} Association
+                  {{ history.association.getLibelle }}
+                  {% if history.startDate is not empty %} du
+                  {{ history.startDate|date('d-m-Y')  }}
+                  {% endif %} {% if history.endDate is not empty %} au
+                  {{ history.endDate|date('d-m-Y')  }}
+                  {% endif %} <br />
+                  {% endfor %}
+                </td>
+                {% endif %}
+              </tr>
             </tbody>
           </table>
         </div>

@@ -60,14 +60,11 @@ class Association
     #[ORM\OneToMany(targetEntity: CampainAssociation::class, mappedBy: 'association')]
     private Collection $campainAssociations;
 
-
     /**
      * @var Collection<int, History>
      */
     #[ORM\OneToMany(targetEntity: History::class, mappedBy: 'association', orphanRemoval: true)]
     private Collection $histories;
-
-
 
     public function __construct()
     {

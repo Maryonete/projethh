@@ -27,7 +27,7 @@ class PresidentController extends AbstractController
     }
     #[Route('/{id<[0-9]+>}', name: 'show', methods: ['GET'])]
     /**
-     * Visualiser les infos du president
+     * View president infos
      *
      * @param President $president
      * @return Response

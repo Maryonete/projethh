@@ -19,7 +19,7 @@ class AssociationController extends AbstractController
     public function listAsso(AssociationRepository $assoRepo): Response
     {
         return $this->render('admin/association/list.html.twig', [
-            'listAsso'  =>  $assoRepo->findAll([], ['code' => 'ASC'])
+            'listAsso'  =>  $assoRepo->findBy([], ['code' => 'ASC'])
         ]);
     }
 
@@ -44,6 +44,7 @@ class AssociationController extends AbstractController
         $form = $this->createForm(AssociationType::class, $association, [
             'current_association_id' => $association->getId(),
         ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -52,17 +53,14 @@ class AssociationController extends AbstractController
             // ajout president
             if ($association->getPresident() == null) {
                 $presidentData = $requestData['president_new'];
-                dump($presidentData);
                 if ($presidentData) {
                     // le president existe dejà
                     $otherPresident = $entityManager->getRepository(President::class)
                         ->findOneByEmail($presidentData['user']['email']);
                     if ($otherPresident) {
-                        dump($otherPresident);
                         // le president existe ET n'est pas rattaché à une association
                         if ($otherPresident->getAssociation() === null) {
                             $otherPresident->setAssociation($association);
-                            dump($otherPresident);
                             $entityManager->persist($otherPresident);
                             // Ajout du président à l'association
                             $association->setPresident($otherPresident);

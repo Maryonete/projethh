@@ -23,7 +23,61 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         parent::__construct($registry, User::class);
     }
+    public function findAllUserPresident()
+    {
+        return $this->createQueryBuilder('u')
+            ->leftJoin('App\Entity\President', 'p', 'WITH', 'u.id = p.user')
+            ->where('p.association IS NOT NULL') // Filtrer les présidents
+            ->getQuery()
+            ->getResult();
+    }
+    /** 
+     * list User non president d'une asso ou president de l'asso passée en param
+     */
+    public function findAllUserNonPresident($currentAssociationId)
+    {
+        dump($currentAssociationId);
+        $presidentUsers = $this->findAllUserPresident();
 
+        $qb = $this->createQueryBuilder('u')
+            ->andWhere('u NOT IN (:presidentUsers)')
+            // ->setParameter('currentAssociationId', $currentAssociationId)
+            ->setParameter('presidentUsers', $presidentUsers);
+        dump($qb->getQuery());
+        dump($presidentUsers);
+        return $qb->getQuery()
+            ->getResult();
+        // $qb = $this->createQueryBuilder('u');
+
+        // if ($currentAssociationId) {
+        //     $qb->leftJoin(
+        //         'App\Entity\President',
+        //         'p',
+        //         'WITH',
+        //         'u.id = p.user
+        //         AND (p.association IS NULL OR p.association = :currentAssociationId)'
+        //     )
+        //         ->setParameter('currentAssociationId', $currentAssociationId);
+        // } else {
+        //     $qb->leftJoin('App\Entity\President', 'p', 'WITH', 'u.id = p.user.id AND p.association IS NULL');
+        // }
+        // $qb->orderBy('u.lastname', 'ASC')
+        //     ->addOrderBy('u.firstname', 'ASC');
+        // 
+        // return $qb->getQuery()->getResult();
+    }
+    public function findAllUserNonReferent($currentAssociationId)
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        $qb->leftJoin('App\Entity\Referent', 'r', 'WITH', 'u.id = r.user')
+            ->where('r.association IS NULL OR r.association = :currentAssociationId')
+            ->setParameter('currentAssociationId', $currentAssociationId)
+            ->orderBy('u.lastname', 'ASC')
+            ->addOrderBy('u.firstname', 'ASC');
+
+        return $qb->getQuery()->getResult();
+    }
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
@@ -37,29 +91,4 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
-
-    //    /**
-    //     * @return User[] Returns an array of User objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?User
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }

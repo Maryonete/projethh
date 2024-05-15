@@ -3,10 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\PresidentRepository;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PresidentRepository::class)]
+#[ORM\Table(name: 'president')]
 class President
 {
     #[ORM\Id]

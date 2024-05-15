@@ -2,9 +2,11 @@
 # TODO https://yoandev.co/symfony-ux-autocomplete
 namespace App\Form;
 
+use App\Entity\User;
 use App\Entity\Referent;
 use App\Entity\President;
 use App\Entity\Association;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,8 +17,12 @@ use Symfony\Component\Form\Extension\Core\Type\{TextType, EmailType, TextareaTyp
 
 class AssociationType extends AbstractType
 {
+    public function __construct(private UserRepository $userRepository)
+    {
+    }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $currentAssociationId = $options['current_association_id'];
         $builder
             ->add('code', TextType::class, [
                 'attr' => [
@@ -128,27 +134,8 @@ class AssociationType extends AbstractType
                 ]
             ])
             ->add('president', EntityType::class, [
-                'class' => President::class,
-                'query_builder' => function (EntityRepository $er) use ($options) {
-                    $currentAssociationId = $options['current_association_id'];
-                    if ($currentAssociationId) {
-                        // Utilisez $currentAssociationId dans votre query_builder
-                        return $er->createQueryBuilder('p')
-                            ->leftJoin('p.user', 'u') // Jointure avec la table User associée
-                            // Jointure avec la table Association associée
-                            ->where('p.association IS NULL OR p.association = :currentAssociationId')
-                            ->setParameter('currentAssociationId', $currentAssociationId)
-                            ->orderBy('u.lastname', 'ASC') // Tri par nom de famille de l'utilisateur
-                            ->addOrderBy('u.firstname', 'ASC');
-                    } else {
-                        // Si $currentAssociationId est vide, retournez simplement les référents sans filtrage
-                        return $er->createQueryBuilder('p')
-                            ->leftJoin('p.user', 'u')
-                            ->where('p.association IS NULL ')
-                            ->orderBy('u.lastname', 'ASC') // Tri par nom de famille de l'utilisateur
-                            ->addOrderBy('u.firstname', 'ASC'); // Puis tri par prénom du référent
-                    }
-                },
+                'class'     => User::class,
+                'choices'   => $this->userRepository->findAllUserNonPresident($currentAssociationId),
                 'choice_label' => function ($president) {
                     return $president;
                 },

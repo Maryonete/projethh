@@ -57,13 +57,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $last_login_at = null;
 
-    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(
+        mappedBy: 'user',
+        cascade: ['persist', 'remove']
+    )]
     #[ORM\Column(nullable: true)]
     private ?President $president = null;
 
     #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
     #[ORM\Column(nullable: true)]
-    private Collection $referent;
+    private ?Referent $referent = null;
 
     /**
      * @var Collection<int, Logs>
@@ -71,12 +74,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Logs::class, mappedBy: 'user')]
     private Collection $logs;
 
+    /**
+     * @var Collection<int, History>
+     */
+    #[ORM\OneToMany(targetEntity: History::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $histories;
+
 
 
     public function __construct()
     {
         $this->logs = new ArrayCollection();
         $this->setPlainPassword('tttttttt');
+        $this->histories = new ArrayCollection();
     }
     public function __toString()
     {
@@ -232,14 +242,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setPresident(?President $president): static
     {
-        // set the owning side of the relation if necessary
-        if ($president->getUser() !== $this) {
-            $president->setUser($this);
+        // Vérifie si le président passé en argument est différent de l'actuel président
+        if ($president !== $this->president) {
+            // Vérifie si l'actuel président n'est pas null et s'il appartient à cet utilisateur
+            if ($this->president !== null && $this->president->getUser() === $this) {
+                // Désactive la relation entre cet utilisateur et l'ancien président
+                $this->president->setUser(null);
+            }
+
+            // Met à jour la relation avec le nouveau président
+            $this->president = $president;
+
+            // Vérifie si le nouveau président est différent de null et s'il n'a pas déjà cet utilisateur comme président
+            if ($president !== null && $president->getUser() !== $this) {
+                // Établit la relation entre le nouveau président et cet utilisateur
+                $president->setUser($this);
+            }
         }
-        $this->president = $president;
 
         return $this;
     }
+
 
     /**
      * Get the value of referent
@@ -277,6 +300,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword($plainPassword)
     {
         $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, History>
+     */
+    public function getHistories(): Collection
+    {
+        return $this->histories;
+    }
+
+    public function addHistory(History $history): static
+    {
+        if (!$this->histories->contains($history)) {
+            $this->histories->add($history);
+            $history->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHistory(History $history): static
+    {
+        if ($this->histories->removeElement($history)) {
+            // set the owning side to null (unless already changed)
+            if ($history->getUser() === $this) {
+                $history->setUser(null);
+            }
+        }
 
         return $this;
     }

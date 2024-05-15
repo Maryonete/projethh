@@ -50,7 +50,19 @@ class FileService
 
         return $filename;
     }
+    public function initDBTables(): void
+    {
+        $this->entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
+        $this->entityManager->createQuery('DELETE FROM App\Entity\Referent')->execute();
+        $this->entityManager->createQuery('DELETE FROM App\Entity\President')->execute();
+        $this->entityManager->createQuery('DELETE FROM App\Entity\Association')->execute();
+        $this->entityManager->createQuery('DELETE FROM App\Entity\History')->execute();
 
+        $this->entityManager->createQuery('DELETE FROM App\Entity\Campains')->execute();
+        $this->entityManager->createQuery('DELETE FROM App\Entity\CampainAssociation')->execute();
+        $this->entityManager->flush();
+        $this->entityManager->commit();
+    }
     /**
      * Vide la table passée en parametre
      *
@@ -60,8 +72,7 @@ class FileService
 
     public function importDataFromFile(String $file): void
     {
-        // Lire le contenu du fichier
-        $data = $this->getDataFile($file);
+
 
         // Vider la table avant l'importation des nouvelles données
         $this->entityManager->getConnection()->exec('SET FOREIGN_KEY_CHECKS=0');
@@ -69,30 +80,26 @@ class FileService
         $this->entityManager->beginTransaction();
 
         try {
-            $this->entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
-            $this->entityManager->createQuery('DELETE FROM App\Entity\Referent')->execute();
-            $this->entityManager->createQuery('DELETE FROM App\Entity\President')->execute();
-            $this->entityManager->createQuery('DELETE FROM App\Entity\Association')->execute();
-
-            $this->entityManager->createQuery('DELETE FROM App\Entity\Campains')->execute();
-            $this->entityManager->createQuery('DELETE FROM App\Entity\CampainAssociation')->execute();
-            $this->entityManager->flush();
-            $this->entityManager->commit();
+            $this->initDBTables();
+            $this->getData($file);
         } catch (\Exception $e) {
             $this->entityManager->rollback();
             throw $e;
         }
 
         $this->entityManager->getConnection()->exec('SET FOREIGN_KEY_CHECKS=1'); // Re-enable foreign key checks
-
-
+    }
+    public function getData(String $file): void
+    {
+        // Lire le contenu du fichier
+        $data = $this->getDataFile($file);
         // tableau d'user par email
         $listeEmailUser     = [];
 
         # #TODO creation admin !!
         $admin = new User();
         $admin->setEmail('test@test.fr');
-        $admin->setPassword($this->encoder->hashPassword($admin, 'test'));
+        $admin->setPlainPassword('test');
         $admin->setRoles(['ROLE_ADMIN']);
         $admin->setFirstname('test');
         $admin->setLastname('test');
@@ -121,7 +128,7 @@ class FileService
                 $user = $listeEmailUser[$assoData[10]];
             } else {
                 $user = new User();
-                $user->setPassword($this->encoder->hashPassword($user, 'test'));
+                // $user->setPassword($user, 'test');
                 $user->setFirstname($assoData[7]);
                 $user->setLastname($assoData[8]);
                 $user->setEmail($assoData[10]);
@@ -142,7 +149,7 @@ class FileService
                     $user = $listeEmailUser[$assoData[13]];
                 } else {
                     $user = new User();
-                    $user->setPassword($this->encoder->hashPassword($user, 'test'));
+                    // $user->setPassword('test');
                     $user->setFirstname($assoData[11]);
                     $user->setLastname($assoData[12]);
                     $user->setEmail($assoData[13]);
@@ -171,6 +178,7 @@ class FileService
             $campainAssociation = new CampainAssociation();
             $campainAssociation->setCampains($campain);
             $campainAssociation->setAssociation($asso);
+            $assoData[15] = html_entity_decode($assoData[15]);
             $campainAssociation->setTextePersonnalise($assoData[15]);
             $campainAssociation->setStatut('finish');
             $this->entityManager->persist($campainAssociation);
