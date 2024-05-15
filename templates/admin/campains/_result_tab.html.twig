@@ -109,17 +109,11 @@
           {{ campainAssociation.association.libelle }}
         </a>
       </td>
-      <td>
-        <i class="fas fa-envelope"></i> Envoyé
-        {{ campainAssociation.sendat 
-          ? 
-          campainAssociation.sendat|date('d/m/Y H:i') 
-          : ' - '
-        }}
-      </td>
+      <td>En attente</td>
 
       <td>
-        {{ campainAssociation.sendAt ? campainAssociation.sendAt|date('d/m/Y H:i') : 'Non envoyé' }}
+        <i class="fas fa-envelope"></i>
+        {{ campainAssociation.sendAt ? campainAssociation.sendAt|date('d/m/Y à H:i') : 'Non envoyé' }}
       </td>
 
       <td>

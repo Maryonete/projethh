@@ -38,84 +38,32 @@ class AssociationController extends AbstractController
         EntityManagerInterface $entityManager,
         Association $association = null
     ): Response {
-        if ($association === null) {
-            $association = new Association();
-        }
+        // Create a new association if none provided
+        $association = $association ?? new Association();
+
+        // Create the form for the association
         $form = $this->createForm(AssociationType::class, $association, [
             'current_association_id' => $association->getId(),
         ]);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $requestData = $request->request->all();
 
-            // ajout president
-            if ($association->getPresident() == null) {
-                $presidentData = $requestData['president_new'];
-                if ($presidentData) {
-                    // le president existe dejà
-                    $otherPresident = $entityManager->getRepository(President::class)
-                        ->findOneByEmail($presidentData['user']['email']);
-                    if ($otherPresident) {
-                        // le president existe ET n'est pas rattaché à une association
-                        if ($otherPresident->getAssociation() === null) {
-                            $otherPresident->setAssociation($association);
-                            $entityManager->persist($otherPresident);
-                            // Ajout du président à l'association
-                            $association->setPresident($otherPresident);
-                        } elseif ($otherPresident->getAssociation()->getId() !== $association->getId()) {
-                            $this->addFlash(
-                                'warning',
-                                'Une président d\'une autre association existe déjà avec cette adresse e-mail'
-                            );
-                            return $this->redirectToRoute(
-                                'edit',
-                                ['id' => $association],
-                                Response::HTTP_SEE_OTHER
-                            );
-                        }
-                    } else {
-                        //
-                        $user = new User();
-                        $user->setFirstname($presidentData['user']['firstname']);
-                        $user->setLastname($presidentData['user']['lastname']);
-                        $user->setEmail($presidentData['user']['email']);
-
-
-                        $entityManager->persist($user);
-                        $president = new President();
-                        $president->setUser($user);
-                        $president->setFonction($presidentData['fonction']);
-                        $president->setAssociation($association);
-                        $association->setPresident($president);
-                        $entityManager->persist($president);
-                    }
-                }
+            // Check if the association code already exists for another association
+            $existingAssociation =
+                $entityManager->getRepository(Association::class)
+                ->findOneByCode($association->getCode());
+            if ($existingAssociation && $existingAssociation->getId() !== $association->getId()) {
+                $this->addFlash('error', 'Le code association existe déjà pour une autre association.');
+                return $this->redirectToRoute('asso_edit', ['id' => $association->getId()], Response::HTTP_SEE_OTHER);
             }
-            if ($association->getReferent() == null) {
+            // Indicateur president logic
+            $this->handlePresident($association, $entityManager, $requestData);
 
-                if (isset($requestData['referent_new'])) {
-                    $referentData = $requestData['referent_new'];
+            // Indicateur referent logic
+            $this->handleReferent($association, $entityManager, $requestData);
 
-                    if ($referentData) {
-                        $user = new User();
-                        $user->setFirstname($referentData['user']['firstname']);
-                        $user->setLastname($referentData['user']['lastname']);
-                        $user->setEmail($referentData['user']['email']);
-                        $entityManager->persist($user);
-                        $referent = new Referent();
-                        $referent->setUser($user);
-                        $referent->setAssociation($association);
-                        $referent->setTel($referentData['tel']);
-                        $entityManager->persist($referent);
-                        // Ajout du referent à l'association
-                        $association->setreferent($referent);
-                        $entityManager->flush();
-                    }
-                }
-            }
-            dump($association);
             $entityManager->persist($association);
             $entityManager->flush();
 
@@ -126,6 +74,139 @@ class AssociationController extends AbstractController
             'association'   => $association,
             'form'          => $form,
         ]);
+    }
+
+    // Separate function to handle president creation/assignment
+    private function handlePresident(
+        Association $association,
+        EntityManagerInterface $entityManager,
+        array $requestData
+    ): void {
+
+        $presidentData = '';
+        if (!empty($requestData['association']['president'])) {
+            $presidentData = $requestData['association']['president'];
+        } else {
+            $presidentData = $requestData['president_new'];
+        }
+        if ($presidentData) {
+            $president = $this->createPresident($association, $entityManager, $presidentData);
+            $association->setPresident($president);
+        }
+    }
+
+    // Separate function to handle referent creation/assignment
+    private function handleReferent(
+        Association $association,
+        EntityManagerInterface $entityManager,
+        array $requestData
+    ): void {
+        $referentData = '';
+        if (!empty($requestData['association']['referent'])) {
+            $referentData = $requestData['association']['referent'];
+        } else {
+            $referentData = $requestData['referent_new'];
+        }
+        if ($referentData) {
+            $referent = $this->createReferent($association, $entityManager, $referentData);
+            $association->setReferent($referent);
+        }
+    }
+
+    // Function to create a president entity
+    private function createPresident(
+        Association $association,
+        EntityManagerInterface $entityManager,
+        $presidentData
+    ): ?President {
+        // Validation de l'entrée
+        if (is_string($presidentData) && ctype_digit($presidentData)) {
+            $userId = (int) $presidentData;
+            $user = $entityManager->getRepository(User::class)->findOneById($userId);
+
+            if (!$user) {
+                $this->addFlash('error', 'L\'identifiant utilisateur fourni est invalide.');
+                return $this->redirectToRoute('asso_edit', ['id' => $association->getId()], Response::HTTP_SEE_OTHER);
+            }
+            // Recherche d'un président existant pour cet utilisateur
+            $president = $entityManager->getRepository(President::class)->findOneByUser($user);
+            if ($president) {
+                if ($president->getAssociation() !== null && $president->getAssociation() !== $association) {
+                    $this->addFlash('error', 'Le président sélectionné est déjà associé à une association.');
+                    return $this->redirectToRoute('asso_edit', ['id' => $association->getId()], Response::HTTP_SEE_OTHER);
+                }
+                return $president; // Président existant, non affecté
+            }
+            // Création d'un nouveau président
+            $president = new President();
+            $president->setUser($user);
+            $president->setFonction("");
+        } else {
+            // Création d'un nouveau président avec les données fournies
+            $user = new User();
+            $user->setFirstname($presidentData['user']['firstname']);
+            $user->setLastname($presidentData['user']['lastname']);
+            $user->setEmail($presidentData['user']['email']);
+            $entityManager->persist($user);
+
+            $president = new President();
+            $president->setUser($user);
+            $president->setFonction($presidentData['fonction']);
+        }
+
+        $president->setAssociation($association);
+        $entityManager->persist($president);
+
+        return $president;
+    }
+
+    private function createReferent(
+        Association $association,
+        EntityManagerInterface $entityManager,
+        $referentData
+    ): Referent {
+        if (is_string($referentData) && ctype_digit($referentData)) {
+            $userId = (int) $referentData;
+            $user = $entityManager->getRepository(User::class)->findOneById($userId);
+
+            if (!$user) {
+                $this->addFlash('error', 'L\'identifiant utilisateur fourni pour le référent est invalide.');
+                return $this->redirectToRoute('asso_edit', ['id' => $association->getId()], Response::HTTP_SEE_OTHER);
+            }
+
+            // Recherche d'un referent existant pour cet utilisateur
+            $referent = $entityManager->getRepository(Referent::class)->findOneByUser($user);
+
+            if ($referent) {
+                if ($referent->getAssociation() !== null and $referent->getAssociation() != $association) {
+                    $this->addFlash('error', 'Le référent sélectionné est déjà associé à une association.');
+                    return $this->redirectToRoute('asso_edit', ['id' => $association->getId()], Response::HTTP_SEE_OTHER);
+                }
+
+                return $referent; // referent existant, non affecté
+            }
+
+            // Création d'un nouveau président
+            $referent = new Referent();
+            $referent->setUser($user);
+            $referent->setTel("");
+        } else {
+            $user = new User();
+            $user->setFirstname($referentData['user']['firstname']);
+            $user->setLastname($referentData['user']['lastname']);
+            $user->setEmail($referentData['user']['email']);
+            $entityManager->persist($user);
+
+            $referent = new Referent();
+            $referent->setUser($user);
+            $referent->setTel($referentData['tel']);
+            // Add referent to the association
+
+        }
+        $referent->setAssociation($association);
+        $association->setReferent($referent);
+        $entityManager->persist($referent);
+        return $referent;
     }
 
     #[Route('/{id<[0-9]+>}', name: 'delete', methods: ['POST'])]

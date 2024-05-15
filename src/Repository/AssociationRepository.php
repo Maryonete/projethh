@@ -20,14 +20,28 @@ class AssociationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Association::class);
     }
-    public function findAllAssociationReferentEmails(): array
+    /** retourne un tableau de tous les mails des referents de asso */
+    public function findAllAssociationReferentEmails(array $associations = []): array
     {
-        $query = $this->createQueryBuilder('a')
+
+
+        $queryBuilder = $this->createQueryBuilder('a')
             ->select('a.id, u.email')
             ->join('a.referent', 'r')
-            ->join('r.user', 'u')
-            ->getQuery();
+            ->join('r.user', 'u');
 
+        if (!empty($associations)) {
+            // Extraire les identifiants des associations
+            $associationIds = array_column($associations, 'id');
+
+            $queryBuilder
+                ->andWhere('r.association IN (:associations)')
+                ->setParameter('associations', $associationIds);
+        }
+
+        $query = $queryBuilder->getQuery();
+        dump($queryBuilder->getQuery());
+        // die;
         $results = $query->getResult();
 
         $emailsReferents = [];
@@ -35,16 +49,23 @@ class AssociationRepository extends ServiceEntityRepository
         foreach ($results as $result) {
             $emailsReferents[$result['id']] = $result['email'];
         }
+
         return $emailsReferents;
     }
-    public function findAllAssociationPresidentEmail(): array
+    /** retourne un tableau de tous les mails des presidents de asso */
+    public function findAllAssociationPresidentEmail(array $associations = []): array
     {
-        $query = $this->createQueryBuilder('a')
+        $queryBuilder = $this->createQueryBuilder('a')
             ->select('a.id, u.email')
             ->join('a.president', 'p')
-            ->join('p.user', 'u')
-            ->getQuery();
-
+            ->join('p.user', 'u');
+        if (!empty($associations)) {
+            $associationIds = array_column($associations, 'id');
+            $queryBuilder
+                ->andWhere('p.association IN (:associations)')
+                ->setParameter('associations', $associationIds);
+        }
+        $query = $queryBuilder->getQuery();
         $results = $query->getResult();
 
         $emailsPresidents = [];
@@ -54,6 +75,7 @@ class AssociationRepository extends ServiceEntityRepository
         }
         return $emailsPresidents;
     }
+
     /**
      * Retourne le nombre d'association enregistrée
      *

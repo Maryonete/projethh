@@ -3,11 +3,8 @@
 namespace App\Form;
 
 use App\Entity\User;
-use App\Entity\Referent;
-use App\Entity\President;
 use App\Entity\Association;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -23,11 +20,15 @@ class AssociationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $currentAssociationId = $options['current_association_id'];
+
+        if ($options["data"]) {
+            $currentAssociation = $options["data"];
+        }
         $builder
             ->add('code', TextType::class, [
                 'attr' => [
                     'class' => 'form-control',
-                    'minlength' => '2',
+                    'minlength' => '1',
                     'maxlength' => '10',
                 ],
                 'label'         =>  'Code asso',
@@ -134,54 +135,38 @@ class AssociationType extends AbstractType
                 ]
             ])
             ->add('president', EntityType::class, [
-                'class'     => User::class,
-                'choices'   => $this->userRepository->findAllUserNonPresident($currentAssociationId),
-                'choice_label' => function ($president) {
-                    return $president;
+                'class'         => User::class,
+                'choices'       => $this->userRepository->findAllUserNonPresident($currentAssociationId),
+                'choice_label'  =>  function ($user) {
+                    return $user->__toString();
                 },
-                'placeholder' => 'Sélectionner un(e) président(e)',
-                'attr' => ['class' => 'form-select'],
-                'required' => false,
+                'data' => ($currentAssociation && $currentAssociation->getPresident()) ?
+                    $currentAssociation->getPresident()->getUser() : null,
+                'placeholder'   => 'Sélectionner un(e) président(e)',
+                'attr'          => ['class' => 'form-select'],
+                'required'      => false,
+                'mapped' => false,
             ])
             ->add('referent', EntityType::class, [
-                'class'         => Referent::class,
-                'query_builder' => function (EntityRepository $er) use ($options) {
-                    $currentAssociationId = $options['current_association_id'];
-                    if ($currentAssociationId) {
-                        // Utilisez $currentAssociationId dans votre query_builder
-                        return $er->createQueryBuilder('r')
-
-                            ->leftJoin('r.user', 'u') // Jointure avec la table User associée
-                            // Jointure avec la table Association associée
-                            ->where('r.association IS NULL OR r.association = :currentAssociationId')
-                            ->setParameter('currentAssociationId', $currentAssociationId)
-                            ->orderBy('u.lastname', 'ASC') // Tri par nom de famille de l'utilisateur
-                            ->addOrderBy('u.firstname', 'ASC');
-                    } else {
-                        // Si $currentAssociationId est vide, retournez simplement les référents sans filtrage
-                        return $er->createQueryBuilder('r')
-                            ->leftJoin('r.user', 'u')
-                            ->where('r.association IS NULL ')
-                            ->orderBy('u.lastname', 'ASC') // Tri par nom de famille de l'utilisateur
-                            ->addOrderBy('u.firstname', 'ASC'); // Puis tri par prénom du référent
-                    }
+                'class'         => User::class,
+                'choices'       => $this->userRepository->findAllUserNonReferent($currentAssociationId),
+                'choice_label'  =>  function ($user) {
+                    return $user->__toString();
                 },
-
-                'choice_label' => function ($referent) {
-                    return $referent;
-                },
+                'data' => ($currentAssociation && $currentAssociation->getReferent()) ?
+                    $currentAssociation->getReferent()->getUser() : null,
+                'placeholder'   => 'Sélectionner un(e) référent(e)',
                 'attr'          => ['class' => 'form-select'],
-                'placeholder' => 'Sélectionner un(e) référent(e)',
-                'required' => false,
-
+                'required'      => false,
+                'mapped' => false,
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Association::class,
-            'current_association_id' => null,
+            'data_class'                => Association::class,
+            'current_association_id'    => null,
         ]);
     }
 }

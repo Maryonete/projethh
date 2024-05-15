@@ -14,15 +14,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Repository\HistoryRepository;
 
 #[Route('/president', name: 'president_')]
 class PresidentController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(PresidentRepository $presidentRepository): Response
-    {
+    public function index(
+        PresidentRepository $presidentRepository
+    ): Response {
         return $this->render('admin/user/president/index.html.twig', [
             'admin/user/presidents' => $presidentRepository->findAll(),
+
         ]);
     }
     #[Route('/{id<[0-9]+>}', name: 'show', methods: ['GET'])]
@@ -32,10 +35,18 @@ class PresidentController extends AbstractController
      * @param President $president
      * @return Response
      */
-    public function show(President $president): Response
+    public function show(President $president,  HistoryRepository $histoRepo): Response
     {
         return $this->render('admin/user/president/show.html.twig', [
             'president' => $president,
+            'historiesRef' => $histoRepo->findBy(
+                ['user' => $president->getUser(), 'role' => 'referent'],
+                ['startDate' => 'ASC']
+            ),
+            'historiesPres' => $histoRepo->findBy(
+                ['user' => $president->getUser(), 'role' => 'president'],
+                ['startDate' => 'ASC']
+            )
         ]);
     }
 

@@ -33,7 +33,7 @@ class Association
     private ?string $city = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private string $tel = '';
+    private ?string $tel = null;
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;
@@ -181,11 +181,11 @@ class Association
 
     public function removeCampainAssociation(CampainAssociation $campainAssociation): static
     {
-        if ($this->campainAssociations->removeElement($campainAssociation)) {
-            // set the owning side to null (unless already changed)
-            if ($campainAssociation->getAssociation() === $this) {
-                $campainAssociation->setAssociation(null);
-            }
+        if (
+            $this->campainAssociations->removeElement($campainAssociation)
+            && $campainAssociation->getAssociation() === $this
+        ) {
+            $campainAssociation->setAssociation(null);
         }
 
         return $this;
@@ -230,11 +230,8 @@ class Association
 
     public function removeHistory(History $history): static
     {
-        if ($this->histories->removeElement($history)) {
-            // set the owning side to null (unless already changed)
-            if ($history->getAssociation() === $this) {
-                $history->setAssociation(null);
-            }
+        if ($this->histories->removeElement($history) && $history->getAssociation() === $this) {
+            $history->setAssociation(null);
         }
 
         return $this;

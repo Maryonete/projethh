@@ -7,8 +7,16 @@ body %}
         {{ include("admin/campains/_buttons.html.twig") }}
         <div class="col-md-12">
           <h1>Détails de la Campagne {{ campain.libelle }}</h1>
-          {{ include("admin/campains/_result_tab.html.twig") }}
+          <h2>Liste des associations en attente</h2>
+          {{ include("admin/campains/_result_tab.html.twig", { repondu: "" }) }}
+        </div>
+        <hr />
 
+        <div class="col-md-12">
+          <h2>Liste des associations ayant répondues</h2>
+          {{
+            include("admin/campains/_result_tab.html.twig", { repondu: "ok" })
+          }}
           {{ include("admin/campains/_buttons.html.twig") }}
         </div>
       </div>

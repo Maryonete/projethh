@@ -54,7 +54,10 @@
         Mise à jour de tous les textes personnalisés
       </a>
       {% if stat.nbAssoEnAttenteValidateForm > 0 %}
-      <br /><a href="#" title="Lien maj textes association" class=""
+      <br /><a
+        href="{{ path('campains_replay', { id: campain.id }) }}"
+        title="Lien maj textes association"
+        class=""
         ><i class="fa-solid fa-caret-right"></i>
         Relancer par mail les associations en attentes
       </a>

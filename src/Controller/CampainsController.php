@@ -99,8 +99,8 @@ class CampainsController extends AbstractController
         // verifie si toutes les données necessaires à l'email sont renseignees
         if (
             $campain->getObjetEmail() === null
-            or $campain->getTexteEmail() === null
-            or $campain->getDestinataire() === null
+            || $campain->getTexteEmail() === null
+            || $campain->getDestinataire() === null
         ) {
             $this->addFlash('warning', 'Vous devez renseigner tous les champs nécessaires');
             return $this->redirectToRoute('campains_edit', ['id' => $campain->getId()]);
@@ -119,6 +119,49 @@ class CampainsController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'La campagne a été envoyée avec succès.');
+
+        return $this->redirectToRoute('campains_result', ['id' => $campain->getId()], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/replay/{id<[0-9]+>}', name: 'replay', methods: ['GET', 'POST'])]
+    /**
+     * Envoie email pour campagne avec token
+     *
+     * @param Request $request
+     * @param Campains $campain
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function campains_replay(
+        Campains $campain,
+        EntityManagerInterface $entityManager,
+        CampainAssociationRepository $campainAssoRepo,
+        CampainEmailSender $campainEmailSender
+    ): Response {
+        // verifie si toutes les données necessaires à l'email sont renseignees
+        if (
+            $campain->getObjetEmail() === null
+            || $campain->getTexteEmail() === null
+            || $campain->getDestinataire() === null
+        ) {
+            $this->addFlash('warning', 'Vous devez renseigner tous les champs nécessaires');
+            return $this->redirectToRoute('campains_edit', ['id' => $campain->getId()]);
+        }
+        $associationsenAttente = array_map(function ($campainAssociation) {
+            return $campainAssociation->getAssociation();
+        }, $campainAssoRepo->findBy([
+            'statut' => 'send',
+            'campains' => $campain
+        ]));
+
+        $campainEmailSender->sendEmailToDestinataires($campain, $associationsenAttente);
+
+        // Mettre à jour le statut de la campagne pour indiquer qu'elle a été envoyée
+        // $campain->setDateSend(new \DateTime());
+        $entityManager->persist($campain);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La campagne a été renvoyée avec succès.');
 
         return $this->redirectToRoute('campains_result', ['id' => $campain->getId()], Response::HTTP_SEE_OTHER);
     }

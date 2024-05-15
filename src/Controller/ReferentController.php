@@ -30,7 +30,15 @@ class ReferentController extends AbstractController
 
         return $this->render('admin/user/referent/show.html.twig', [
             'referent' => $referent,
-            'historiesRef'  => $histoRepo->findReferentByUser($referent->getUser())
+            'historiesRef' => $histoRepo->findBy(
+                ['user' => $referent->getUser(), 'role' => 'referent'],
+                ['startDate' => 'ASC']
+            ),
+            'historiesPres' => $histoRepo->findBy(
+                ['user' => $referent->getUser(), 'role' => 'president'],
+                ['startDate' => 'ASC']
+            )
+
         ]);
     }
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]

@@ -23,60 +23,71 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         parent::__construct($registry, User::class);
     }
-    public function findAllUserPresident()
+    public function findAllUserPresident($currentAssociationId)
     {
-        return $this->createQueryBuilder('u')
-            ->leftJoin('App\Entity\President', 'p', 'WITH', 'u.id = p.user')
-            ->where('p.association IS NOT NULL') // Filtrer les présidents
-            ->getQuery()
-            ->getResult();
+        $req =  $this->createQueryBuilder('u')
+            ->leftJoin('App\Entity\President', 'p', 'WITH', 'u.id = p.user');
+
+        if ($currentAssociationId) {
+            $req->where('p.association IS NOT NULL AND p.association <> :currentAssociationId')
+                ->setParameter('currentAssociationId', $currentAssociationId);
+        } else {
+            $req->where('p.association IS NOT NULL');
+        }
+
+        return $req->getQuery()->getResult();
     }
-    /** 
-     * list User non president d'une asso ou president de l'asso passée en param
+    /**
+     * lister User non president d'une asso ou president de l'asso passée en param
      */
     public function findAllUserNonPresident($currentAssociationId)
     {
-        dump($currentAssociationId);
-        $presidentUsers = $this->findAllUserPresident();
+        $presidentUsers = $this->findAllUserPresident($currentAssociationId);
 
         $qb = $this->createQueryBuilder('u')
             ->andWhere('u NOT IN (:presidentUsers)')
-            // ->setParameter('currentAssociationId', $currentAssociationId)
-            ->setParameter('presidentUsers', $presidentUsers);
-        dump($qb->getQuery());
-        dump($presidentUsers);
-        return $qb->getQuery()
-            ->getResult();
-        // $qb = $this->createQueryBuilder('u');
-
-        // if ($currentAssociationId) {
-        //     $qb->leftJoin(
-        //         'App\Entity\President',
-        //         'p',
-        //         'WITH',
-        //         'u.id = p.user
-        //         AND (p.association IS NULL OR p.association = :currentAssociationId)'
-        //     )
-        //         ->setParameter('currentAssociationId', $currentAssociationId);
-        // } else {
-        //     $qb->leftJoin('App\Entity\President', 'p', 'WITH', 'u.id = p.user.id AND p.association IS NULL');
-        // }
-        // $qb->orderBy('u.lastname', 'ASC')
-        //     ->addOrderBy('u.firstname', 'ASC');
-        // 
-        // return $qb->getQuery()->getResult();
-    }
-    public function findAllUserNonReferent($currentAssociationId)
-    {
-        $qb = $this->createQueryBuilder('u');
-
-        $qb->leftJoin('App\Entity\Referent', 'r', 'WITH', 'u.id = r.user')
-            ->where('r.association IS NULL OR r.association = :currentAssociationId')
-            ->setParameter('currentAssociationId', $currentAssociationId)
+            ->setParameter('presidentUsers', $presidentUsers)
+            ->andWhere('u.roles NOT LIKE :adminRole')
+            ->setParameter('adminRole', '%ROLE_ADMIN%')
             ->orderBy('u.lastname', 'ASC')
             ->addOrderBy('u.firstname', 'ASC');
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+
+    public function findAllUserReferent($currentAssociationId)
+    {
+        $req =  $this->createQueryBuilder('u')
+            ->leftJoin('App\Entity\Referent', 'p', 'WITH', 'u.id = p.user');
+
+        if ($currentAssociationId) {
+            $req->where('p.association IS NOT NULL AND p.association <> :currentAssociationId')
+                ->setParameter('currentAssociationId', $currentAssociationId);
+        } else {
+            $req->where('p.association IS NOT NULL');
+        }
+
+        return $req->getQuery()->getResult();
+    }
+    /**
+     * lister User non referent d'une asso ou referent de l'asso passée en param
+     */
+    public function findAllUserNonReferent($currentAssociationId)
+    {
+        $referentUsers = $this->findAllUserReferent($currentAssociationId);
+
+        $qb = $this->createQueryBuilder('u')
+            ->andWhere('u NOT IN (:referentUsers)')
+            ->setParameter('referentUsers', $referentUsers)
+            ->andWhere('u.roles NOT LIKE :adminRole')
+            ->setParameter('adminRole', '%ROLE_ADMIN%')
+            ->orderBy('u.lastname', 'ASC')
+            ->addOrderBy('u.firstname', 'ASC');
+
+        return $qb->getQuery()
+            ->getResult();
     }
     /**
      * Used to upgrade (rehash) the user's password automatically over time.

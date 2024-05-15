@@ -48,63 +48,82 @@ class CampainEmailSender
     /**
      * Lien personnalisé
      *
-     * @param Association $association
      * @return string
      */
-    private function genererLienPersonnalise(Association $association): string
+    private function genererLienPersonnalise(): string
     {
         // Générer une chaîne de caractères aléatoire
         return bin2hex(random_bytes(16)); // Génère une chaîne hexadécimale de 16 octets aléatoires
     }
 
-    public function sendEmailToDestinataires(Campains $campain)
-    {
-        // Récupérer les destinataires sélectionnés de la campagne
+    public function sendEmailToDestinataires(
+        Campains $campain,
+        $associations = []
+    ) {
         $destinataires = $campain->getDestinataire();
-        $emailsDestinataires = [];
-        // die;
-        // Vérifier s'il y a des destinataires sélectionnés
+
         if (!empty($destinataires)) {
-            // liste des emails
+            $emailsPresidents = [];
+            $emailsReferents = [];
+
+            // Retrieve emails based on selected destinataires
             foreach ($destinataires as $destinataire) {
-                if ($destinataire === "presidents") {
-                    $emailsPresidents = $this->assoRepo->findAllAssociationPresidentEmail();
-                }
-                if ($destinataire === "referents") {
-                    $emailsReferents = $this->assoRepo->findAllAssociationReferentEmails();
+                switch ($destinataire) {
+                    case "presidents":
+                        $emailsPresidents = $this->assoRepo->findAllAssociationPresidentEmail($associations);
+                        break;
+                    case "referents":
+                        $emailsReferents = $this->assoRepo->findAllAssociationReferentEmails($associations);
+                        break;
+                    default:
+                        // Handle unknown destinataires
+                        break;
                 }
             }
-            // liste de toutes les associations
-            $listeAsso = $this->assoRepo->findAll();
-            $listeEmails = "";
+            dump($associations);
+            // die;
+            $listeAsso = $associations ?? $this->assoRepo->findAll();
+
             foreach ($listeAsso as $association) {
-                // Créer l'e-mail contenenant le token personnalisé pour l'association
                 $token = $this->genererLienPersonnalise($association);
                 $email = $this->createEmail($campain, $token);
-                $destinataire = "";
-                if (in_array('presidents', $destinataires)) {
-                    $destinataire = $emailsPresidents[$association->getId()];
-                }
-                if (in_array('referents', $destinataires)) {
-                    if (isset($emailsReferents[$association->getId()])) {
-                        $destinataire .= ', ' . $emailsReferents[$association->getId()];
-                    }
-                }
+                $destinataire =
+                    $this->getDestinataireEmails(
+                        $association,
+                        $destinataires,
+                        $emailsPresidents,
+                        $emailsReferents
+                    );
 
                 $this->createCampainAssociation($campain, $destinataire, $association, $token);
 
-                // Envoyer l'e-mail à chaque destinataire sélectionné
-                // $email->to($destinataire);
-                $email->to('maryonete26@gmail.com');
-                $listeEmails .= $destinataire . ', ';
-                // $this->mailer->send($email);
-
+                $email->to('maryonete26@gmail.com'); // Temporarily hardcoded email for testing
+                //$email->to($destinataire);
+                //$this->mailer->send($email);
             }
-            // Envoyer un e-mail récapitulatif
-            //$email = $this->createEmail($campain);
-            //$this->createEmailRecap($email, $listeEmails, $campain->getEmailCc());
+
+            //$this->createEmailRecap($campain, $listeEmails); // Uncomment when needed
         }
     }
+
+    private function getDestinataireEmails($association, $destinataires, $emailsPresidents, $emailsReferents)
+    {
+        $destinataire = "";
+
+        if (in_array('presidents', $destinataires)) {
+            $destinataire = $emailsPresidents[$association->getId()] ?? '';
+        }
+
+        if (
+            in_array('referents', $destinataires)
+            && isset($emailsReferents[$association->getId()])
+        ) {
+            $destinataire .= ', ' . $emailsReferents[$association->getId()];
+        }
+
+        return $destinataire;
+    }
+
     private function createCampainAssociation(
         Campains $campain,
         string $email,
@@ -156,11 +175,5 @@ class CampainEmailSender
         //     dump(
         //         'Une erreur s\'est produite lors de l\'envoi de l\'e-mail récapitulatif : ' . $errorMessage
         //     );
-    }
-    private function sendEmail(Email $email, string $recipient): void
-    {
-        $email->to($recipient);
-        // Envoyer l'e-mail
-        $this->mailer->send($email);
     }
 }
