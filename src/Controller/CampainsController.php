@@ -50,6 +50,29 @@ class CampainsController extends AbstractController
             'oldCampainAssociations'    => $oldCampainAssociations,
         ]);
     }
+
+    #[Route('/responses/{campain<[0-9]+>}', name: 'responses', methods: ['GET', 'POST'])]
+    public function associations_responses(
+        Campains $campain,
+        CampainAssociationRepository $campainAssoRepo
+    ): Response {
+        $campainAssociations = $campainAssoRepo->findByCampains($campain);
+
+        $campainAssociations = $campainAssoRepo->findBy([
+            'statut' => 'updated',
+            'campains' => $campain
+        ]);
+        $oldCampainAssociations = "";
+        if ($campain->getOldcampain()) {
+            $oldCampainAssociations = $campainAssoRepo->findByCampains($campain->getOldcampain());
+        }
+
+        return $this->render('admin/campains/associations_responses.html.twig', [
+            'campain'                   => $campain,
+            'campainAssociations'       => $campainAssociations,
+            'oldCampainAssociations'    => $oldCampainAssociations,
+        ]);
+    }
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     #[Route('/{id<[0-9]+>}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(

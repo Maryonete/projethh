@@ -7,12 +7,15 @@ use Doctrine\DBAL\Connection;
 use App\Entity\CampainAssociation;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Doctrine\ORM\EntityManagerInterface;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use App\Entity\{File, Association, Campains, History, Person, President, Referent, User};
+use App\Entity\{Association, Campains,  President, Referent, User};
+use PhpParser\Node\Expr\Cast\String_;
 
 class FileService
 {
@@ -23,7 +26,7 @@ class FileService
         private string $upload_directory,
         private Filesystem $filesystem,
         private SluggerInterface $slugger,
-        private UserPasswordHasherInterface $encoder
+        private UserPasswordHasherInterface $encoder,
     ) {
     }
     public function upload(UploadedFile $file, ?string $directory = null): string
@@ -232,5 +235,69 @@ class FileService
             header('Content-Length: ' . filesize($file));
             readfile($file);
         }
+    }
+    public function generateCampainExcel(array $campainAsso)
+    {
+        // Création d'une instance de la classe Spreadsheet
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        // Ajout des en-têtes de colonnes
+        $sheet->setCellValue('A1', 'Code asso');
+        $sheet->setCellValue('B1', 'Association');
+        $sheet->setCellValue('C1', 'Adresse');
+        $sheet->setCellValue('D1', 'CP');
+        $sheet->setCellValue('E1', 'Ville');
+        $sheet->setCellValue('F1', 'Tél');
+        $sheet->setCellValue('G1', 'Email');
+        $sheet->setCellValue('H1', 'Prénom du président');
+        $sheet->setCellValue('I1', 'Nom du président');
+        $sheet->setCellValue('J1', 'Fonction du président');
+        $sheet->setCellValue('K1', 'Email du président');
+        $sheet->setCellValue('L1', 'Prénom du référent');
+        $sheet->setCellValue('M1', 'Nom du Référent');
+        $sheet->setCellValue('N1', 'Email du référent');
+        $sheet->setCellValue('O1', 'Téléphone du référent');
+        $sheet->setCellValue('P1', 'Texte personnalisé');
+        // Remplissage des données des associations
+        $row = 2;
+        $campagneLib = "";
+        /** @var CampainAssociation $camp */
+        foreach ($campainAsso as $camp) {
+            $campagneLib = $camp->getCampains()->getLibelle();
+            $sheet->setCellValue('A' . $row, $camp->getAssociation()->getCode());
+            $sheet->setCellValue('B' . $row, $camp->getAssociation()->getLibelle());
+            $sheet->setCellValue('C' . $row, $camp->getAssociation()->getAdress());
+            $sheet->setCellValue('D' . $row, $camp->getAssociation()->getCp());
+            $sheet->setCellValue('E' . $row, $camp->getAssociation()->getCity());
+            $sheet->setCellValue('F' . $row, $camp->getAssociation()->getTel());
+            $sheet->setCellValue('G' . $row, $camp->getAssociation()->getEmail());
+            $sheet->setCellValue('H' . $row, $camp->getAssociation()->getPresident()->getUser()->getFirstname());
+            $sheet->setCellValue('I' . $row, $camp->getAssociation()->getPresident()->getUser()->getLastname());
+            $sheet->setCellValue('J' . $row, $camp->getAssociation()->getPresident()->getFonction());
+            $sheet->setCellValue('K' . $row, $camp->getAssociation()->getPresident()->getUser()->getEmail());
+            if ($camp->getAssociation()->getReferent()) {
+                $sheet->setCellValue('L' . $row, $camp->getAssociation()->getReferent()->getUser()->getFirstname());
+                $sheet->setCellValue('M' . $row, $camp->getAssociation()->getReferent()->getUser()->getLastname());
+                $sheet->setCellValue('N' . $row, $camp->getAssociation()->getReferent()->getUser()->getEmail());
+                $sheet->setCellValue('O' . $row, $camp->getAssociation()->getReferent()->getTel());
+            }
+            $sheet->setCellValue('P' . $row, $camp->getTextePersonnalise());
+            // Ajoutez plus de colonnes si nécessaire avec les autres informations de l'association
+            $row++;
+        }
+
+        // Création d'un objet Writer pour générer le fichier XLSX
+        $writer = new Xlsx($spreadsheet);
+
+        // Définition du chemin du fichier
+        $filePath = $this->upload_directory . '/associations_' . date('d_m_Y') . '.xlsx';
+
+        // Enregistrement du fichier XLSX
+        $writer->save($filePath);
+        return $filePath;
+    }
+    public function getFileNameDownload(String $campainLib): String
+    {
+        return $this->slugger->slug($campainLib) . '_' . date('d_m_Y') . '-' . uniqid();
     }
 }

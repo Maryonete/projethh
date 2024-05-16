@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Campains;
+use App\Repository\CampainAssociationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -11,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Service\FileService;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\File;
+
 
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -35,10 +38,10 @@ class FileController extends AbstractController
         $form = $this->createFormBuilder(null, ['attr' => ['class' => 'your-form-class']])
             ->add('file', FileType::class, [
                 'label' => '<i class="fas fa-file-excel"></i> Fichier XLSX',
-                'label_html' => true, // Permet d'interpréter le HTML dans le label
-                'mapped' => false,
-                'required' => false,
-                'constraints' => [
+                'label_html'    => true, // Permet d'interpréter le HTML dans le label
+                'mapped'        => false,
+                'required'      => false,
+                'constraints'   => [
                     new NotBlank([
                         'message' => 'Veuillez sélectionner un fichier.',
                     ]),
@@ -90,16 +93,31 @@ class FileController extends AbstractController
         return $this->redirectToRoute('asso_home');
     }
 
+    #[Route('upload/{campain<[0-9]+>}', name: 'upload')]
+    public function telechargerExcel(
+        CampainAssociationRepository $campainAssoRepo,
+        FileService $fileService,
+        Campains $campain
+    ): Response {
+        // Récupération des associations depuis votre repository ou service
+        $campainAsso = $campainAssoRepo->findBy([
+            // 'statut' => 'send',
+            'campains' => $campain
+        ]);
+        $filePath = $fileService->generateCampainExcel($campainAsso);
+        $fileName = $fileService->getFileNameDownload($campain->getLibelle());
+        // Définir les en-têtes HTTP
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment;filename="' . $fileName . '.xlsx"');
+        $response->headers->set('Cache-Control', 'max-age=0');
 
-    /**
-     * telechargement fichier xlsx
-     */
-    // #[Route('download/{filepath}', name: 'download')]
-    // public function download_file(String $filepath, FileService $fileService): Response
-    // {
+        // Envoyer le contenu du fichier
+        $response->setContent(file_get_contents($filePath));
 
-    //     $fileService->downloadFile($filepath);
+        // Suppression du fichier temporaire après téléchargement
+        unlink($filePath);
 
-    //     return new Response();
-    // }
+        return $response;
+    }
 }

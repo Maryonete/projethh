@@ -6,6 +6,7 @@
 }
 // the ~ allows you to reference things in node_modules
 @import "~bootstrap/scss/bootstrap";
+
 /* Define base colors */
 $primary: #009ee0;
 $secondary: #253a6d;
@@ -22,9 +23,11 @@ h2 {
 }
 h1 {
   color: #00a0e9;
+  size: 2rem !important;
 }
 h2 {
   color: #253a6d;
+  size: 1.5rem !important;
 }
 
 /* Utility classes */
@@ -87,20 +90,6 @@ button.btn.btn-outline-primary:hover {
 .accordion-button::after {
   filter: invert(100%); /* Invert the colors of the icon */
   font-weight: bold;
-}
-
-/* Dividers */
-.b-example-divider {
-  height: 3rem;
-  background-color: rgba(0, 0, 0, 0.1);
-  border: solid rgba(0, 0, 0, 0.15);
-  border-top-width: medium;
-  border-right-width: medium;
-  border-bottom-width: medium;
-  border-left-width: medium;
-  border-width: 1px 0;
-  box-shadow: inset 0 0.5em 1.5em rgba(0, 0, 0, 0.1),
-    inset 0 0.125em 0.5em rgba(0, 0, 0, 0.15);
 }
 
 /* Error styles */

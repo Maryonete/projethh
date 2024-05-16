@@ -19,11 +19,12 @@
   <div class="row p-3 mb-4 bg-light rounded-3">
     <div class="col-md-7 mx-2">
       <b>Emails</b><br />destinataires : {% for destinataire in
-      campain.destinataire %} {{ destinataire }}, {% endfor %} <br />envoyés le
+      campain.destinataire %} {{ destinataire }}, {% endfor %} <br />Envoyé le
       {{ campain.datesend|date('d/m/Y')  }}
       <br />
       {{ stat.nbSentEmailsCount }} emails envoyés /
-      {{ stat.nbAssoValidateFormCount }} reponses
+      {{ stat.nbAssoValidateFormCount }}
+      {{ stat.nbAssoValidateFormCount > 2 ? "réponses" : "réponse" }}
 
       <div
         class="progress"
@@ -62,11 +63,25 @@
         Relancer par mail les associations en attentes
       </a>
       {% endif %} {% if stat.nbAssoValidateFormCount > 0 %}
-      <br /><a href="#" title="Lien maj textes association" class=""
+      <br /><a
+        href="{{
+          path('campains_responses', {
+            campain: campain.id
+          })
+        }}"
+        title="Lien maj textes association"
+        class=""
         ><i class="fa-solid fa-caret-right"></i>
         Visualiser les réponses
       </a>
-      <br /><a href="#" title="Lien maj textes association" class=""
+      <br /><a
+        href="{{
+          path('file_upload', {
+            campain: campain.id
+          })
+        }}"
+        title="Lien maj textes association"
+        class=""
         ><i class="fa-solid fa-caret-right"></i> Télécharger les réponses
         <i class="fa-regular fa-file-excel"></i>
       </a>

@@ -1,0 +1,177 @@
+{% extends 'base.html.twig' %} {% block title %}Campains{% endblock %} {% block
+body %}
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Détails de la Campagne {{ campain.libelle }}</h1>
+        </div>
+        <hr />
+
+        <div class="col-md-12">
+          <h2>Réponses des associations</h2>
+          <table
+            class="table table-striped table-hover sortTable w-100"
+            id="assoListOk"
+          >
+            <caption>
+              Liste des associations
+            </caption>
+            <thead>
+              <tr class="text-center">
+                <th scope="col">Code asso</th>
+                <th scope="col">Association</th>
+                <th scope="col">Date de réponse</th>
+                <th scope="col">A renseigné le questionnaire</th>
+                <th scope="col">Texte personnalisé</th>
+                <th scope="col">
+                  Texte personnalisé campagne {{ campain.oldcampain.libelle }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for campainAssociation in campainAssociations %} {% if
+              (campainAssociation.statut == 'updated') %}
+              <tr>
+                <td>{{ campainAssociation.association.code }}</td>
+                <td>
+                  <a
+                    href="{{
+                      path('asso_show', {
+                        id: campainAssociation.association.id
+                      })
+                    }}"
+                    title="Visualiser"
+                    alt="lien vers l'association"
+                  >
+                    {{ campainAssociation.association.libelle }}
+                  </a>
+                </td>
+                <td>
+                  {{ campainAssociation.updatedTextAt 
+                    ? 
+                    campainAssociation.updatedTextAt|date('d/m/Y H:i') 
+                    : ' - '
+                  }}
+                </td>
+                <td>
+                  {{
+                    campainAssociation.updatedby
+                      ? campainAssociation.updatedby == "referent"
+                        ? "référent"
+                        : "administrateur"
+                      : ""
+                  }}
+                </td>
+                <td class="text-center">
+                  <p class="d-inline-flex gap-1">
+                    <a
+                      class="btn btn-primary"
+                      data-bs-toggle="collapse"
+                      href="#collapseExample"
+                      role="button"
+                      aria-expanded="false"
+                      aria-controls="collapseExample"
+                    >
+                      <i class="fa fa-eye"></i>
+                    </a>
+                  </p>
+                  <div class="collapse" id="collapseExample">
+                    <div class="card card-body">
+                      {{ campainAssociation.textepersonnalise | raw }}
+                    </div>
+                  </div>
+                </td>
+                <td class="text-center">
+                  {% for oldCampainAssociation in oldCampainAssociations %} {%
+                  if oldCampainAssociation.association ==
+                  campainAssociation.association %} {% if
+                  oldCampainAssociation.textepersonnalise is not empty %}
+                  <p class="d-inline-flex gap-1">
+                    <a
+                      class="btn btn-primary"
+                      data-bs-toggle="collapse"
+                      href="#collapseExample"
+                      role="button"
+                      aria-expanded="false"
+                      aria-controls="collapseExample"
+                    >
+                      <i class="fa fa-eye"></i>
+                    </a>
+                  </p>
+                  <div class="collapse" id="collapseExample">
+                    <div class="card card-body">
+                      {{ oldCampainAssociation.textepersonnalise | raw }}
+                    </div>
+                  </div>
+
+                  {% else %} Non renseigné {%endif%} {% endif %} {% endfor %}
+                </td>
+                <td>
+                  <a
+                    href="{{
+                      path('asso_editTextePersonnalise', {
+                        id: campainAssociation.id
+                      })
+                    }}"
+                    class="flex-grow-1 mx-2"
+                    title="Lien pour association"
+                    ><i class="fas fa-pencil-alt"></i
+                  ></a>
+                </td>
+              </tr>
+              {% endif %} {% endfor %}
+            </tbody>
+          </table>
+          <div class="row mt-3">
+            <div class="d-flex justify-content-between col">
+              <a
+                href="{{ path('campains_index') }}"
+                class="btn btn-primary flex-grow-1 mx-2"
+                >Retour à la liste</a
+              >
+              {% if campain.valid == true %}
+              <a
+                href="{{
+                  path('asso_editAllTextePersonnalise', {
+                    id: campain.id
+                  })
+                }}"
+                class="btn btn-primary flex-grow-1 mx-2"
+                >Modifier tous les textes</a
+              >
+
+              {% endif %}
+
+              <!-- {{ include("admin/campains/_delete_form.html.twig") }} -->
+            </div>
+          </div>
+          <script>
+            $(document).ready(function () {
+              $("#assoListOk").DataTable({
+                order: [2, "asc"],
+                searching: true,
+                info: false,
+                paging: false,
+                language: {
+                  sSearch: "<i class='fas fa-search'></i>",
+                },
+                columns: [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  { orderable: false },
+                ],
+              });
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -14,24 +14,24 @@ pour Toutes les Associations {% endblock %} {% block javascripts %}
 </script>
 {% endblock %} {% block body %}
 <div class="container">
-  <h1>
-    Modifier le texte toutes les Associations -
-    {{ campain.libelle }}
-  </h1>
+  <h1>Modifier le texte toutes les Associations</h1>
+  <h2>{{ campain.libelle }}</h2>
   {{ form_start(form) }}
 
   <table class="table">
     <thead>
       <tr>
+        <th>Code asso</th>
         <th>Association</th>
         <th style="width: 50%">Texte personnalisé (Campagne en cours)</th>
-        <th>Texte personnalisé (Ancienne campagne)</th>
+        <th>Texte personnalisé ({{ campain.oldcampain.libelle }})</th>
       </tr>
     </thead>
     <tbody>
       {% for campainAssociation in campainAssociations %}
       <tr>
         <td>{{ campainAssociation.association.libelle }}</td>
+        <td>{{ campainAssociation.association.code }}</td>
         <td>
           {{ form_widget(form['texte_personnalise' ~ campainAssociation.association.id]) }}
         </td>
