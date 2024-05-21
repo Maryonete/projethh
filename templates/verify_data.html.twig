@@ -2,13 +2,25 @@
 endblock %} {% block javascripts %}
 {{ parent() }}
 <script src="/bundles/tinymce/ext/tinymce/tinymce.min.js"></script>
+
 <script>
-  tinymce.init({
-    selector: "textarea#campain_association_texte_personnalise",
-    plugins: "image lists link anchor charmap ",
-    toolbar:
-      "blocks | bold italic bullist numlist | link image charmap | custombutton",
-    menubar: false,
+  window.addEventListener("load", function () {
+    tinymce.init({
+      selector: "textarea#campain_association_texte_personnalise",
+      plugins: "image lists link anchor charmap ",
+      toolbar:
+        "blocks | bold italic bullist numlist | link image charmap | custombutton",
+      menubar: false,
+    });
+    // Ajout d'un gestionnaire d'événements pour le clic sur le bouton de confirmation
+    document
+      .querySelector("#confirmButton")
+      .addEventListener("click", function () {
+        // Redirection vers le lien spécifié dans le tag <a>
+        window.location.href = document.querySelector(
+          'a[title="pas de participation"]'
+        ).href;
+      });
   });
 </script>
 <div class="container">
@@ -38,6 +50,62 @@ endblock %} {% block javascripts %}
 </div>
 {% endif %}
 <div class="container">
+  <div class="bg-red-100 mb-4 p-2 text-center">
+    <a
+      href="{{
+        path('association_declineCampain', {
+          token: campAsso.token
+        })
+      }}"
+      title="pas de participation"
+      data-bs-toggle="modal"
+      data-bs-target="#confirmModal"
+      style="font-weight: bold"
+    >
+      Cliquez ici si vous ne souhaitez pas participer à cet appel aux dons
+    </a>
+
+    <!-- Modal de confirmation -->
+    <div
+      class="modal fade"
+      id="confirmModal"
+      tabindex="-1"
+      aria-labelledby="confirmModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmModalLabel">Confirmation</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <b>Attention, vous n'aurez plus accès au questionnaire. </b>
+            <br />Pour toute modification, veuillez contacter
+            <br />marketing@habitat-humanisme.org. <br /><br />
+            <b>Confirmez-vous ne pas vouloir participer à cette campagne ?</b>
+          </div>
+          <div class="modal-footer">
+            <!-- Bouton pour annuler -->
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Non
+            </button>
+            <!-- Bouton pour confirmer -->
+            <a href="#" class="btn btn-primary" id="confirmButton">Oui</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <main>
     <div class="card">
       <div class="card-body">

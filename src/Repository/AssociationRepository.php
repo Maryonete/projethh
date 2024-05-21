@@ -23,8 +23,6 @@ class AssociationRepository extends ServiceEntityRepository
     /** retourne un tableau de tous les mails des referents de asso */
     public function findAllAssociationReferentEmails(array $associations = []): array
     {
-
-
         $queryBuilder = $this->createQueryBuilder('a')
             ->select('a.id, u.email')
             ->join('a.referent', 'r')
@@ -40,8 +38,7 @@ class AssociationRepository extends ServiceEntityRepository
         }
 
         $query = $queryBuilder->getQuery();
-        dump($queryBuilder->getQuery());
-        // die;
+
         $results = $query->getResult();
 
         $emailsReferents = [];
@@ -65,9 +62,13 @@ class AssociationRepository extends ServiceEntityRepository
                 ->andWhere('p.association IN (:associations)')
                 ->setParameter('associations', $associationIds);
         }
-        $query = $queryBuilder->getQuery();
-        $results = $query->getResult();
 
+        $query = $queryBuilder->getQuery();
+
+
+        $results = $query->getResult();
+        dump('**');
+        dump($results);
         $emailsPresidents = [];
 
         foreach ($results as $result) {

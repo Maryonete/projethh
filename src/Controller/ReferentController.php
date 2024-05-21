@@ -73,22 +73,4 @@ class ReferentController extends AbstractController
             'form' => $form,
         ]);
     }
-
-    #[Route('/{id<[0-9]+>}', name: 'delete', methods: ['POST'])]
-    /**
-     * Delete Referent
-     *
-     * @param Request $request
-     * @param Referent $referent
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     */
-    public function delete(Request $request, Referent $referent, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $referent->getId(), $request->getPayload()->get('_token'))) {
-            $entityManager->remove($referent);
-            $entityManager->flush();
-        }
-        return $this->redirectToRoute('user', [], Response::HTTP_SEE_OTHER);
-    }
 }

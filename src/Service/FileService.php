@@ -75,8 +75,6 @@ class FileService
 
     public function importDataFromFile(String $file): void
     {
-
-
         // Vider la table avant l'importation des nouvelles données
         $this->entityManager->getConnection()->exec('SET FOREIGN_KEY_CHECKS=0');
 

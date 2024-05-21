@@ -99,10 +99,17 @@ class Campains
         return $this->campainAssociations;
     }
 
-    public function addCampainAssociation(CampainAssociation $campainAssociation): static
+    /**
+     * Add a campainAssociation to the campainAssociations collection.
+     *
+     * @param CampainAssociation $campainAssociation
+     * * @return $this
+     */
+    public function addCampainAssociation(CampainAssociation $campainAssociation): self
     {
         if (!$this->campainAssociations->contains($campainAssociation)) {
-            $this->campainAssociations->add($campainAssociation);
+            $this->campainAssociations[] = $campainAssociation;
+            // Optional: You might want to set the owning side of the association here
             $campainAssociation->setCampains($this);
         }
 

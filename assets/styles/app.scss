@@ -34,7 +34,9 @@ h2 {
 .bordercolor {
   border: $tertiary solid 1px;
 }
-
+.bg-custom-light-red {
+  background-color: #ffcccc;
+}
 .ml-5 {
   display: flex; /* Enable flexbox layout */
   margin-left: 1rem;

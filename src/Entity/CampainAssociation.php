@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: CampainAssociationRepository::class)]
 #[UniqueEntity(
     fields: ['campains', 'association'],
-    message: 'Une seule instance de CampainAssociation est autorisée 
+    message: 'Une seule instance de CampainAssociation est autorisée
     pour chaque association et campagne.'
 )]
 class CampainAssociation

@@ -209,16 +209,7 @@ class AssociationController extends AbstractController
         return $referent;
     }
 
-    #[Route('/{id<[0-9]+>}', name: 'delete', methods: ['POST'])]
-    public function delete(Request $request, Association $association, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $association->getId(), $request->getPayload()->get('_token'))) {
-            $entityManager->remove($association);
-            $entityManager->flush();
-        }
 
-        return $this->redirectToRoute('asso_list', [], Response::HTTP_SEE_OTHER);
-    }
 
     #[Route('/texte/{id<[0-9]+>}', name: 'editTextePersonnalise', methods: ['GET', 'POST'])]
     /**

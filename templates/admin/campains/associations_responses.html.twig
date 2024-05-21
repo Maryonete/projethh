@@ -1,4 +1,12 @@
-{% extends 'base.html.twig' %} {% block title %}Campains{% endblock %} {% block
+{% extends 'base.html.twig' %} {% block title %}Campains{% endblock %}
+{% block
+  javascripts %}
+  
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  {{ parent() }}
+  {% endblock %}
+
+{% block
 body %}
 <div class="container">
   <div class="card">
@@ -65,47 +73,61 @@ body %}
                   }}
                 </td>
                 <td class="text-center">
-                  <p class="d-inline-flex gap-1">
-                    <a
-                      class="btn btn-primary"
-                      data-bs-toggle="collapse"
-                      href="#collapseExample"
-                      role="button"
-                      aria-expanded="false"
-                      aria-controls="collapseExample"
-                    >
-                      <i class="fa fa-eye"></i>
-                    </a>
-                  </p>
-                  <div class="collapse" id="collapseExample">
-                    <div class="card card-body">
-                      {{ campainAssociation.textepersonnalise | raw }}
-                    </div>
-                  </div>
+                    <p class="d-inline-flex gap-1">
+                      <a href="#new{{ campainAssociation.id }}" 
+                      class="btn btn-primary" 
+                      data-bs-target="#new{{ campainAssociation.id }}" 
+                      data-bs-toggle="modal">
+                        <i class="fa fa-eye"></i>
+                      </a>
+                      <div class="modal fade" id="new{{ campainAssociation.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="modalLabelNew{{ campain.id }}"> {{ campain.libelle }}</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-start">
+                              {{ campainAssociation.textepersonnalise | raw }}
+                            </div>
+                            
+                          </div>
+                        </div>
+                      </div>
+                    </p>
                 </td>
                 <td class="text-center">
                   {% for oldCampainAssociation in oldCampainAssociations %} {%
                   if oldCampainAssociation.association ==
                   campainAssociation.association %} {% if
                   oldCampainAssociation.textepersonnalise is not empty %}
+
+                  
                   <p class="d-inline-flex gap-1">
-                    <a
-                      class="btn btn-primary"
-                      data-bs-toggle="collapse"
-                      href="#collapseExample"
-                      role="button"
-                      aria-expanded="false"
-                      aria-controls="collapseExample"
-                    >
+                    <a href="#old{{ oldCampainAssociation.id }}"
+                      data-bs-target="#old{{ oldCampainAssociation.id }}" 
+                      class="btn btn-primary" 
+                      data-bs-toggle="modal">
                       <i class="fa fa-eye"></i>
                     </a>
-                  </p>
-                  <div class="collapse" id="collapseExample">
-                    <div class="card card-body">
-                      {{ oldCampainAssociation.textepersonnalise | raw }}
+                    <div class="modal fade" 
+                      id="old{{ oldCampainAssociation.id }}" 
+                      aria-labelledby="modalLabelOld{{ oldCampainAssociation.id }}" 
+                      aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-scrollable">
+                        <div class="modal-content ">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="modalLabelOld{{ oldCampainAssociation.id }}"> {{ campain.oldcampain.libelle }}</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                    
+                          <div class="modal-body text-start">
+                            {{ oldCampainAssociation.textepersonnalise | raw }}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-
+                  </p>
                   {% else %} Non renseigné {%endif%} {% endif %} {% endfor %}
                 </td>
                 <td>
@@ -143,8 +165,6 @@ body %}
               >
 
               {% endif %}
-
-              <!-- {{ include("admin/campains/_delete_form.html.twig") }} -->
             </div>
           </div>
           <script>
@@ -174,4 +194,5 @@ body %}
     </div>
   </div>
 </div>
+
 {% endblock %}

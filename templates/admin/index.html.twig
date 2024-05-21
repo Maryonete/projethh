@@ -23,9 +23,16 @@
       {{ campain.datesend|date('d/m/Y')  }}
       <br />
       {{ stat.nbSentEmailsCount }} emails envoyés /
+      {{ stat.nbAssoReponseCount }}
+      {{ stat.nbAssoReponseCount > 1 ? "réponses" : "réponse" }}
+      {% if stat.nbAssoValidateFormCount>0 %} dont
       {{ stat.nbAssoValidateFormCount }}
-      {{ stat.nbAssoValidateFormCount > 2 ? "réponses" : "réponse" }}
-
+      {{
+        stat.nbAssoValidateFormCount > 1
+          ? "associations ne souhaitent pas participer"
+          : "association ne souhaite pas participer"
+      }}
+      {% endif %}
       <div
         class="progress"
         role="progressbar"
@@ -56,11 +63,11 @@
       </a>
       {% if stat.nbAssoEnAttenteValidateForm > 0 %}
       <br /><a
-        href="{{ path('campains_replay', { id: campain.id }) }}"
+        href="{{ path('campains_relance', { id: campain.id }) }}"
         title="Lien maj textes association"
         class=""
         ><i class="fa-solid fa-caret-right"></i>
-        Relancer par mail les associations en attentes
+        Relancer par mail les associations en attente
       </a>
       {% endif %} {% if stat.nbAssoValidateFormCount > 0 %}
       <br /><a
@@ -147,6 +154,36 @@
           </div>
         </div>
       </div>
+      {% if stat.nbAssoDeclinedFormCount %}
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button
+            class="accordion-button bg-danger text-white collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseDeclined"
+            aria-expanded="false"
+            aria-controls="collapseDeclined"
+          >
+            {{ stat.nbAssoDeclinedFormCount > 0 ? (stat.nbAssoDeclinedFormCount > 1 ? stat.nbAssoDeclinedFormCount ~ ' associations' : stat.nbAssoDeclinedFormCount ~ ' association') : 'association' }}
+            ne participe pas à la campagne
+          </button>
+        </h2>
+        <div
+          id="collapseDeclined"
+          class="accordion-collapse collapse"
+          data-bs-parent="#accordionOK"
+        >
+          <div class="accordion-body">
+            {{
+              include("admin/campains/_result_tab.html.twig", {
+                repondu: "declined"
+              })
+            }}
+          </div>
+        </div>
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>

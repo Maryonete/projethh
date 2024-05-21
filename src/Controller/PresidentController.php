@@ -87,26 +87,4 @@ class PresidentController extends AbstractController
             'form'      => $form,
         ]);
     }
-
-
-
-
-    #[Route('/{id<[0-9]+>}', name: 'delete', methods: ['POST'])]
-    /**
-     * Delete president
-     *
-     * @param Request $request
-     * @param President $president
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     */
-    public function delete(Request $request, President $president, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $president->getId(), $request->getPayload()->get('_token'))) {
-            $entityManager->remove($president);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('user', [], Response::HTTP_SEE_OTHER);
-    }
 }

@@ -24,7 +24,17 @@ endblock %} {% block body %} {% if app.session.flashbag is not empty %}
         <p class="col-lg-8 mx-auto fs-5 text-muted my-4">
           {% if campAsso.statut == 'updated' %} Fiche validée le
           {{  campAsso.updatedTextAt|date('d/m/Y') }}
-          à {{  campAsso.updatedTextAt|date('H:i') }} {% endif %}
+          à {{  campAsso.updatedTextAt|date('H:i') }} {% endif %} 
+          {% if campAsso.updatedBy == "referent" %}
+            {% if campAsso.association.referent is not empty %}
+              par {{ campAsso.association.referent.user.firstname}} {{ campAsso.association.referent.user.lastname}}
+            {% endif %}
+
+          {% elseif campAsso.statut == 'declined' %}
+          Nous avons bien enregistré votre décision de ne pas participer à cette campagne
+          {% endif %}
+
+
         </p>
         <div class=" gap-2 mb-5">
             <div class="mb-2"><strong> Pour tous changements, merci de contacter</strong></div>

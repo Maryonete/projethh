@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use TypeError;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user')]
@@ -54,8 +55,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(min: 2, max: 60)]
     private ?string $lastname = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $last_login_at = null;
 
     #[ORM\OneToOne(
         mappedBy: 'user',
@@ -68,11 +67,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?Referent $referent = null;
 
-    /**
-     * @var Collection<int, Logs>
-     */
-    #[ORM\OneToMany(targetEntity: Logs::class, mappedBy: 'user')]
-    private Collection $logs;
 
     /**
      * @var Collection<int, History>
@@ -84,7 +78,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->logs = new ArrayCollection();
         $this->setPlainPassword('tttttttt');
         $this->histories = new ArrayCollection();
     }
@@ -104,7 +97,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setEmail(string $email): static
     {
-        $this->email = $email;
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new TypeError('Format de l\'Email Incorrect');
+        } else {
+            $this->email = $email;
+        }
 
         return $this;
     }
@@ -128,7 +125,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
@@ -191,49 +188,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getLastLoginAt(): ?\DateTimeImmutable
-    {
-        return $this->last_login_at;
-    }
 
-    public function setLastLoginAt(?\DateTimeImmutable $last_login_at): static
-    {
-        $this->last_login_at = $last_login_at;
-
-        return $this;
-    }
-
-
-
-    /**
-     * @return Collection<int, Logs>
-     */
-    public function getLogs(): Collection
-    {
-        return $this->logs;
-    }
-
-    public function addLog(Logs $log): static
-    {
-        if (!$this->logs->contains($log)) {
-            $this->logs->add($log);
-            $log->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLog(Logs $log): static
-    {
-        if ($this->logs->removeElement($log)) {
-            // set the owning side to null (unless already changed)
-            if ($log->getUser() === $this) {
-                $log->setUser(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function getPresident(): ?President
     {

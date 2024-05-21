@@ -64,29 +64,15 @@ class CampainAssociationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
-
-    //    /**
-    //     * @return CampainAssociation[] Returns an array of CampainAssociation objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?CampainAssociation
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function countNbAssoDeclinedFormCount(int $campainId): int
+    {
+        return $this->createQueryBuilder('ca')
+            ->select('COUNT(ca.id)')
+            ->where('ca.campains = :campainId')
+            ->andwhere('ca.statut = :statut')
+            ->setParameter('campainId', $campainId)
+            ->setParameter('statut', 'declined')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

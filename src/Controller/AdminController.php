@@ -34,10 +34,13 @@ class AdminController extends AbstractController
             }
             $stat['nbSentEmailsCount'] = $statsCalculator->calculateSentEmailsCount($campain->getId());
             $stat['nbAssoValidateFormCount'] = $statsCalculator->calculateNbAssoValidateFormCount($campain->getId());
+            $stat['nbAssoDeclinedFormCount'] = $statsCalculator->calculateNbAssoDeclinedFormCount($campain->getId());
+            $stat['nbAssoReponseCount'] = $stat['nbAssoValidateFormCount']  + $stat['nbAssoDeclinedFormCount'];
+
 
             $stat['percentAssoValidateFormCount'] =
                 ($stat['nbSentEmailsCount'] > 0) ?
-                ($stat['nbAssoValidateFormCount'] * 100 / $stat['nbSentEmailsCount'])
+                ($stat['nbAssoReponseCount'] * 100 / $stat['nbSentEmailsCount'])
                 : 0;
             $stat['nbAssoEnAttenteValidateForm'] = $stat['nbSentEmailsCount'] - $stat['nbAssoValidateFormCount'];
         }
@@ -47,14 +50,6 @@ class AdminController extends AbstractController
             'campainAssociations'   =>  $campainAssociations,
             'oldCampainAssociations' => $oldCampainAssociations,
             'stat' => $stat,
-        ]);
-    }
-
-    #[Route('/user', name: 'user', methods: ['GET'])]
-    public function index_user(PresidentRepository $presidentRepository): Response
-    {
-        return $this->render('admin/user/index.html.twig', [
-            'presidents' => $presidentRepository->findAll(),
         ]);
     }
 }

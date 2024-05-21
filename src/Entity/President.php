@@ -90,12 +90,9 @@ class President
     public function setAssociation(?Association $association): static
     {
         // Si l'association est différente de null
-        if ($association !== null) {
-            // Vérifie si cette instance de président est déjà associée à l'association
-            if ($association->getPresident() !== $this) {
-                // Si ce n'est pas le cas, mettez cette instance de président comme président de l'association
-                $association->setPresident($this);
-            }
+        if ($association !== null && $association->getPresident() !== $this) {
+            // Si ce n'est pas le cas, mettez cette instance de président comme président de l'association
+            $association->setPresident($this);
         }
 
         // Met à jour la propriété d'association de ce président
