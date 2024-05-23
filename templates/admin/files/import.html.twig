@@ -3,23 +3,22 @@
 
 <div class="container">
   <div class="row justify-content-center">
-    <div class="col-md-12 bordercolor rounded-3 p-5">
-      <h1>
+    <div class="col-md-10 border rounded-3 p-5 shadow">
+      <h1 class="text-center mb-4">
         Importer la liste des associations<br />
-        à partir d'un fichier xlsx
+        à partir d'un fichier XLSX
       </h1>
 
       {{ form_start(form) }}
 
       {# Champ de dépôt de fichier avec Bootstrap #}
-      <div class="form-group row">
-        <label for="file" class="col-sm-2 col-form-label fas fa-file-excel"
-          >Fichier XLSX</label
-        >
-        <div class="col-sm-10">
-          {{ form_widget(form.file, {'attr': {'class': 'form-control-file'}}) }}
-          {{ form_errors(form.file) }}
-        </div>
+      <div class="mb-3">
+        <label for="form_file" class="form-label fs-5">
+          Fichier XLSX
+          <i class="fas fa-file-excel ms-2"></i>
+        </label>
+        {{ form_widget(form.file, {'attr': {'class': 'form-control-file'}}) }}
+        {{ form_errors(form.file) }}
       </div>
 
       {# Bouton de soumission #}
@@ -27,26 +26,34 @@
 
       {{ form_end(form) }}
 
-      <div class="card mt-5 bg-custom-light-red">
+      <div class="card mt-5 bg-light">
         <div class="card-body">
-          <h2 class="card-title">Préparation du fichier xlsx</h2>
-          <h6 class="card-subtitle my-2 text-body-secondary">
-            Assurez-vous que le fichier xlsx contienne les informations
+          <h2 class="card-title fs-4">Préparation du fichier XLSX</h2>
+          <h6 class="card-subtitle my-2 text-muted">
+            Assurez-vous que le fichier XLSX contienne les informations
             nécessaires sur les associations, avec les colonnes suivantes
             <b>dans l'ordre indiqué</b> :
           </h6>
-          <p class="card-text">
-            colonne 0 : Code association <br />colonne 1 : Libellé association
-            <br />colonne 2 : Adresse association <br />colonne 3 : Code Postal
-            association <br />colonne 4 : Ville association <br />colonne 5 :
-            Téléphone association <br />colonne 6 : Email association
-            <br />colonne 7 : Prénom du président <br />colonne 8 : Nom du
-            président <br />colonne 9 : Fonction du président <br />colonne 10 :
-            Email du président <br />colonne 11 : Prénom du référent
-            <br />colonne 12 : Nom du référent <br />colonne 13 : Email du
-            référent <br />colonne 14 : Téléphone du référent <br />colonne 15 :
-            Texte utilisé lors du précédent appel aux dons
-          </p>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">colonne 0 : Code association</li>
+            <li class="list-group-item">colonne 1 : Libellé association</li>
+            <li class="list-group-item">colonne 2 : Adresse association</li>
+            <li class="list-group-item">colonne 3 : Code Postal association</li>
+            <li class="list-group-item">colonne 4 : Ville association</li>
+            <li class="list-group-item">colonne 5 : Téléphone association</li>
+            <li class="list-group-item">colonne 6 : Email association</li>
+            <li class="list-group-item">colonne 7 : Prénom du président</li>
+            <li class="list-group-item">colonne 8 : Nom du président</li>
+            <li class="list-group-item">colonne 9 : Fonction du président</li>
+            <li class="list-group-item">colonne 10 : Email du président</li>
+            <li class="list-group-item">colonne 11 : Prénom du référent</li>
+            <li class="list-group-item">colonne 12 : Nom du référent</li>
+            <li class="list-group-item">colonne 13 : Email du référent</li>
+            <li class="list-group-item">colonne 14 : Téléphone du référent</li>
+            <li class="list-group-item">
+              colonne 15 : Texte utilisé lors du précédent appel aux dons
+            </li>
+          </ul>
         </div>
       </div>
     </div>

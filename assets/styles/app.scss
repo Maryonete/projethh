@@ -126,3 +126,19 @@ button.btn.btn-outline-primary:hover {
 .modal-content {
   background-color: white; /* Fond blanc pour le contenu de la modal */
 }
+
+.dashboard-card {
+  transition: transform 0.3s ease;
+}
+/* Dashborad admin */
+.dashboard-card:hover {
+  transform: scale(1.05);
+}
+
+.dashboard-icon {
+  font-size: 3rem;
+}
+
+.card-title {
+  margin-bottom: 0;
+}

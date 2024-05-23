@@ -3,11 +3,13 @@
 namespace App\Repository;
 
 use App\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\NonUniqueResultException;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -101,5 +103,22 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newHashedPassword);
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param string $role
+     * @return User[] Returns an array of User objects
+     */
+    public function findOneByRole(string $role): ?User
+    {
+        try {
+            return $this->createQueryBuilder('u')
+                ->andWhere('u.roles LIKE :role')
+                ->setParameter('role', '%"' . $role . '"%')
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NoResultException | NonUniqueResultException $e) {
+            return null;
+        }
     }
 }
