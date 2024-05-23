@@ -16,23 +16,38 @@
       </h2>
     </div>
   </div>
-  <div class="row p-3 mb-4 bg-light rounded-3">
-    <div class="col-md-7 mx-2">
-      <b>Emails</b><br />destinataires : {% for destinataire in
-      campain.destinataire %} {{ destinataire }}, {% endfor %} <br />Envoyé le
-      {{ campain.datesend|date('d/m/Y')  }}
-      <br />
-      {{ stat.nbSentEmailsCount }} emails envoyés /
-      {{ stat.nbAssoReponseCount }}
-      {{ stat.nbAssoReponseCount > 1 ? "réponses" : "réponse" }}
-      {% if stat.nbAssoValidateFormCount>0 %} dont
-      {{ stat.nbAssoValidateFormCount }}
-      {{
-        stat.nbAssoValidateFormCount > 1
-          ? "associations ne souhaitent pas participer"
-          : "association ne souhaite pas participer"
-      }}
-      {% endif %}
+  <div class="row p-2 mb-4 bg-light rounded-3">
+    <div class="col-md-6 mx-2">
+      <h4 class="mb-3"><strong> Statistiques</strong></h4>
+      <p>
+        <strong>Destinataires :</strong> {% for destinataire in
+        campain.destinataire %} {{ destinataire }}, {% endfor %}
+        <br />
+        <strong>Date d'envoi :</strong>
+        {{ campain.datesend|date('d/m/Y')  }}
+        <br />
+        <strong>Nombre d'emails envoyés :</strong> {{ stat.nbSentEmailsCount }}
+
+        <br />
+        <strong
+          >{{
+            stat.nbAssoReponseCount > 1 ? "Réponses reçues" : "Réponse reçue"
+          }}
+          :</strong
+        >
+        {{ stat.nbAssoReponseCount }}
+        {% if stat.nbAssoValidateFormCount>0 %}
+        <br />
+        <strong
+          >{{
+            stat.nbAssoValidateFormCount > 1 ? "Associations" : "Association"
+          }}
+          ne souhaitant pas participer :</strong
+        >
+
+        {{ stat.nbAssoValidateFormCount }}
+        {% endif %}
+      </p>
       <div
         class="progress"
         role="progressbar"
@@ -45,54 +60,66 @@
           class="progress-bar"
           style="width: {{ stat.percentAssoValidateFormCount }}%"
         >
-          {{ stat.percentAssoValidateFormCount }}%
+          <small class="text-white">
+            {{ stat.percentAssoValidateFormCount }}% de réponses reçues</small
+          >
         </div>
       </div>
     </div>
-    <div class="col-4">
-      <a
-        href="{{
-          path('asso_editAllTextePersonnalise', {
-            id: campain.id
-          })
-        }}"
-        title="Lien maj textes association"
-        class=""
-        ><i class="fa-solid fa-caret-right"></i>
-        Mise à jour de tous les textes personnalisés
-      </a>
-      {% if stat.nbAssoEnAttenteValidateForm > 0 %}
-      <br /><a
-        href="{{ path('campains_relance', { id: campain.id }) }}"
-        title="Lien maj textes association"
-        class=""
-        ><i class="fa-solid fa-caret-right"></i>
-        Relancer par mail les associations en attente
-      </a>
-      {% endif %} {% if stat.nbAssoValidateFormCount > 0 %}
-      <br /><a
-        href="{{
-          path('campains_responses', {
-            campain: campain.id
-          })
-        }}"
-        title="Lien maj textes association"
-        class=""
-        ><i class="fa-solid fa-caret-right"></i>
-        Visualiser les réponses
-      </a>
-      <br /><a
-        href="{{
-          path('file_upload', {
-            campain: campain.id
-          })
-        }}"
-        title="Lien maj textes association"
-        class=""
-        ><i class="fa-solid fa-caret-right"></i> Télécharger les réponses
-        <i class="fa-regular fa-file-excel"></i>
-      </a>
-      {% endif %}
+    <div class="col-md-5 ms-md-auto">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a
+            href="{{
+              path('asso_editAllTextePersonnalise', {
+                id: campain.id
+              })
+            }}"
+            title="Lien maj textes association"
+            class=""
+            ><i class="fa-solid fa-caret-right"></i>
+            Mise à jour de tous les textes personnalisés
+          </a>
+        </li>
+        {% if stat.nbAssoEnAttenteValidateForm > 0 %}
+        <li class="list-group-item">
+          <a
+            href="{{ path('campains_relance', { id: campain.id }) }}"
+            title="Renvoyer le mail aux associations"
+            class=""
+            ><i class="fa-solid fa-caret-right"></i>
+            Relancer par mail les associations en attente
+          </a>
+        </li>
+        {% endif %} {% if stat.nbAssoValidateFormCount > 0 %}
+        <li class="list-group-item">
+          <a
+            href="{{
+              path('campains_responses', {
+                campain: campain.id
+              })
+            }}"
+            title="Voir les réponses"
+            class=""
+            ><i class="fa-solid fa-caret-right"></i>
+            Visualiser les réponses
+          </a>
+        </li>
+        <li class="list-group-item">
+          <a
+            href="{{
+              path('file_upload', {
+                campain: campain.id
+              })
+            }}"
+            title="Télécharger toutes les réponses"
+            class=""
+            ><i class="fa-solid fa-caret-right"></i> Télécharger les réponses
+            <i class="fa-regular fa-file-excel"></i>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
     </div>
   </div>
 
@@ -122,7 +149,10 @@
         >
           <div class="accordion-body">
             {{
-              include("admin/campains/_result_tab.html.twig", { repondu: "ok" })
+              include("admin/campains/_result_tab.html.twig", {
+                repondu: "ok",
+                nbAssoValidateFormCount: 0
+              })
             }}
           </div>
         </div>
@@ -149,7 +179,10 @@
         >
           <div class="accordion-body">
             {{
-              include("admin/campains/_result_tab.html.twig", { repondu: "" })
+              include("admin/campains/_result_tab.html.twig", {
+                repondu: "",
+                nbAssoEnAttenteValidateForm: 0
+              })
             }}
           </div>
         </div>
@@ -177,7 +210,8 @@
           <div class="accordion-body">
             {{
               include("admin/campains/_result_tab.html.twig", {
-                repondu: "declined"
+                repondu: "declined",
+                nbAssoEnAttenteValidateForm: 0
               })
             }}
           </div>

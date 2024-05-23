@@ -118,3 +118,11 @@ button.btn.btn-outline-primary:hover {
 .bg-red-100 {
   background-color: #fee2e2; /* Valeur correspondante à bg-red-100 dans Tailwind CSS */
 }
+.fa-eye,
+.fa-redo {
+  color: blue; /* Couleur bleue pour l'icône */
+}
+
+.modal-content {
+  background-color: white; /* Fond blanc pour le contenu de la modal */
+}

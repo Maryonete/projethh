@@ -5,7 +5,7 @@ body %}
     <div class="card-body">
       <div class="row">
         <div class="col-md-10 offset-md-1">
-          <h1>Détail de la campagne</h1>
+          <h2 class="mb-4">Détail de la campagne</h2>
 
           <div class="row mb-3">
             <div class="col-3">
@@ -99,13 +99,14 @@ body %}
             class="btn btn-primary flex-grow-1 mx-2"
             >Modifier</a
           >
+          {% if campain.datesend is empty %}
           <a
             href="{{ path('campains_play', { id: campain.id }) }}"
             class="btn btn-primary flex-grow-1 mx-2"
             onclick="return confirm('L\'email sera envoyé à toutes les associations, voulez-vous continuer ?');"
             ><i class="fas fa-play"></i> Lancer la campagne</a
           >
-          {% endif %} {% if campain.datesend is not empty %}
+          {% endif %}{% endif %} {% if campain.datesend is not empty %}
           <a
             href="{{ path('campains_result', { id: campain.id }) }}"
             class="btn btn-primary flex-grow-1 mx-2"

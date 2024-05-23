@@ -13,12 +13,12 @@ body %}
     <div class="card-body">
       <div class="row">
         <div class="col-md-12">
-          <h1>Détails de la Campagne {{ campain.libelle }}</h1>
+          <h2 class="mb-4">Campagne {{ campain.libelle }}</h2>
         </div>
         <hr />
 
         <div class="col-md-12">
-          <h2>Réponses des associations</h2>
+          <h4>Réponses des associations</h4>
           <table
             class="table table-striped table-hover sortTable w-100"
             id="assoListOk"
@@ -72,10 +72,10 @@ body %}
                       : ""
                   }}
                 </td>
-                <td class="text-center">
+                <td class="text-center align-middle">
                     <p class="d-inline-flex gap-1">
                       <a href="#new{{ campainAssociation.id }}" 
-                      class="btn btn-primary" 
+                      class="btn" 
                       data-bs-target="#new{{ campainAssociation.id }}" 
                       data-bs-toggle="modal">
                         <i class="fa fa-eye"></i>
@@ -96,7 +96,7 @@ body %}
                       </div>
                     </p>
                 </td>
-                <td class="text-center">
+                <td class="text-center align-middle">
                   {% for oldCampainAssociation in oldCampainAssociations %} {%
                   if oldCampainAssociation.association ==
                   campainAssociation.association %} {% if
@@ -106,7 +106,7 @@ body %}
                   <p class="d-inline-flex gap-1">
                     <a href="#old{{ oldCampainAssociation.id }}"
                       data-bs-target="#old{{ oldCampainAssociation.id }}" 
-                      class="btn btn-primary" 
+                      class="btn" 
                       data-bs-toggle="modal">
                       <i class="fa fa-eye"></i>
                     </a>

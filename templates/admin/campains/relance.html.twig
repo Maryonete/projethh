@@ -28,84 +28,91 @@ block javascripts %}
 {% endblock %} {% block body %}
 
 <div class="container">
-  <h1>
-    Relance les associations par mail <br />campagne {{ campain.libelle }}
-  </h1>
-  <div class="container">
-    <div class="card">
-      <div class="card-body">
-        <div class="row g-5">
-          <div class="col-md-10">
-            {{ form_start(form) }}
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="mb-4">Campagne {{ campain.libelle }}</h2>
 
-            <div class="form-group row mb-3">
-              <div class="col-md-3">Date de début :</div>
-              <div class="col-md-3">
-                {{ campain.date|date('d-m-Y')  }}
-              </div>
+          {% if association %}
+          <h4>Relancer par mail l'association {{ association.libelle }}</h4>
+          {% else %}
+          <h4>Relance les associations par mail</h4>
+          {%endif %}
+          <hr />
+          {{ form_start(form) }}
+          <div class="row mb-3 mt-4">
+            <div class="col-md-3">Date de début :</div>
+            <div class="col-md-3">
+              {{ campain.date|date('d-m-Y')  }}
             </div>
-            <div class="form-group row mb-3">
-              <div class="col-md-3">Campagne précédente :</div>
-              <div class="col-md-9">
-                {{ campain.oldcampain.libelle }}
-              </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-3">Campagne précédente :</div>
+            <div class="col-md-9">
+              {{ campain.oldcampain.libelle }}
             </div>
+          </div>
 
-            <div class="form-group row mb-3">
-              <div class="col-md-3">
-                {{ form_label(form.destinataire) }}
-              </div>
-              <div class="col-md-8">
-                {{ form_widget(form.destinataire) }}
-                <div class="form-error">
-                  {{ form_errors(form.destinataire) }}
-                </div>
+          <div class="row mb-3">
+            <div class="col-md-3">
+              {{ form_label(form.destinataire) }}
+            </div>
+            <div class="col-md-9">
+              {{ form_widget(form.destinataire) }}
+              <div class="form-error">
+                {{ form_errors(form.destinataire) }}
               </div>
             </div>
+          </div>
 
-            <div class="form-group mb-3">
-              <div class="col-md-3">
-                {{ form_label(form.email_from) }}
-              </div>
-              <div class="col-md-5">
-                {{ form_widget(form.email_from) }}
-                <div class="form-error">{{ form_errors(form.email_from) }}</div>
-              </div>
+          <div class="row mb-3">
+            <div class="col-md-3">
+              {{ form_label(form.email_from) }}
             </div>
-            <div class="form-group mb-3">
-              <div class="col-md-3">
-                {{ form_label(form.email_cc) }}
-              </div>
-              <div class="col-md-5">
-                {{ form_widget(form.email_cc) }}
-                <div class="form-error">{{ form_errors(form.email_cc) }}</div>
+            <div class="col-md-5">
+              {{ form_widget(form.email_from) }}
+              <div class="form-error">
+                {{ form_errors(form.email_from) }}
               </div>
             </div>
-
-            <div class="form-group mb-3">
-              {{ form_label(form.objet_email) }}
-              {{ form_widget(form.objet_email) }}
-              <div class="form-error">{{ form_errors(form.objet_email) }}</div>
+          </div>
+          <div class="form-group mb-3">
+            <div class="col-md-3">
+              {{ form_label(form.email_cc) }}
             </div>
-
-            <div class="form-group mb-3">
-              {{ form_label(form.texte_email) }}
-              {{ form_widget(form.texte_email) }}
-              <div class="form-error">{{ form_errors(form.texte_email) }}</div>
+            <div class="col-md-5">
+              {{ form_widget(form.email_cc) }}
+              <div class="form-error">{{ form_errors(form.email_cc) }}</div>
             </div>
+          </div>
 
-            <div class="col-md-6 text-center">
-              <button type="submit" class="btn btn-primary">
-                Envoyer l'email
-              </button>
-
-              {{ form_end(form) }}
+          <div class="form-group mb-3">
+            {{ form_label(form.objet_email) }}
+            {{ form_widget(form.objet_email) }}
+            <div class="form-error">
+              {{ form_errors(form.objet_email) }}
             </div>
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form_label(form.texte_email) }}
+            {{ form_widget(form.texte_email) }}
+            <div class="form-error">
+              {{ form_errors(form.texte_email) }}
+            </div>
+          </div>
+
+          <div class="col-md-12 text-center">
+            <button type="submit" class="btn btn-primary">
+              Envoyer l'email
+            </button>
+
+            {{ form_end(form) }}
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
 {% endblock %}

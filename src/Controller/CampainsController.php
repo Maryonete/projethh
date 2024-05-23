@@ -4,14 +4,18 @@ namespace App\Controller;
 
 use App\Entity\Campains;
 use App\Form\CampainsType;
-use App\Repository\CampainAssociationRepository;
+use App\Entity\Association;
+use App\Service\StatsCalculator;
+use App\Entity\CampainAssociation;
+use App\Service\CampainEmailSender;
 use App\Repository\CampainsRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\AssociationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\CampainAssociationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Service\CampainEmailSender;
 
 #[Route('/campains', name: 'campains_')]
 class CampainsController extends AbstractController
@@ -39,23 +43,44 @@ class CampainsController extends AbstractController
             'campain' => $campain,
         ]);
     }
+    #[Route('/{campAsso<[0-9]+>}/reactivate', name: 'reactivate', methods: ['GET'])]
+    public function reactivate(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        CampainAssociation $campAsso
+    ): Response {
+        $campAsso->setStatut('send');
+        $entityManager->persist($campAsso);
+        $entityManager->flush();
+        $this->addFlash('success', 'La participation de l\'association a été réactivée avec succès.');
+        return $this->redirectToRoute('asso_home');
+    }
+
+
+
     /**
      * Affiche les résultats d'une campagne spécifique.
      */
     #[Route('/result/{id<[0-9]+>}', name: 'result', methods: ['GET', 'POST'])]
     public function result(
         Campains $campain,
-        CampainAssociationRepository $campainAssoRepo
+        CampainAssociationRepository $campainAssoRepo,
+        StatsCalculator $statsCalculator
     ): Response {
         $campainAssociations = $campainAssoRepo->findByCampains($campain);
         $oldCampainAssociations = "";
         if ($campain->getOldcampain()) {
             $oldCampainAssociations = $campainAssoRepo->findByCampains($campain->getOldcampain());
         }
+        $stat = $statsCalculator->calculateStats($campain, $campainAssoRepo);
+
         return $this->render('admin/campains/result.html.twig', [
-            'campain'                   => $campain,
-            'campainAssociations'       => $campainAssociations,
-            'oldCampainAssociations'    => $oldCampainAssociations,
+            'campain'                   =>  $campain,
+            'campainAssociations'       =>  $campainAssociations,
+            'oldCampainAssociations'    =>  $oldCampainAssociations,
+            'nbAssoEnAttenteValidateForm'   =>  $stat['nbAssoEnAttenteValidateForm'],
+            'nbAssoDeclinedFormCount'   =>  $stat['nbAssoDeclinedFormCount'],
+            'nbAssoValidateFormCount'   =>  $stat['nbAssoValidateFormCount'],
         ]);
     }
     /**
@@ -117,15 +142,25 @@ class CampainsController extends AbstractController
      *  relance campagne
      */
     #[Route('/{id<[0-9]+>}/relance', name: 'relance', methods: ['GET', 'POST'])]
+    #[Route('/{id<[0-9]+>}/relanceAsso/{associationId<[0-9]+>}', name: 'relanceAsso', methods: ['GET', 'POST'])]
+
     public function relance(
         Request $request,
         EntityManagerInterface $entityManager,
-        CampainsRepository $campainsRepository,
         CampainAssociationRepository $campainAssoRepo,
         Campains $campain,
-        CampainEmailSender $campainEmailSender
+        AssociationRepository $assoRepo,
+        CampainEmailSender $campainEmailSender,
+        ?int $associationId
     ): Response {
+        // Récupérer les informations de l'association à relancer
+        $associationId = $request->get('associationId');
+        $association = null;
 
+        if ($associationId) {
+            // Si un ID d'association est passé, récupérer les informations de cette association
+            $association = $assoRepo->find($associationId);
+        }
         $form = $this->createForm(
             CampainsType::class,
             $campain,
@@ -136,12 +171,14 @@ class CampainsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            return $this->handleCampain($campain, $entityManager, $campainEmailSender, $campainAssoRepo);
+
+            return $this->handleCampain($campain, $entityManager, $campainEmailSender, $campainAssoRepo, $association);
         }
 
         return $this->render('admin/campains/relance.html.twig', [
-            'campain'   => $campain,
-            'form'      => $form,
+            'campain'       => $campain,
+            'form'          => $form,
+            'association'   => $association,
         ]);
     }
     /**
@@ -160,8 +197,6 @@ class CampainsController extends AbstractController
     ): Response {
         return $this->handleCampain($campain, $entityManager, $campainEmailSender);
     }
-
-
     /**
      * Gère l'envoi de la campagne par email
      *
@@ -175,7 +210,8 @@ class CampainsController extends AbstractController
         Campains $campain,
         EntityManagerInterface $entityManager,
         CampainEmailSender $campainEmailSender,
-        CampainAssociationRepository $campainAssoRepo = null
+        CampainAssociationRepository $campainAssoRepo = null,
+        Association $association = null,
     ): Response {
         // Vérifie si toutes les données nécessaires à l'email sont renseignées
         if (
@@ -186,8 +222,9 @@ class CampainsController extends AbstractController
             $this->addFlash('warning', 'Vous devez renseigner tous les champs nécessaires');
             return $this->redirectToRoute('campains_edit', ['id' => $campain->getId()]);
         }
-
-        if ($campainAssoRepo) {
+        if ($association) {
+            $campainEmailSender->sendEmailToDestinataires($campain, [$association]);
+        } elseif ($campainAssoRepo) {
             $associationsenAttente = array_map(function ($campainAssociation) {
                 return $campainAssociation->getAssociation();
             }, $campainAssoRepo->findBy([

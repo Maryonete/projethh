@@ -39,4 +39,34 @@ class StatsCalculator
     {
         return $this->associationRepository->countAllUpdatedAssociations();
     }
+    public function calculateStats($campain, $campainAssoRepo)
+    {
+        $stat = [
+            'nbAssoCount'               => $this->calculateNbAssoCount(),
+            'nbSentEmailsCount'         => 0,
+            'nbAssoValidateFormCount'   => 0,
+            'nbAssoDeclinedFormCount'   => 0,
+            'nbAssoReponseCount'        => 0,
+            'percentAssoValidateFormCount' => 0,
+            'nbAssoEnAttenteValidateForm' => 0
+        ];
+
+        if ($campain) {
+            // Calcul des statistiques spécifiques à la campagne
+            $stat['nbSentEmailsCount'] = $this->calculateSentEmailsCount($campain->getId());
+            $stat['nbAssoValidateFormCount'] = $this->calculateNbAssoValidateFormCount($campain->getId());
+            $stat['nbAssoDeclinedFormCount'] = $this->calculateNbAssoDeclinedFormCount($campain->getId());
+            $stat['nbAssoReponseCount'] = $stat['nbAssoValidateFormCount'] + $stat['nbAssoDeclinedFormCount'];
+
+            $stat['percentAssoValidateFormCount'] = ($stat['nbSentEmailsCount'] > 0) ?
+                ($stat['nbAssoReponseCount'] * 100 / $stat['nbSentEmailsCount']) : 0;
+
+            $stat['nbAssoEnAttenteValidateForm']
+                = $stat['nbSentEmailsCount'] -
+                $stat['nbAssoValidateFormCount'] -
+                $stat['nbAssoDeclinedFormCount'];
+        }
+
+        return $stat;
+    }
 }
