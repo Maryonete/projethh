@@ -55,7 +55,7 @@ class AssociationController extends AbstractController
                 $entityManager->getRepository(Association::class)
                 ->findOneByCode($association->getCode());
             if ($existingAssociation && $existingAssociation->getId() !== $association->getId()) {
-                $this->addFlash('error', 'Le code association existe déjà pour une autre association.');
+                $this->addFlash('warning', 'Le code association existe déjà pour une autre association.');
                 return $this->redirectToRoute('asso_edit', ['id' => $association->getId()], Response::HTTP_SEE_OTHER);
             }
             // Indicateur president logic

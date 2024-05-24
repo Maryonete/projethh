@@ -97,14 +97,11 @@ class AdminController extends AbstractController
             /** @var User $admin */
             $admin = $userRepository->findOneByRole('ROLE_ADMIN');
             if ($hasher->isPasswordValid($admin, $form->getData()['plainPassword'])) {
-                $admin->setUpdatedAt(new \DateTimeImmutable());
                 $admin->setPlainPassword(
                     $form->getData()['newPassword']
                 );
                 $entityManager->flush();
-                $this->addFlash('success', 'Les modifications ont été enregistrées avec succès.');
-                dump('uuu');
-                die;
+                $this->addFlash('success', 'Le mot de passe a été modifié avec succès.');
                 return $this->redirectToRoute('asso_home');
             } else {
 
