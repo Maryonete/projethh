@@ -17,7 +17,7 @@
   </div>
 
   <div class="row p-2 mb-4 bg-light rounded-3">
-    <div class="col-md-6">
+    <div class="col-md-7">
       <h4 class="mb-3"><strong>Statistiques</strong></h4>
       <p>
         <strong>Destinataires :</strong> {% for destinataire in
@@ -68,7 +68,7 @@
         <li class="list-group-item">
           <a href="{{ path('campains_relance', { id: campain.id }) }}">
             <i class="fa-solid fa-caret-right me-1"></i>
-            Relancer par mail les associations en attente
+            Relancer par email les associations en attente
           </a>
         </li>
         {% endif %} {% if stat.nbAssoValidateFormCount > 0 %}
@@ -168,6 +168,10 @@
             aria-controls="collapseDeclined"
           >
             {% if stat.nbAssoDeclinedFormCount > 0 %}{{ stat.nbAssoDeclinedFormCount > 1 ? stat.nbAssoDeclinedFormCount ~ ' associations' : stat.nbAssoDeclinedFormCount ~ ' association'
+
+
+
+
 
 
 

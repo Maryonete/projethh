@@ -47,14 +47,13 @@ class CampainAssociationRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('ca')
             ->select(
-                'SUM(CASE WHEN ca.statut = :send THEN 1 ELSE 0 END) as sentEmailsCount',
+                'COUNT(ca.id) as sentEmailsCount',
                 'SUM(CASE WHEN ca.statut = :updated THEN 1 ELSE 0 END) as updatedCount',
                 'SUM(CASE WHEN ca.statut = :declined THEN 1 ELSE 0 END) as declinedCount',
                 'SUM(CASE WHEN ca.statut = :finish THEN 1 ELSE 0 END) as finishedCount'
             )
             ->where('ca.campains = :campainId')
             ->setParameter('campainId', $campainId)
-            ->setParameter('send', 'send')
             ->setParameter('updated', 'updated')
             ->setParameter('declined', 'declined')
             ->setParameter('finish', 'finish')
