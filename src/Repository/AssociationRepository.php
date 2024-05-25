@@ -26,7 +26,9 @@ class AssociationRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('a')
             ->select('a.id, u.email')
             ->join('a.referent', 'r')
-            ->join('r.user', 'u');
+            ->join('r.user', 'u')
+            ->where('a.status = :status')
+            ->setParameter('status', 'active');
 
         if (!empty($associations)) {
             // Extraire les identifiants des associations
@@ -55,7 +57,9 @@ class AssociationRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('a')
             ->select('a.id, u.email')
             ->join('a.president', 'p')
-            ->join('p.user', 'u');
+            ->join('p.user', 'u')
+            ->where('a.status = :status')
+            ->setParameter('status', 'active');
         if (!empty($associations)) {
             $associationIds = array_column($associations, 'id');
             $queryBuilder
@@ -67,8 +71,6 @@ class AssociationRepository extends ServiceEntityRepository
 
 
         $results = $query->getResult();
-        dump('**');
-        dump($results);
         $emailsPresidents = [];
 
         foreach ($results as $result) {
@@ -86,6 +88,8 @@ class AssociationRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('a')
             ->select('COUNT(a.id)')
+            ->where('a.status = :status')
+            ->setParameter('status', 'active')
             ->getQuery()
             ->getSingleScalarResult();
     }

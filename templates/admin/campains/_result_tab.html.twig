@@ -214,7 +214,6 @@
       <tr class="text-center">
         <th scope="col">Code asso</th>
         <th scope="col">Association</th>
-        <th scope="col">Statut</th>
         <th scope="col">Envoyé le</th>
         <th scope="col">Lien</th>
         <th scope="col">Relancer</th>
@@ -236,13 +235,12 @@
             {{ campainAssociation.association.libelle }}
           </a>
         </td>
-        <td>En attente</td>
-
         <td>
           <i class="fas fa-envelope"></i>
-          {{ campainAssociation.sendAt ? campainAssociation.sendAt|date('d/m/Y à H:i') : 'Non envoyé' }}
+          {{ campainAssociation.sendAt ?
+             campainAssociation.sendAt|date('d/m/Y à H:i') :
+              'Non envoyé' }}
         </td>
-
         <td>
           <a
             href="{{
@@ -298,7 +296,6 @@
         sSearch: "<i class='fas fa-search'></i>",
       },
       columns: [
-        null,
         null,
         null,
         null,

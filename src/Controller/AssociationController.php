@@ -9,7 +9,7 @@ use App\Repository\{AssociationRepository, CampainAssociationRepository};
 use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\{TextareaType, SubmitType};
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormFactoryInterface;
 
 #[Route('/association', name: 'asso_')]
@@ -19,7 +19,7 @@ class AssociationController extends AbstractController
     public function listAsso(AssociationRepository $assoRepo): Response
     {
         return $this->render('admin/association/list.html.twig', [
-            'listAsso'  =>  $assoRepo->findBy([], ['code' => 'ASC'])
+            'listAsso'  =>  $assoRepo->findBy([], ['code' => 'ASC']),
         ]);
     }
 
@@ -133,7 +133,11 @@ class AssociationController extends AbstractController
             if ($president) {
                 if ($president->getAssociation() !== null && $president->getAssociation() !== $association) {
                     $this->addFlash('error', 'Le président sélectionné est déjà associé à une association.');
-                    return $this->redirectToRoute('asso_edit', ['id' => $association->getId()], Response::HTTP_SEE_OTHER);
+                    return $this->redirectToRoute(
+                        'asso_edit',
+                        ['id' => $association->getId()],
+                        Response::HTTP_SEE_OTHER
+                    );
                 }
                 return $president; // Président existant, non affecté
             }
@@ -178,9 +182,13 @@ class AssociationController extends AbstractController
             $referent = $entityManager->getRepository(Referent::class)->findOneByUser($user);
 
             if ($referent) {
-                if ($referent->getAssociation() !== null and $referent->getAssociation() != $association) {
+                if ($referent->getAssociation() !== null && $referent->getAssociation() != $association) {
                     $this->addFlash('error', 'Le référent sélectionné est déjà associé à une association.');
-                    return $this->redirectToRoute('asso_edit', ['id' => $association->getId()], Response::HTTP_SEE_OTHER);
+                    return $this->redirectToRoute(
+                        'asso_edit',
+                        ['id' => $association->getId()],
+                        Response::HTTP_SEE_OTHER
+                    );
                 }
 
                 return $referent; // referent existant, non affecté
@@ -318,5 +326,57 @@ class AssociationController extends AbstractController
             'campain' => $campain,
             'oldCampainAssociations' => $oldCampainAssociations,
         ]);
+    }
+
+    #[Route('/{id<[0-9]+>}/markAsObsolete', name: 'markAsObsolete', methods: ['GET'])]
+    /**
+     * Marque une association comme obsolète.
+     * 
+     */
+    public function markAsObsolete(
+        EntityManagerInterface $entityManager,
+        $id
+    ): Response {
+        $association = $entityManager->getRepository(Association::class)->find($id);
+
+        if (!$association) {
+            throw $this->createNotFoundException('Association non trouvée');
+        }
+        $president = $association->getPresident();
+        if ($president) {
+            $president->setAssociation(null);
+        }
+        $referent = $association->getReferent();
+        if ($referent) {
+            $referent->setAssociation(null);
+        }
+        $association->setStatus('obsolete');
+
+        $entityManager->flush();
+
+
+        return $this->redirectToRoute('asso_list');
+    }
+    #[Route('/{id<[0-9]+>}/reactivate', name: 'reactivate', methods: ['GET'])]
+    /**
+     * Réactive une association obsolète.
+     * 
+     */
+    public function reactivate(
+        EntityManagerInterface $entityManager,
+        $id
+    ): Response {
+        $association = $entityManager->getRepository(Association::class)->find($id);
+
+        if (!$association) {
+            throw $this->createNotFoundException('Association non trouvée');
+        }
+
+        $association->setStatus('active');
+
+        $entityManager->flush();
+
+
+        return $this->redirectToRoute('asso_list');
     }
 }

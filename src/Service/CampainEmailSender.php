@@ -80,10 +80,7 @@ class CampainEmailSender
                         break;
                 }
             }
-            dump($associations);
-            // die;
-            $listeAsso = $associations ?? $this->assoRepo->findAll();
-
+            $listeAsso = (!empty($associations)) ? $associations : $this->assoRepo->findBy(['status' => 'active']);
             foreach ($listeAsso as $association) {
                 $token = $this->genererLienPersonnalise($association);
                 $email = $this->createEmail($campain, $token);

@@ -95,6 +95,7 @@
       class="accordion accordion-flush accordion-borderless"
       id="accordionAsso"
     >
+      {% if stat.nbAssoValidateFormCount > 0 %}
       <div class="accordion-item">
         <h2 class="accordion-header">
           <button
@@ -105,14 +106,15 @@
             aria-expanded="false"
             aria-controls="collapseOne"
           >
-            {% if stat.nbAssoValidateFormCount > 0 %}{{ stat.nbAssoValidateFormCount > 1 ? stat.nbAssoValidateFormCount ~ ' associations' : stat.nbAssoValidateFormCount ~ ' association'
-
-
-
-
-            }}{% else %}'association'{% endif %} ayant répondu
+            {% if stat.nbAssoValidateFormCount > 0 %}
+            {{ stat.nbAssoValidateFormCount > 1 ? 
+              stat.nbAssoValidateFormCount ~ ' associations' : 
+              stat.nbAssoValidateFormCount ~ ' association'
+            }}
+            {% else %}'association'{% endif %} ayant répondu
           </button>
         </h2>
+
         <div
           id="collapseOne"
           class="accordion-collapse collapse"
@@ -124,7 +126,7 @@
           </div>
         </div>
       </div>
-
+      {% endif %}
       <div class="accordion-item">
         <h2 class="accordion-header">
           <button
@@ -135,12 +137,12 @@
             aria-expanded="false"
             aria-controls="collapseAttente"
           >
-            {% if stat.nbAssoEnAttenteValidateForm > 0 %}{{ stat.nbAssoEnAttenteValidateForm > 1 ? stat.nbAssoEnAttenteValidateForm ~ ' associations' : stat.nbAssoEnAttenteValidateForm ~ ' association'
-
-
-
-
-            }}{% else %}'association'{% endif %} en attente
+            {% if stat.nbAssoEnAttenteValidateForm > 0 %}
+            {{ stat.nbAssoEnAttenteValidateForm > 1 ? 
+              stat.nbAssoEnAttenteValidateForm ~ ' associations' : 
+              stat.nbAssoEnAttenteValidateForm ~ ' association'
+            }}
+            {% else %}'association'{% endif %} en attente
           </button>
         </h2>
         <div
@@ -166,6 +168,16 @@
             aria-controls="collapseDeclined"
           >
             {% if stat.nbAssoDeclinedFormCount > 0 %}{{ stat.nbAssoDeclinedFormCount > 1 ? stat.nbAssoDeclinedFormCount ~ ' associations' : stat.nbAssoDeclinedFormCount ~ ' association'
+
+
+
+
+
+
+
+
+
+
 
 
 

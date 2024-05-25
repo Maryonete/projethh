@@ -66,6 +66,10 @@ class Association
     #[ORM\OneToMany(targetEntity: History::class, mappedBy: 'association', orphanRemoval: true)]
     private Collection $histories;
 
+    // Par défaut, l'association est active
+    #[ORM\Column(length: 255)]
+    private ?string $status = 'active';
+
     public function __construct()
     {
         $this->campainAssociations = new ArrayCollection();
@@ -261,6 +265,18 @@ class Association
         if ($referent !== null) {
             $referent->setAssociation($this);
         }
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

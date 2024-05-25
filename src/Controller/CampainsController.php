@@ -237,12 +237,11 @@ class CampainsController extends AbstractController
             $campainEmailSender->sendEmailToDestinataires($campain);
             $campain->setDateSend(new \DateTime());
         }
-
         $entityManager->persist($campain);
         $entityManager->flush();
 
         $this->addFlash('success', 'La campagne a été envoyée avec succès.');
 
-        return $this->redirectToRoute('campains_result', ['id' => $campain->getId()], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('asso_home', ['id' => $campain->getId()], Response::HTTP_SEE_OTHER);
     }
 }

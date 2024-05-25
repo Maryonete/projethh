@@ -39,7 +39,11 @@ class CampainAssociation
     #[ORM\JoinColumn(nullable: false)]
     private ?Campains $campains = null;
 
-    #[ORM\ManyToOne(targetEntity: Association::class, inversedBy: 'campainAssociations', fetch: "EAGER")]
+    #[ORM\ManyToOne(
+        targetEntity: Association::class,
+        inversedBy: 'campainAssociations',
+        fetch: "EAGER"
+    )]
     #[ORM\JoinColumn(nullable: false)]
     private ?Association $association = null;
 
