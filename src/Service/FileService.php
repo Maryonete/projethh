@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use DateTime;
+use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use App\Entity\CampainAssociation;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -10,12 +11,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Entity\{Association, Campains, President, Referent, User};
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use App\Entity\{Association, Campains,  President, Referent, User};
-use PhpParser\Node\Expr\Cast\String_;
 
 class FileService
 {
@@ -29,8 +30,11 @@ class FileService
         private UserPasswordHasherInterface $encoder,
     ) {
     }
-    public function upload(UploadedFile $file, ?string $directory = null): string
-    {
+
+    public function upload(
+        UploadedFile $file,
+        ?string $directory = null
+    ): string {
         $original_filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $original_extension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
         $safe_filename = $this->slugger->slug($original_filename);
@@ -41,84 +45,77 @@ class FileService
         try {
             $full_dir = $this->upload_directory . ($directory ? '/' . $directory : '');
 
-            $fs = new Filesystem();
-
-            if (!$fs->exists($full_dir)) {
-                $fs->mkdir($full_dir);
+            if (!$this->filesystem->exists($full_dir)) {
+                $this->filesystem->mkdir($full_dir);
             }
             $file->move($full_dir, $filename);
         } catch (\Exception $e) {
-            // renvoyer et gérer les erreur
+            // Renvoyer et gérer les erreurs
         }
 
         return $filename;
     }
+
+
     public function initDBTables(): void
     {
-        $this->entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
+        // Suppression des utilisateurs sauf ceux ayant le rôle ROLE_ADMIN
+
+        $sql = "DELETE FROM App\Entity\User u WHERE u.roles NOT LIKE '%ROLE_ADMIN%'";
+        $this->entityManager->createQuery($sql)->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\Referent')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\President')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\Association')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\History')->execute();
-
         $this->entityManager->createQuery('DELETE FROM App\Entity\Campains')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\CampainAssociation')->execute();
         $this->entityManager->flush();
-        $this->entityManager->commit();
     }
-    /**
-     * Vide la table passée en parametre
-     *
-     * @param string $tableName
-     * @return void
-     */
 
-    public function importDataFromFile(String $file): void
-    {
+    public function importDataFromFile(
+        String $file,
+        String $campaignLabel,
+        String $startDate
+    ): void {
         // Vider la table avant l'importation des nouvelles données
         $this->entityManager->getConnection()->exec('SET FOREIGN_KEY_CHECKS=0');
 
-        $this->entityManager->beginTransaction();
-
         try {
+            $this->entityManager->beginTransaction();
             $this->initDBTables();
-            $this->getData($file);
+            $this->getData($file, $campaignLabel, $startDate);
+            $this->entityManager->commit();
         } catch (\Exception $e) {
             $this->entityManager->rollback();
             throw $e;
         }
 
-        $this->entityManager->getConnection()->exec('SET FOREIGN_KEY_CHECKS=1'); // Re-enable foreign key checks
+        $this->entityManager->getConnection()->exec('SET FOREIGN_KEY_CHECKS=1');
     }
-    public function getData(String $file): void
-    {
+
+    public function getData(
+        String $file,
+        String $campaignLabel,
+        $startDate
+    ): void {
         // Lire le contenu du fichier
         $data = $this->getDataFile($file);
-        // tableau d'user par email
-        $listeEmailUser     = [];
 
-        # #TODO creation admin !!
-        $admin = new User();
-        $admin->setEmail('test@test.fr');
-        $admin->setPlainPassword('test');
-        $admin->setRoles(['ROLE_ADMIN']);
-        $admin->setFirstname('test');
-        $admin->setLastname('test');
-        $this->entityManager->persist($admin);
+        // Tableau d'utilisateur par email
+        $listeEmailUser = [];
 
-        // création premiere campagne
+        // Création de la première campagne
         $campain = new Campains();
         $campain->isValid(true);
-        $campain->setLibelle('Campagne printemps 2024');
+        $campain->setLibelle($campaignLabel);
         $campain->setEmailFrom($_ENV['EMAIL_DEFAULT']);
-        $campain->setDate(DateTime::createFromFormat('Y-m-d', '2024-03-01'));
-        $campain->setDateSend(DateTime::createFromFormat('Y-m-d', '2024-03-01'));
+        $campain->setDate(new DateTimeImmutable($startDate));
         $this->entityManager->persist($campain);
 
-        // la premiere ligne d tableau contient les entetes
+        // La première ligne du tableau contient les entêtes
         for ($i = 1; $i < count($data); $i++) {
             $assoData = $data[$i];
-            // enleve espace 
+            // Enlever les espaces
             foreach ($assoData as &$element) {
                 $element = $element !== null ? trim($element) : null;
             }
@@ -129,7 +126,6 @@ class FileService
                 $user = $listeEmailUser[$assoData[10]];
             } else {
                 $user = new User();
-                // $user->setPassword($user, 'test');
                 $user->setFirstname($assoData[7]);
                 $user->setLastname($assoData[8]);
                 $user->setEmail($assoData[10]);
@@ -140,17 +136,15 @@ class FileService
             $president = new President();
             $president->setFonction($assoData[9]);
             $president->setUser($user);
-
             $president->setAssociation($asso);
             $this->entityManager->persist($president);
 
-            // Referent
+            // Référent
             if ($assoData[13]) {
                 if (array_key_exists($assoData[13], $listeEmailUser)) {
                     $user = $listeEmailUser[$assoData[13]];
                 } else {
                     $user = new User();
-                    // $user->setPassword('test');
                     $user->setFirstname($assoData[11]);
                     $user->setLastname($assoData[12]);
                     $user->setEmail($assoData[13]);
@@ -165,9 +159,7 @@ class FileService
                 $asso->setReferent($referent);
             }
 
-
             $asso->setCode((int)$assoData[0]);
-
             $asso->setLibelle($assoData[1]);
             $asso->setAdress($assoData[2]);
             $asso->setCp($assoData[3]);
@@ -187,6 +179,7 @@ class FileService
 
         $this->entityManager->flush();
     }
+
 
     /**
      * Retourne un tableau contenant les données du tableau passé

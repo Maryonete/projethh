@@ -68,6 +68,11 @@ block body %}
           ></a>
           {% endif %}
         </td>
+        <td>
+          <a href="{{ path('file_upload', { campain: campain.id }) }}">
+            <i class="fa-regular fa-file-excel ms-1"></i>
+          </a>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
@@ -86,6 +91,7 @@ block body %}
           null,
           null,
           null,
+          { orderable: false },
           { orderable: false },
           { orderable: false },
           { orderable: false },

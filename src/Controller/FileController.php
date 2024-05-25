@@ -82,14 +82,17 @@ class FileController extends AbstractController
     /**
      * Import data's file in database
      */
-    #[Route('import/{filepath}', name: 'import')]
+    #[Route('import/', name: 'import')]
     public function file_import(
         FileService $fileService,
-        String $filepath,
+        Request $request,
         string $upload_directory
     ): Response {
+        $filepath = $request->request->get('filepath');
+        $campaignLabel = $request->request->get('campaign_label');
+        $startDate = $request->request->get('start_date');
+        $fileService->importDataFromFile($filepath, $campaignLabel, $startDate);
 
-        $fileService->importDataFromFile($filepath);
         return $this->redirectToRoute('asso_home');
     }
 

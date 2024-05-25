@@ -21,19 +21,6 @@ class StatsCalculator
         return $this->associationRepository->countAssociations();
     }
 
-    public function calculateSentEmailsCount(int $campainId): int
-    {
-        return $this->campainAssociationRepository->countSentEmailsForCampain($campainId);
-    }
-    public function calculateNbAssoValidateFormCount(int $campainId): int
-    {
-        return $this->campainAssociationRepository->countNbAssoValidateFormCount($campainId);
-    }
-    public function calculateNbAssoDeclinedFormCount(int $campainId): int
-    {
-        return $this->campainAssociationRepository->countNbAssoDeclinedFormCount($campainId);
-    }
-
 
     public function calculateUpdatedAssociationsCount(): int
     {
@@ -48,14 +35,18 @@ class StatsCalculator
             'nbAssoDeclinedFormCount'   => 0,
             'nbAssoReponseCount'        => 0,
             'percentAssoValidateFormCount' => 0,
-            'nbAssoEnAttenteValidateForm' => 0
+            'nbAssoEnAttenteValidateForm' => 0,
+            'calculateNbAssoFinishedCount' => 0,
         ];
 
         if ($campain) {
+            $counts = $this->campainAssociationRepository->getCountsForCampain($campain->getId());
+
             // Calcul des statistiques spécifiques à la campagne
-            $stat['nbSentEmailsCount'] = $this->calculateSentEmailsCount($campain->getId());
-            $stat['nbAssoValidateFormCount'] = $this->calculateNbAssoValidateFormCount($campain->getId());
-            $stat['nbAssoDeclinedFormCount'] = $this->calculateNbAssoDeclinedFormCount($campain->getId());
+            $stat['nbSentEmailsCount'] = $counts['sentEmailsCount'];
+            $stat['nbAssoFinishedCount'] = $counts['finishedCount'];
+            $stat['nbAssoValidateFormCount'] = $counts['updatedCount'];
+            $stat['nbAssoDeclinedFormCount'] = $counts['declinedCount'];
             $stat['nbAssoReponseCount'] = $stat['nbAssoValidateFormCount'] + $stat['nbAssoDeclinedFormCount'];
 
             $stat['percentAssoValidateFormCount'] = ($stat['nbSentEmailsCount'] > 0) ?
@@ -64,7 +55,8 @@ class StatsCalculator
             $stat['nbAssoEnAttenteValidateForm']
                 = $stat['nbSentEmailsCount'] -
                 $stat['nbAssoValidateFormCount'] -
-                $stat['nbAssoDeclinedFormCount'];
+                $stat['nbAssoDeclinedFormCount'] -
+                $stat['calculateNbAssoFinishedCount'];
         }
 
         return $stat;

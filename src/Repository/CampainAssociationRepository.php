@@ -43,36 +43,22 @@ class CampainAssociationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-    public function countSentEmailsForCampain(int $campainId): int
+    public function getCountsForCampain(int $campainId): array
     {
         return $this->createQueryBuilder('ca')
-            ->select('COUNT(ca.id)')
+            ->select(
+                'SUM(CASE WHEN ca.statut = :send THEN 1 ELSE 0 END) as sentEmailsCount',
+                'SUM(CASE WHEN ca.statut = :updated THEN 1 ELSE 0 END) as updatedCount',
+                'SUM(CASE WHEN ca.statut = :declined THEN 1 ELSE 0 END) as declinedCount',
+                'SUM(CASE WHEN ca.statut = :finish THEN 1 ELSE 0 END) as finishedCount'
+            )
             ->where('ca.campains = :campainId')
             ->setParameter('campainId', $campainId)
-            // ->setParameter('statut', 'send')
+            ->setParameter('send', 'send')
+            ->setParameter('updated', 'updated')
+            ->setParameter('declined', 'declined')
+            ->setParameter('finish', 'finish')
             ->getQuery()
-            ->getSingleScalarResult();
-    }
-    public function countNbAssoValidateFormCount(int $campainId): int
-    {
-        return $this->createQueryBuilder('ca')
-            ->select('COUNT(ca.id)')
-            ->where('ca.campains = :campainId')
-            ->andwhere('ca.statut = :statut')
-            ->setParameter('campainId', $campainId)
-            ->setParameter('statut', 'updated')
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
-    public function countNbAssoDeclinedFormCount(int $campainId): int
-    {
-        return $this->createQueryBuilder('ca')
-            ->select('COUNT(ca.id)')
-            ->where('ca.campains = :campainId')
-            ->andwhere('ca.statut = :statut')
-            ->setParameter('campainId', $campainId)
-            ->setParameter('statut', 'declined')
-            ->getQuery()
-            ->getSingleScalarResult();
+            ->getSingleResult();
     }
 }

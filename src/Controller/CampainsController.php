@@ -81,6 +81,7 @@ class CampainsController extends AbstractController
             'nbAssoEnAttenteValidateForm'   =>  $stat['nbAssoEnAttenteValidateForm'],
             'nbAssoDeclinedFormCount'   =>  $stat['nbAssoDeclinedFormCount'],
             'nbAssoValidateFormCount'   =>  $stat['nbAssoValidateFormCount'],
+            'calculateNbAssoFinishedCount'   =>  $stat['calculateNbAssoFinishedCount'],
         ]);
     }
     /**

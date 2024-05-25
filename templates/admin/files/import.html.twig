@@ -4,28 +4,36 @@
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-10 border rounded-3 p-5 shadow">
-      <h1 class="text-center mb-4">
-        Importer la liste des associations<br />
-        à partir d'un fichier XLSX
-      </h1>
+      <h2 class="mb-4">
+        Importer la liste des associations à partir d'un fichier XLSX
+      </h2>
 
       {{ form_start(form) }}
 
-      {# Champ de dépôt de fichier avec Bootstrap #}
       <div class="mb-3">
         <label for="form_file" class="form-label fs-5">
           Fichier XLSX
           <i class="fas fa-file-excel ms-2"></i>
         </label>
         {{ form_widget(form.file, {'attr': {'class': 'form-control-file'}}) }}
-        {{ form_errors(form.file) }}
+        <div class="form-errors">{{ form_errors(form.file) }}</div>
       </div>
-
-      {# Bouton de soumission #}
-      {{ form_row(form.save, {'attr': {'class': 'btn btn-primary mt-3'}}) }}
-
+      <div class="text-center">
+        {# Bouton de soumission #}
+        {{
+          form_row(form.save, {
+            attr: {
+              class: "btn btn-primary mt-3"
+            }
+          })
+        }}
+      </div>
       {{ form_end(form) }}
-
+      <p class="card-text text-danger mt-3 text-center">
+        <i class="fas fa-exclamation-triangle fa-3x text-danger"></i>
+        Cette action supprimera <b>toutes les données actuelles</b> de la base
+        de données
+      </p>
       <div class="card mt-5 bg-light">
         <div class="card-body">
           <h2 class="card-title fs-4">Préparation du fichier XLSX</h2>

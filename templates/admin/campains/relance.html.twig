@@ -60,7 +60,7 @@ block javascripts %}
             </div>
             <div class="col-md-9">
               {{ form_widget(form.destinataire) }}
-              <div class="form-error">
+              <div class="form-errors">
                 {{ form_errors(form.destinataire) }}
               </div>
             </div>
@@ -72,7 +72,7 @@ block javascripts %}
             </div>
             <div class="col-md-5">
               {{ form_widget(form.email_from) }}
-              <div class="form-error">
+              <div class="form-errors">
                 {{ form_errors(form.email_from) }}
               </div>
             </div>
@@ -83,14 +83,14 @@ block javascripts %}
             </div>
             <div class="col-md-5">
               {{ form_widget(form.email_cc) }}
-              <div class="form-error">{{ form_errors(form.email_cc) }}</div>
+              <div class="form-errors">{{ form_errors(form.email_cc) }}</div>
             </div>
           </div>
 
           <div class="form-group mb-3">
             {{ form_label(form.objet_email) }}
             {{ form_widget(form.objet_email) }}
-            <div class="form-error">
+            <div class="form-errors">
               {{ form_errors(form.objet_email) }}
             </div>
           </div>
@@ -98,7 +98,7 @@ block javascripts %}
           <div class="form-group mb-3">
             {{ form_label(form.texte_email) }}
             {{ form_widget(form.texte_email) }}
-            <div class="form-error">
+            <div class="form-errors">
               {{ form_errors(form.texte_email) }}
             </div>
           </div>
