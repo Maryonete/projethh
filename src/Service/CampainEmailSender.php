@@ -94,9 +94,11 @@ class CampainEmailSender
 
                 $this->createCampainAssociation($campain, $destinataire, $association, $token);
 
-                $email->to('maryonete26@gmail.com'); // Temporarily hardcoded email for testing
+                $email->to('marion.maurice@mail.com'); // Temporarily hardcoded email for testing
                 //$email->to($destinataire);
-                //$this->mailer->send($email);
+                // dump($email);
+                $this->mailer->send($email);
+                // die;
             }
 
             //$this->createEmailRecap($campain, $listeEmails); // Uncomment when needed
