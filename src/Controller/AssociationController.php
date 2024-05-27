@@ -104,7 +104,7 @@ class AssociationController extends AbstractController
         $referentData = '';
         if (!empty($requestData['association']['referent'])) {
             $referentData = $requestData['association']['referent'];
-        } else {
+        } elseif (isset($requestData['referent_new'])) {
             $referentData = $requestData['referent_new'];
         }
         if ($referentData) {
