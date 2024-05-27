@@ -110,6 +110,8 @@ class AssociationController extends AbstractController
         if ($referentData) {
             $referent = $this->createReferent($association, $entityManager, $referentData);
             $association->setReferent($referent);
+        } else {
+            $association->setReferent(null);
         }
     }
 
@@ -217,54 +219,29 @@ class AssociationController extends AbstractController
         return $referent;
     }
 
-
-
     #[Route('/texte/{id<[0-9]+>}', name: 'editTextePersonnalise', methods: ['GET', 'POST'])]
     /**
-     * Modifier le texte personnalise d'une asso pour une campagne
+     * Modifier le texte personnalisé d'une asso pour une campagne
      *
      * @param Request $request
      * @param FormFactoryInterface $formFactory
+     * @param EntityManagerInterface $entityManager
      * @param CampainAssociation $campAsso
-     * @return void
+     * @return Response
      */
     public function editTextePersonnalise(
         Request $request,
         FormFactoryInterface $formFactory,
         EntityManagerInterface $entityManager,
         CampainAssociation $campAsso
-    ) {
+    ): Response {
+        $form = $this->createTextePersonnaliseForm($formFactory, $campAsso);
+        $oldCampainAssociations = $this->getOldCampainAssociations($entityManager, $campAsso);
 
-        $form = $formFactory->createBuilder()
-            ->add('texte_personnalise', TextareaType::class, [
-                'label' => 'Texte de présentation pour la campagne ',
-                'required' => false,
-                'attr' => [
-                    'class' => 'form-control',
-                    'rows' => 5
-                ],
-                'data' => $campAsso->getTextePersonnalise()
-            ])
-            ->getForm();
-        $oldCampainAssociations = "";
-        if ($campAsso && $campAsso->getCampains()->getOldcampain()) {
-            $oldCampainAssociations = $entityManager->getRepository(CampainAssociation::class)->findOneBy(
-                [
-                    'campains' => $campAsso->getCampains()->getOldcampain(),
-                    'association' => $campAsso->getAssociation()
-                ]
-            );
-        }
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $textePersonnalise = $form->get('texte_personnalise')->getData();
-
-            // Définir la nouvelle valeur du champ texte personnalisé sur l'objet CampainAssociation
-            $campAsso->setTextePersonnalise($textePersonnalise);
-            $entityManager->persist($campAsso);
-            $entityManager->flush();
-
+            $this->saveTextePersonnalise($form, $campAsso, $entityManager);
             return $this->redirectToRoute('asso_home');
         }
 
@@ -274,6 +251,7 @@ class AssociationController extends AbstractController
             'oldCampainAssociations' => $oldCampainAssociations
         ]);
     }
+
     #[Route('/textes/{id<[0-9]+>}', name: 'editAllTextePersonnalise', methods: ['GET', 'POST'])]
     public function editAllTextePersonnalise(
         Request $request,
@@ -281,42 +259,18 @@ class AssociationController extends AbstractController
         EntityManagerInterface $entityManager,
         CampainAssociationRepository $campainAssoRepo,
         Campains $campain
-    ) {
-        $campainAssociations = $entityManager->getRepository(CampainAssociation::class)
-            ->findByCampains($campain);
+    ): Response {
+        $campainAssociations = $campainAssoRepo->findByCampains($campain);
+        $oldCampainAssociations = $campain->getOldcampain()
+            ? $campainAssoRepo->findByCampains($campain->getOldcampain())
+            : [];
 
-        $oldCampainAssociations = "";
-        if ($campain->getOldcampain()) {
-            $oldCampainAssociations =
-                $campainAssoRepo->findByCampains($campain->getOldcampain());
-        }
-        $formBuilder = $formFactory->createBuilder();
-        foreach ($campainAssociations as $campAsso) {
+        $form = $this->createAllTextePersonnaliseForm($formFactory, $campainAssociations);
 
-
-            $formBuilder->add('texte_personnalise' . $campAsso->getAssociation()->getId(), TextareaType::class, [
-                'label' => '',
-                'required' => false,
-                'attr' => [
-                    'class' => 'form-control',
-                    'rows' => 15
-                ],
-                'data' => $campAsso ? $campAsso->getTextePersonnalise() : null
-            ]);
-        }
-        $form = $formBuilder->getForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData(); // Récupérer les données soumises du formulaire
-            foreach ($campainAssociations as $campAsso) {
-                $fieldName = 'texte_personnalise' . $campAsso->getAssociation()->getId();
-                $textePersonnalise = $data[$fieldName]; // Récupérer le texte personnalisé pour cette association
-                // Mettre à jour l'objet CampainAssociation avec le nouveau texte personnalisé
-                $campAsso->setTextePersonnalise($textePersonnalise);
-                $entityManager->persist($campAsso);
-            }
-            $entityManager->flush();
+            $this->saveAllTextePersonnalise($form, $campainAssociations, $entityManager);
             return $this->redirectToRoute('asso_home');
         }
 
@@ -327,6 +281,66 @@ class AssociationController extends AbstractController
             'oldCampainAssociations' => $oldCampainAssociations,
         ]);
     }
+
+    // Méthodes utilitaires
+
+    private function createTextePersonnaliseForm(FormFactoryInterface $formFactory, CampainAssociation $campAsso)
+    {
+        return $formFactory->createBuilder()
+            ->add('texte_personnalise', TextareaType::class, [
+                'label' => 'Texte de présentation pour la campagne',
+                'required' => false,
+                'attr' => ['class' => 'form-control', 'rows' => 5],
+                'data' => $campAsso->getTextePersonnalise()
+            ])
+            ->getForm();
+    }
+
+    private function getOldCampainAssociations(EntityManagerInterface $entityManager, CampainAssociation $campAsso)
+    {
+        if ($campAsso->getCampains()->getOldcampain()) {
+            return $entityManager->getRepository(CampainAssociation::class)->findOneBy([
+                'campains' => $campAsso->getCampains()->getOldcampain(),
+                'association' => $campAsso->getAssociation()
+            ]);
+        }
+        return null;
+    }
+
+    private function saveTextePersonnalise($form, CampainAssociation $campAsso, EntityManagerInterface $entityManager)
+    {
+        $textePersonnalise = $form->get('texte_personnalise')->getData();
+        $campAsso->setTextePersonnalise($textePersonnalise);
+        $entityManager->persist($campAsso);
+        $entityManager->flush();
+    }
+
+    private function createAllTextePersonnaliseForm(FormFactoryInterface $formFactory, array $campainAssociations)
+    {
+        $formBuilder = $formFactory->createBuilder();
+        foreach ($campainAssociations as $campAsso) {
+            $formBuilder->add('texte_personnalise' . $campAsso->getAssociation()->getId(), TextareaType::class, [
+                'label' => '',
+                'required' => false,
+                'attr' => ['class' => 'form-control', 'rows' => 15],
+                'data' => $campAsso->getTextePersonnalise()
+            ]);
+        }
+        return $formBuilder->getForm();
+    }
+
+    private function saveAllTextePersonnalise($form, array $campainAssociations, EntityManagerInterface $entityManager)
+    {
+        $data = $form->getData();
+        foreach ($campainAssociations as $campAsso) {
+            $fieldName = 'texte_personnalise' . $campAsso->getAssociation()->getId();
+            $textePersonnalise = $data[$fieldName];
+            $campAsso->setTextePersonnalise($textePersonnalise);
+            $entityManager->persist($campAsso);
+        }
+        $entityManager->flush();
+    }
+
 
     #[Route('/{id<[0-9]+>}/markAsObsolete', name: 'markAsObsolete', methods: ['GET'])]
     /**

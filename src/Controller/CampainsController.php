@@ -45,7 +45,6 @@ class CampainsController extends AbstractController
     }
     #[Route('/{campAsso<[0-9]+>}/reactivate', name: 'reactivate', methods: ['GET'])]
     public function reactivate(
-        Request $request,
         EntityManagerInterface $entityManager,
         CampainAssociation $campAsso
     ): Response {
@@ -172,7 +171,16 @@ class CampainsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Vérifie si toutes les données nécessaires à l'email sont renseignées
 
+            if (
+                $campain->getObjetEmail() === null
+                || $campain->getTexteEmail() === null
+                || empty($campain->getDestinataire())
+            ) {
+                $this->addFlash('warning', 'Vous devez renseigner tous les champs nécessaires à l\'envoie de l\'email');
+                return $this->redirectToRoute('campains_edit', ['id' => $campain->getId()]);
+            }
             return $this->handleCampain($campain, $entityManager, $campainEmailSender, $campainAssoRepo, $association);
         }
 
@@ -214,15 +222,7 @@ class CampainsController extends AbstractController
         CampainAssociationRepository $campainAssoRepo = null,
         Association $association = null,
     ): Response {
-        // Vérifie si toutes les données nécessaires à l'email sont renseignées
-        if (
-            $campain->getObjetEmail() === null
-            || $campain->getTexteEmail() === null
-            || $campain->getDestinataire() === null
-        ) {
-            $this->addFlash('warning', 'Vous devez renseigner tous les champs nécessaires');
-            return $this->redirectToRoute('campains_edit', ['id' => $campain->getId()]);
-        }
+
         if ($association) {
             $campainEmailSender->sendEmailToDestinataires($campain, [$association]);
         } elseif ($campainAssoRepo) {

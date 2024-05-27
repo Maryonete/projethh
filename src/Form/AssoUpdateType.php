@@ -85,7 +85,7 @@ class AssoUpdateType extends AbstractType
             ])
             ->add('tel', TextType::class, [
                 'required'  =>  false,
-                'empty_data' => '',
+                // 'empty_data' => '',
                 'attr'  => [
                     'class'     =>  'form-control',
                     'minlength' => '2',

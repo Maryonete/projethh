@@ -35,10 +35,10 @@
         {% if stat.nbAssoValidateFormCount > 0 %}
         <br />
         <strong
-          >{% if stat.nbAssoValidateFormCount > 1 %}Associations{% else
+          >{% if stat.nbAssoDeclinedFormCount > 1 %}Associations{% else
           %}Association{% endif %} ne souhaitant pas participer :</strong
         >
-        {{ stat.nbAssoValidateFormCount }}
+        {{ stat.nbAssoDeclinedFormCount }}
         {% endif %}
       </p>
       <div class="progress">
@@ -168,6 +168,7 @@
             aria-controls="collapseDeclined"
           >
             {% if stat.nbAssoDeclinedFormCount > 0 %}{{ stat.nbAssoDeclinedFormCount > 1 ? stat.nbAssoDeclinedFormCount ~ ' associations' : stat.nbAssoDeclinedFormCount ~ ' association'
+
 
 
 

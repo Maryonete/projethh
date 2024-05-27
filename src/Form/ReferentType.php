@@ -27,8 +27,8 @@ class ReferentType extends AbstractType
                     'class'     =>  'col-form-label mt-2'
                 ],
                 'required'  =>  false,
+                'empty_data' => '',
             ])
-
             ->add('user', UserType::class, [
                 'label' => false
             ]);

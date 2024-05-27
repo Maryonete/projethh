@@ -103,19 +103,14 @@ class AssociationType extends AbstractType
                 'attr'  => [
                     'class'     =>  'form-control',
                     'minlength' => '2',
-                    'maxlength' => '50',
+                    'maxlength' => '12',
                 ],
                 'label'         =>  'Téléphone',
                 'label_attr'    =>  [
                     'class'     =>  'col-form-label mt-2'
                 ],
-                'constraints'   => [
-                    new Assert\Length(['min' => 2, 'max' => 50]),
-                    new Assert\NotBlank([
-                        'message' => 'Veuillez saisir le numéro de téléphone'
-                    ])
-                ],
                 'required'  => false,
+                'empty_data' => '',
             ])
             ->add('email', EmailType::class, [
                 'attr'  => [
@@ -158,7 +153,7 @@ class AssociationType extends AbstractType
                 'placeholder'   => 'Sélectionner un(e) référent(e)',
                 'attr'          => ['class' => 'form-select'],
                 'required'      => false,
-                'mapped' => false,
+                'mapped'        => false,
             ]);
     }
 

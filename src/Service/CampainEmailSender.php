@@ -74,6 +74,10 @@ class CampainEmailSender
                         break;
                     case "referents":
                         $emailsReferents = $this->assoRepo->findAllAssociationReferentEmails($associations);
+                        if (empty($emailsReferents)) {
+                            // Si aucun e-mail de référents n'est trouvé, utiliser les e-mails des présidents
+                            $emailsReferents = $this->assoRepo->findAllAssociationPresidentEmail($associations);
+                        }
                         break;
                     default:
                         // Handle unknown destinataires

@@ -18,7 +18,6 @@ class Referent
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tel = null;
 
-
     #[ORM\ManyToOne(
         targetEntity: "App\Entity\Association",
         inversedBy: "referent",
