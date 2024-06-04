@@ -17,16 +17,13 @@ class President
     #[ORM\Column(length: 255)]
     private ?string $fonction = null;
 
-    #[ORM\ManyToOne(
-        targetEntity: "App\Entity\Association",
-        inversedBy: "presidents",
-        cascade: ['persist', 'remove']
-    )]
-    private ?Association $association = null;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\OneToOne(inversedBy: 'president', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
     private ?User $user = null;
+
+    #[ORM\OneToOne(inversedBy: 'president', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'association_id', referencedColumnName: 'id', nullable: true)]
+    private ?Association $association = null;
 
     public function __toString()
     {

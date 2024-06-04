@@ -38,22 +38,11 @@ class Association
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[ORM\OneToOne(
-        targetEntity: President::class,
-        inversedBy: "association",
-        cascade: ['persist', 'remove'],
-    )]
-    // #[Assert\NotBlank(message: "Une association doit avoir un président.")]
+    #[ORM\OneToOne(mappedBy: 'association', cascade: ['persist', 'remove'])]
     private ?President $president = null;
 
-    #[ORM\OneToOne(
-        targetEntity: Referent::class,
-        inversedBy: "association",
-        cascade: ['persist', 'remove']
-    )]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(mappedBy: 'association', cascade: ['persist', 'remove'])]
     private ?Referent $referent = null;
-
     /**
      * @var Collection<int, CampainAssociation>
      */

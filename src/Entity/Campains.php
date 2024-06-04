@@ -118,11 +118,12 @@ class Campains
 
     public function removeCampainAssociation(CampainAssociation $campainAssociation): static
     {
-        if ($this->campainAssociations->removeElement($campainAssociation)) {
+        if (
+            $this->campainAssociations->removeElement($campainAssociation)
+            && $campainAssociation->getCampains() === $this
+        ) {
             // set the owning side to null (unless already changed)
-            if ($campainAssociation->getCampains() === $this) {
-                $campainAssociation->setCampains(null);
-            }
+            $campainAssociation->setCampains(null);
         }
 
         return $this;

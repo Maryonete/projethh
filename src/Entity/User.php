@@ -55,26 +55,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(min: 2, max: 60)]
     private ?string $lastname = null;
 
-
-    #[ORM\OneToOne(
-        mappedBy: 'user',
-        cascade: ['persist', 'remove']
-    )]
-    #[ORM\Column(nullable: true)]
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?President $president = null;
 
-    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
-    #[ORM\Column(nullable: true)]
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?Referent $referent = null;
-
 
     /**
      * @var Collection<int, History>
      */
     #[ORM\OneToMany(targetEntity: History::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $histories;
-
-
 
     public function __construct()
     {
@@ -208,7 +199,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // Met à jour la relation avec le nouveau président
             $this->president = $president;
 
-            // Vérifie si le nouveau président est différent de null et s'il n'a pas déjà cet utilisateur comme président
+            // Vérifie si le nouveau président est différent de null
+            //et s'il n'a pas déjà cet utilisateur comme président
             if ($president !== null && $president->getUser() !== $this) {
                 // Établit la relation entre le nouveau président et cet utilisateur
                 $president->setUser($this);
@@ -279,11 +271,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeHistory(History $history): static
     {
-        if ($this->histories->removeElement($history)) {
+        if ($this->histories->removeElement($history) && $history->getUser() === $this) {
             // set the owning side to null (unless already changed)
-            if ($history->getUser() === $this) {
-                $history->setUser(null);
-            }
+            $history->setUser(null);
         }
 
         return $this;

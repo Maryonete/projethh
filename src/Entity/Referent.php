@@ -18,16 +18,15 @@ class Referent
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tel = null;
 
-    #[ORM\ManyToOne(
-        targetEntity: "App\Entity\Association",
-        inversedBy: "referent",
-        cascade: ['persist', 'remove']
-    )]
+    #[ORM\OneToOne(inversedBy: 'referent', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true)]
+    private ?User $user = null;
+
+    #[ORM\OneToOne(inversedBy: 'referent', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'association_id', referencedColumnName: 'id', nullable: true)]
     private ?Association $association = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+
 
     public function __toString()
     {
@@ -58,9 +57,6 @@ class Referent
     public function setUser(?User $user): static
     {
         $this->user = $user;
-        // if ($user !== null && $user->getReferent() !== $this) {
-        //     $user->setReferent($this);
-        // }
         return $this;
     }
     /**

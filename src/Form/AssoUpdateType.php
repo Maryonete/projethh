@@ -1,5 +1,5 @@
 <?php
-# TODO https://yoandev.co/symfony-ux-autocomplete
+
 namespace App\Form;
 
 use App\Entity\Association;
@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\{TextType,  EmailType, TextareaTy
 
 class AssoUpdateType extends AbstractType
 {
+    const FORM_LABEL_CLASS = 'col-form-label mt-2';
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -40,7 +41,7 @@ class AssoUpdateType extends AbstractType
                 ],
                 'label'         =>  'Adresse',
                 'label_attr'    =>  [
-                    'class'     =>  'col-form-label mt-2'
+                    'class'     =>  self::FORM_LABEL_CLASS
                 ],
                 'constraints'   => [
                     new Assert\Length(['min' => 2, 'max' => 250]),
@@ -57,7 +58,7 @@ class AssoUpdateType extends AbstractType
                 ],
                 'label'         =>  'Code postal',
                 'label_attr'    =>  [
-                    'class'     =>  'col-form-label mt-2'
+                    'class'     =>  self::FORM_LABEL_CLASS
                 ],
                 'constraints'   => [
                     new Assert\Length(['min' => 2, 'max' => 50]),
@@ -74,7 +75,7 @@ class AssoUpdateType extends AbstractType
                 ],
                 'label'         =>  'Ville',
                 'label_attr'    =>  [
-                    'class'     =>  'col-form-label mt-2'
+                    'class'     =>  self::FORM_LABEL_CLASS
                 ],
                 'constraints'   => [
                     new Assert\Length(['min' => 2, 'max' => 50]),
@@ -93,7 +94,7 @@ class AssoUpdateType extends AbstractType
                 ],
                 'label'         =>  'Téléphone',
                 'label_attr'    =>  [
-                    'class'     =>  'col-form-label mt-2'
+                    'class'     =>  self::FORM_LABEL_CLASS
                 ],
             ])
             ->add('email', EmailType::class, [
@@ -104,7 +105,7 @@ class AssoUpdateType extends AbstractType
                 ],
                 'label'         =>  'E-mail',
                 'label_attr'    =>  [
-                    'class'     =>  'col-form-label mt-2'
+                    'class'     =>  self::FORM_LABEL_CLASS
                 ],
                 'constraints'   => [
                     new Assert\Length(['min' => 2, 'max' => 80]),

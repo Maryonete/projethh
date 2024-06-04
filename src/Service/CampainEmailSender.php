@@ -33,11 +33,26 @@ class CampainEmailSender
             ),
             $campain->getTexteEmail()
         );
+        // Supprimer les balises HTML
+        $textePlain = strip_tags($texteEmail);
+
+        // Convertir les caractères spéciaux HTML en entités HTML
+        $textePlain = htmlspecialchars_decode($textePlain);
+
+        // Supprimer les espaces multiples et les sauts de ligne répétés
+        $textePlain = preg_replace('/\s+/', ' ', $textePlain);
+
+        // Supprimer les espaces en début et fin de chaîne
+        $textePlain = trim($textePlain);
+
+        // Supprimer les sauts de ligne répétés pour améliorer la lisibilité
+        $textePlain = preg_replace('/(\r?\n){2,}/', "\n\n", $textePlain);
         // Créer l'e-mail
         $email = (new Email())
             ->from($campain->getEmailFrom())
             ->subject($campain->getObjetEmail())
-            ->html($texteEmail);
+            ->html($texteEmail)
+            ->text($textePlain);
 
         if ($campain->getEmailCc() !== null) {
             $email->cc($campain->getEmailCc());
@@ -100,9 +115,9 @@ class CampainEmailSender
 
                 $email->to('marion.maurice@mail.com'); // Temporarily hardcoded email for testing
                 //$email->to($destinataire);
-                // dump($email);
+                dump($email);
                 $this->mailer->send($email);
-                // die;
+                die;
             }
 
             //$this->createEmailRecap($campain, $listeEmails); // Uncomment when needed

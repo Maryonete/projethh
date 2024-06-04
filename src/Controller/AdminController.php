@@ -88,7 +88,7 @@ class AdminController extends AbstractController
 
         $form = $this->createForm(AdminPasswordType::class);
         $form->handleRequest($request);
-        $session = $request->getSession();
+        // $session = $request->getSession();
         if ($form->isSubmitted() && !$form->isValid()) {
             $errors = $form->getErrors(true, false);
             dump($errors);

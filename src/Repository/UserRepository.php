@@ -27,11 +27,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
     public function findAllUserPresident($currentAssociationId)
     {
-        $req =  $this->createQueryBuilder('u')
-            ->leftJoin('App\Entity\President', 'p', 'WITH', 'u.id = p.user');
+        $req = $this->createQueryBuilder('u')
+            ->leftJoin('u.president', 'p')
+            ->leftJoin('p.association', 'a');
 
         if ($currentAssociationId) {
-            $req->where('p.association IS NOT NULL AND p.association <> :currentAssociationId')
+            $req->where('p.association IS NOT NULL AND a.id <> :currentAssociationId')
                 ->setParameter('currentAssociationId', $currentAssociationId);
         } else {
             $req->where('p.association IS NOT NULL');
@@ -39,6 +40,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $req->getQuery()->getResult();
     }
+
     /**
      * lister User non president d'une asso ou president de l'asso passée en param
      */

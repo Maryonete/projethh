@@ -1,5 +1,5 @@
 <?php
-# TODO https://yoandev.co/symfony-ux-autocomplete
+
 namespace App\Form;
 
 use App\Entity\User;
@@ -12,13 +12,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form\Extension\Core\Type\{TextType, EmailType, TextareaType};
 
+
 class AssociationType extends AbstractType
 {
+    const FORM_LABEL_CLASS = 'col-form-label mt-2';
     public function __construct(private UserRepository $userRepository)
     {
     }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+
         $currentAssociationId = $options['current_association_id'];
 
         if ($options["data"]) {
@@ -33,7 +36,7 @@ class AssociationType extends AbstractType
                 ],
                 'label'         =>  'Code asso',
                 'label_attr'    =>  [
-                    'class'     =>  'col-form-label mt-2'
+                    'class'     =>  self::FORM_LABEL_CLASS
                 ],
             ])
             ->add('libelle', TextType::class, [
@@ -44,7 +47,7 @@ class AssociationType extends AbstractType
                 ],
                 'label'         =>  'Libellé',
                 'label_attr'    =>  [
-                    'class'     =>  'col-form-label mt-2'
+                    'class'     =>  self::FORM_LABEL_CLASS
                 ],
                 'constraints'   => [
                     new Assert\Length(['min' => 2, 'max' => 250]),
@@ -60,7 +63,7 @@ class AssociationType extends AbstractType
                 ],
                 'label'         =>  'Adresse',
                 'label_attr'    =>  [
-                    'class'     =>  'col-form-label mt-2'
+                    'class'     =>  self::FORM_LABEL_CLASS
                 ],
                 'required' => false,
 
@@ -73,7 +76,7 @@ class AssociationType extends AbstractType
                 ],
                 'label'         =>  'Code postal',
                 'label_attr'    =>  [
-                    'class'     =>  'col-form-label mt-2'
+                    'class'     =>  self::FORM_LABEL_CLASS
                 ],
                 'constraints'   => [
                     new Assert\Length(['min' => 2, 'max' => 50]),
@@ -90,7 +93,7 @@ class AssociationType extends AbstractType
                 ],
                 'label'         =>  'Ville',
                 'label_attr'    =>  [
-                    'class'     =>  'col-form-label mt-2'
+                    'class'     =>  self::FORM_LABEL_CLASS
                 ],
                 'constraints'   => [
                     new Assert\Length(['min' => 2, 'max' => 50]),
@@ -107,7 +110,7 @@ class AssociationType extends AbstractType
                 ],
                 'label'         =>  'Téléphone',
                 'label_attr'    =>  [
-                    'class'     =>  'col-form-label mt-2'
+                    'class'     =>  self::FORM_LABEL_CLASS
                 ],
                 'required'  => false,
                 'empty_data' => '',
@@ -120,7 +123,7 @@ class AssociationType extends AbstractType
                 ],
                 'label'         =>  'E-mail',
                 'label_attr'    =>  [
-                    'class'     =>  'col-form-label mt-2'
+                    'class'     =>  self::FORM_LABEL_CLASS
                 ],
                 'constraints'   => [
                     new Assert\Length(['min' => 2, 'max' => 80]),

@@ -48,7 +48,7 @@
               {% endif %}
             </td>
             <td>
-              {% if asso.referent is not null %}
+              {% if asso.referent is not null and asso.referent.user is not null %}
               {{ asso.referent.user.firstname }}
               {{ asso.referent.user.lastname }}
               {% endif %}
