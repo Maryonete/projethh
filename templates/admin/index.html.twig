@@ -1,0 +1,210 @@
+{% extends 'base.html.twig' %} {% block title %} Habitat Humanisme {% endblock
+%} {% block body %}
+<div class="container">
+  <h1 class="text-center">MODULE D'AIDE POUR LA COLLECTE DE DON</h1>
+</div>
+
+<div class="container px-4 py-2">
+  {% if campain is not empty %}
+  <div class="row">
+    <div class="col-md-8">
+      <h2
+        class="pb-2 border-bottom d-flex justify-content-between align-items-center"
+      >
+        Campagne en cours - {{ campain.libelle }}
+      </h2>
+    </div>
+  </div>
+
+  <div class="row p-2 mb-4 bg-light rounded-3">
+    <div class="col-md-7">
+      <h4 class="mb-3"><strong>Statistiques</strong></h4>
+      <p>
+        <strong>Destinataires :</strong> {% for destinataire in
+        campain.destinataire %} {{ destinataire }}, {% endfor %}
+        <br />
+        <strong>Date d'envoi :</strong> {{ campain.datesend|date('d/m/Y') }}
+        <br />
+        <strong>Nombre d'emails envoyés :</strong> {{ stat.nbSentEmailsCount }}
+        <br />
+        <strong
+          >{% if stat.nbAssoReponseCount > 1 %}Réponses reçues{% else %}Réponse
+          reçue{% endif %} :</strong
+        >
+        {{ stat.nbAssoReponseCount }}
+        {% if stat.nbAssoValidateFormCount > 0 %}
+        <br />
+        <strong
+          >{% if stat.nbAssoDeclinedFormCount > 1 %}Associations{% else
+          %}Association{% endif %} ne souhaitant pas participer :</strong
+        >
+        {{ stat.nbAssoDeclinedFormCount }}
+        {% endif %}
+      </p>
+      <div class="progress">
+        <div
+          class="progress-bar"
+          style="width: {{ stat.percentAssoValidateFormCount }}%;"
+        >
+          <small class="text-white"
+            >{{ stat.percentAssoValidateFormCount }}% de réponses reçues</small
+          >
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5 mt-md-0 mt-4">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a
+            href="{{
+              path('asso_editAllTextePersonnalise', { id: campain.id })
+            }}"
+          >
+            <i class="fa-solid fa-caret-right me-1"></i>
+            Mise à jour de tous les textes personnalisés
+          </a>
+        </li>
+        {% if stat.nbAssoEnAttenteValidateForm > 0 %}
+        <li class="list-group-item">
+          <a href="{{ path('campains_relance', { id: campain.id }) }}">
+            <i class="fa-solid fa-caret-right me-1"></i>
+            Relancer par email les associations en attente
+          </a>
+        </li>
+        {% endif %} {% if stat.nbAssoValidateFormCount > 0 %}
+        <li class="list-group-item">
+          <a href="{{ path('campains_responses', { campain: campain.id }) }}">
+            <i class="fa-solid fa-caret-right me-1"></i>
+            Visualiser les réponses
+          </a>
+        </li>
+        <li class="list-group-item">
+          <a href="{{ path('file_upload', { campain: campain.id }) }}">
+            <i class="fa-solid fa-caret-right me-1"></i>
+            Télécharger les réponses
+            <i class="fa-regular fa-file-excel ms-1"></i>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="row p-2 mb-4 bg-light rounded-3">
+    <div
+      class="accordion accordion-flush accordion-borderless"
+      id="accordionAsso"
+    >
+      {% if stat.nbAssoValidateFormCount > 0 %}
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button
+            class="accordion-button bg-primary text-white collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseOne"
+            aria-expanded="false"
+            aria-controls="collapseOne"
+          >
+            {% if stat.nbAssoValidateFormCount > 0 %}
+            {{ stat.nbAssoValidateFormCount > 1 ? 
+              stat.nbAssoValidateFormCount ~ ' associations' : 
+              stat.nbAssoValidateFormCount ~ ' association'
+            }}
+            {% else %}'association'{% endif %} ayant répondu
+          </button>
+        </h2>
+
+        <div
+          id="collapseOne"
+          class="accordion-collapse collapse"
+          data-bs-parent="#accordionOK"
+        >
+          <div class="accordion-body">
+            {% include "admin/campains/_result_tab.html.twig" with { repondu:
+            "ok", nbAssoValidateFormCount: 0 } %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button
+            class="accordion-button bg-secondary text-white collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseAttente"
+            aria-expanded="false"
+            aria-controls="collapseAttente"
+          >
+            {% if stat.nbAssoEnAttenteValidateForm > 0 %}
+            {{ stat.nbAssoEnAttenteValidateForm > 1 ? 
+              stat.nbAssoEnAttenteValidateForm ~ ' associations' : 
+              stat.nbAssoEnAttenteValidateForm ~ ' association'
+            }}
+            {% else %}'association'{% endif %} en attente
+          </button>
+        </h2>
+        <div
+          id="collapseAttente"
+          class="accordion-collapse collapse"
+          data-bs-parent="#accordionOK"
+        >
+          <div class="accordion-body">
+            {% include "admin/campains/_result_tab.html.twig" with { repondu:
+            "", nbAssoEnAttenteValidateForm: 0 } %}
+          </div>
+        </div>
+      </div>
+      {% if stat.nbAssoDeclinedFormCount %}
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button
+            class="accordion-button bg-danger text-white collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseDeclined"
+            aria-expanded="false"
+            aria-controls="collapseDeclined"
+          >
+            {% if stat.nbAssoDeclinedFormCount > 0 %}{{ stat.nbAssoDeclinedFormCount > 1 ? stat.nbAssoDeclinedFormCount ~ ' associations' : stat.nbAssoDeclinedFormCount ~ ' association'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            }}{% else %}'association'{% endif %} ne participe pas à la campagne
+          </button>
+        </h2>
+        <div
+          id="collapseDeclined"
+          class="accordion-collapse collapse"
+          data-bs-parent="#accordionOK"
+        >
+          <div class="accordion-body">
+            {% include "admin/campains/_result_tab.html.twig" with { repondu:
+            "declined", nbAssoEnAttenteValidateForm: 0 } %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% else %}
+<p class="text-center">Pas de campagne en cours.</p>
+{% endif %} {% endblock %}

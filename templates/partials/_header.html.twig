@@ -1,0 +1,53 @@
+<div class="container">
+  <header
+    class="d-flex flex-column flex-md-row align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom"
+  >
+    <div class="mb-2 mb-md-0">
+      <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
+        <img
+          src="{{ asset('build/images/logo.svg') }}"
+          alt="Logo HH"
+          height="40"
+        />
+      </a>
+    </div>
+    {% if app.user %}
+    <ul class="nav col-12 col-md-auto mb-2 mb-md-0 text-center text-md-start">
+      <li>
+        <a href="{{ path('asso_home') }}" class="nav-link px-2 link-secondary"
+          >Accueil</a
+        >
+      </li>
+      <li>
+        <a href="{{ path('asso_list') }}" class="nav-link px-2">Associations</a>
+      </li>
+      <li>
+        <a href="{{ path('user') }}" class="nav-link px-2">Personnes</a>
+      </li>
+      <li>
+        <a href="{{ path('campains_index') }}" class="nav-link px-2"
+          >Campagnes</a
+        >
+      </li>
+
+      <li>
+        <a href="{{ path('asso_admin') }}" class="nav-link px-2"
+          >Administration</a
+        >
+      </li>
+    </ul>
+    {% endif %}
+    <div class="text-center text-md-end mt-2 mt-md-0">
+      {% if app.user %}
+      <a href="{{ path('app_logout') }}" class="btn btn-primary text-white"
+        >Déconnexion</a
+      >
+      {% else %} {% if app.request.attributes.get('_route') != 'app_login' %}
+      <a href="{{ path('app_login') }}" class="btn btn-primary me-2"
+        >Connexion</a
+      >
+      {% endif %} {% endif %}
+    </div>
+  </header>
+</div>
+{% include "/partials/_flash.html.twig" %}

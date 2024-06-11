@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %} {% block title %}Habitat Humanisme{% endblock %}
+{% block body %}
+
+<div class="container mt-5">
+  <h1 class="text-start mb-4">Tableau de Bord</h1>
+  <div class="row justify-content-center align-items-stretch">
+    <div class="col-md-6 mb-4">
+      <div class="card dashboard-card text-center h-100 d-flex flex-column">
+        <div class="card-body">
+          <div class="dashboard-icon mb-3">
+            <i class="fas fa-user-edit"></i>
+          </div>
+          <h5 class="card-title">Administrateur</h5>
+          <p class="card-text">
+            {{ app.user.lastName }} {{ app.user.firstName }}<br />
+            {{ app.user.email }}
+          </p>
+          <a href="{{ path('asso_admin_edit') }}" class="btn btn-primary"
+            >Modifier Coordonnées</a
+          >
+          <a href="{{ path('asso_admin_editpwd') }}" class="btn btn-primary"
+            >Modifier Mot de Passe</a
+          >
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card dashboard-card text-center h-100 d-flex flex-column">
+        <div class="card-body">
+          <div class="dashboard-icon mb-3">
+            <i class="fas fa-file-import"></i>
+          </div>
+          <h5 class="card-title">Importer des Données dans le systéme</h5>
+          <p class="card-text text-danger">
+            <i class="fas fa-exclamation-triangle fa-3x text-danger"></i>
+            <br />Cette action supprimera <b>toutes les données actuelles</b>
+            <br />
+            de la base de données
+          </p>
+
+          <a href="{{ path('file_new') }}" class="btn btn-primary">Importer</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

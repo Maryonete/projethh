@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %} {% block title %}Campains{% endblock %} {% block
+javascripts %}
+
+<script src="/bundles/tinymce/ext/tinymce/tinymce.min.js"></script>
+{{ parent() }}
+<script>
+  tinymce.init({
+    selector: "textarea#form_texte_personnalise",
+    plugins: "image lists link anchor charmap ",
+    toolbar:
+      "blocks | bold italic bullist numlist | link image charmap | custombutton",
+    menubar: false,
+  });
+</script>
+{% endblock %} {% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+          <h1>Association {{ campAsso.association.libelle }}</h1>
+          <div class="row p-2 mb-4 bg-light rounded-3">
+          {% if campAsso.statut == 'send' %} Email envoyé le {{campAsso.sendat|date('d/m/Y H:i') }}
+          {% elseif
+          campAsso.statut == 'updated' %} Texte mis à jour le
+          {{ campAsso.updatedTextAt 
+          ? 
+          campAsso.updatedTextAt|date('d/m/Y H:i') 
+          : ' - '
+          }}
+          {% if campAsso.updatedby is not empty %} {% if campAsso.updatedby ==
+          'referent' %} par le référent {% elseif campAsso.updatedby ==
+          'administrateur' %} par l'administrateur {% endif %} {% endif %} {%
+          endif %}
+
+          {% if campAsso.emails is not empty %}
+            <br> Email envoyé à : {{campAsso.emails}}
+          {% endif %}
+        </div>
+        <div class="row p-2 mb-4 bg-light rounded-3">
+          {{ form_start(form) }}
+            <div class="form-group">
+                <h3>Ancien texte de présentation</h3>
+                {{ campAsso.campains.oldcampain.libelle }}
+                <div class="card bg-light">
+                <div class="card-body text-justify">
+                    {% if oldCampainAssociations is not empty %}
+                    {{ oldCampainAssociations.textepersonnalise | raw }}
+                    {% endif %}
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="row p-2 mb-4 bg-light rounded-3">
+            <div class="form-group mt-4">
+                <h3>{{ form_label(form.texte_personnalise) }} {{ campAsso.campains.libelle }}</h3>
+                {{
+                form_widget(form.texte_personnalise, {
+                    attr: {
+                    class: "form-control"
+                    }
+                })
+                }}
+                {{ form_errors(form.texte_personnalise) }}
+            </div>
+        </div>
+          <div class="col-md-12">
+            <div class="row mt-3">
+              <div class="col-12 text-center">
+                <button type="submit" class="btn btn-primary">
+                  Enregistrer
+                </button>
+              </div>
+            </div>
+          </div>
+          {{ form_end(form) }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

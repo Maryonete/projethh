@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %} {% block title %}Campains{% endblock %} {% block
+body %}
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-10 offset-md-1">
+          <h2 class="mb-4">Détail de la campagne</h2>
+
+          <div class="row mb-3">
+            <div class="col-3">
+              <label for="libelle" class="form-label">Libellé</label>
+            </div>
+            <div class="col-6">
+              <div>{{ campain.libelle }}</div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-3">
+              <label for="dateDebut" class="form-label">Date de début</label>
+            </div>
+            <div class="col-6">
+              <div>{{ campain.date ? campain.date|date('d-m-Y') : '' }}</div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-3">
+              <label for="emailExpediteur" class="form-label"
+                >Email de l'expéditeur</label
+              >
+            </div>
+            <div class="col-6">
+              <div>{{ campain.emailfrom ?: '-' }}</div>
+            </div>
+          </div>
+          {% if campain.emailcc is not empty %}
+          <div class="row mb-3">
+            <div class="col-3">
+              <label for="emailCC" class="form-label">Email en copie</label>
+            </div>
+            <div class="col-6">
+              <div>{{ campain.emailcc ?: '-' }}</div>
+            </div>
+          </div>
+          {% endif %}
+          <div class="row mb-3">
+            <div class="col-3">
+              <label for="destinataires" class="form-label"
+                >Destinataires</label
+              >
+            </div>
+            <div class="col-6">
+              <div>
+                {% set destinataires = campain.destinataire %} {% if
+                destinataires %} {% for destinataire in destinataires %} {% if
+                loop.index0 > 0 %}
+                <span class="separator">et</span>
+                {% endif %}
+                {{ destinataire }}
+                {% endfor %} {% else %} Aucun destinataire sélectionné {% endif
+                %}
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-3">
+              <label for="objetEmail" class="form-label"
+                >Objet de l'email</label
+              >
+            </div>
+            <div class="col-6">
+              <div>{{ campain.objetemail ?: '-' }}</div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-3">
+              <label for="texteEmail" class="form-label"
+                >Texte de l'email</label
+              >
+            </div>
+            <div class="col-9">
+              <div class="text-justify">
+                {{ campain.texteemail | raw ?: '-' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="d-flex justify-content-between col">
+          <a
+            href="{{ path('campains_index') }}"
+            class="btn btn-primary flex-grow-1 mx-2"
+            >Retour à la liste</a
+          >
+          {% if campain.valid == true %}
+          <a
+            href="{{ path('campains_edit', { id: campain.id }) }}"
+            class="btn btn-primary flex-grow-1 mx-2"
+            >Modifier</a
+          >
+          {% if campain.datesend is empty %}
+          <a
+            href="{{ path('campains_play', { id: campain.id }) }}"
+            class="btn btn-primary flex-grow-1 mx-2"
+            onclick="return confirm('L\'email sera envoyé à toutes les associations, voulez-vous continuer ?');"
+            ><i class="fas fa-play"></i> Lancer la campagne</a
+          >
+          {% endif %}{% endif %} {% if campain.datesend is not empty %}
+          <a
+            href="{{ path('campains_result', { id: campain.id }) }}"
+            class="btn btn-primary flex-grow-1 mx-2"
+            ><i class="fas fa-chart-bar"></i> Résultat de la campagne</a
+          >
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

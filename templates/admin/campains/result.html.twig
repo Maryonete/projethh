@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %} {% block title %}Campains{% endblock %} {% block
+body %}
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="mb-4">Campagne {{ campain.libelle }}</h2>
+
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            {% if nbAssoEnAttenteValidateForm >0 %}
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="attente-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#attente"
+                type="button"
+                role="tab"
+                aria-controls="attente"
+                aria-selected="true"
+              >
+                {{ nbAssoEnAttenteValidateForm }}
+                Associations en Attente
+              </button>
+            </li>
+            {% endif %} {% if nbAssoValidateFormCount >0 %}
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="reponses-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#reponses"
+                type="button"
+                role="tab"
+                aria-controls="reponses"
+                aria-selected="false"
+              >
+                {{ nbAssoValidateFormCount }} Réponses des Associations
+              </button>
+            </li>
+            {% endif %} {% if nbAssoDeclinedFormCount >0 %}
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="declined-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#declined"
+                type="button"
+                role="tab"
+                aria-controls="declined"
+                aria-selected="false"
+              >
+                Associations Déclinées
+              </button>
+            </li>
+            {% endif %}
+          </ul>
+
+          <div class="tab-content mt-4" id="myTabContent">
+            {% if nbAssoEnAttenteValidateForm >0 %}
+            <!-- Associations en Attente -->
+            <div
+              class="tab-pane fade show active"
+              id="attente"
+              role="tabpanel"
+              aria-labelledby="attente-tab"
+            >
+              {{
+                include("admin/campains/_result_tab.html.twig", { repondu: "" })
+              }}
+            </div>
+            {% endif %}
+            <div
+              class="tab-pane fade"
+              id="reponses"
+              role="tabpanel"
+              aria-labelledby="reponses-tab"
+            >
+              {{
+                include("admin/campains/_result_tab.html.twig", {
+                  repondu: "ok"
+                })
+              }}
+            </div>
+            {% if nbAssoDeclinedFormCount >0 %}
+            <div
+              class="tab-pane fade"
+              id="declined"
+              role="tabpanel"
+              aria-labelledby="declined-tab"
+            >
+              {{
+                include("admin/campains/_result_tab.html.twig", {
+                  repondu: "declined"
+                })
+              }}
+            </div>
+
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

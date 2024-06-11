@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %} {% block title %}Administrateur{% endblock %} {%
+block body %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h1 class="text-center mb-4">Édition de l'administrateur</h1>
+          {{ form_start(form) }}
+
+          <div class="mb-3">
+            {{
+              form_label(form.firstname, "Prénom", {
+                label_attr: { class: "form-label" }
+              })
+            }}
+            {{ form_widget(form.firstname, {'attr': {'class': 'form-control'}})
+            }}
+          </div>
+          <div class="mb-3">
+            {{
+              form_label(form.lastname, "Nom", {
+                label_attr: { class: "form-label" }
+              })
+            }}
+            {{ form_widget(form.lastname, {'attr': {'class': 'form-control'}})
+            }}
+          </div>
+          <div class="mb-3">
+            {{
+              form_label(form.email, "Email", {
+                label_attr: { class: "form-label" }
+              })
+            }}
+            {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+          </div>
+          <div class="mb-3 text-center">
+            <button type="submit" class="btn btn-primary btn-block">
+              Enregistrer
+            </button>
+          </div>
+          {{ form_end(form) }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

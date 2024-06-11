@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr-FR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{% block title %}Habitat et Humanisme{% endblock %}</title>
+    <link rel="icon" href="{{ asset('build/images/hh_favicon.ico') }}" />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta
+      name="description"
+      content="Habitat et Humanisme agit depuis 32 ans en faveur du logement et de l&#039;insertion des personnes en difficulté. Don, Bénévolat, Epargne solidaire,… aidez-nous !"
+    />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="Habitat et Humanisme : association de lutte contre le mal logement"
+    />
+    <meta
+      property="og:description"
+      content="Habitat et Humanisme agit depuis 32 ans en faveur du logement et de l&#039;insertion des personnes en difficulté. Don, Bénévolat, Epargne solidaire,… aidez-nous !"
+    />
+    <meta property="og:url" content="https://www.habitat-humanisme.org/" />
+    <meta
+      property="og:site_name"
+      content="Habitat et Humanisme : association de lutte contre le mal logement"
+    />
+    <meta
+      property="article:publisher"
+      content="https://www.facebook.com/HabitatetHumanisme/"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css"
+    />
+    <!-- Include Bootstrap styles if using Bootstrap -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/2.0.5/css/dataTables.bootstrap5.min.css"
+    />
+
+    {% block stylesheets %} {% for file in encore_entry_css_files('app') %}
+    <link rel="stylesheet" href="{{ file }}" media="screen" />
+    {% endfor %}
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    {% endblock %} {% block javascripts %}
+    {{
+      encore_entry_script_tags("app")
+    }}
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}{% endblock %} {% include 'partials/_footer.html.twig' %}
+  </body>
+</html>

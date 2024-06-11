@@ -1,0 +1,198 @@
+{% extends 'base.html.twig' %} {% block title %}Campains{% endblock %}
+{% block
+  javascripts %}
+  
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  {{ parent() }}
+  {% endblock %}
+
+{% block
+body %}
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="mb-4">Campagne {{ campain.libelle }}</h2>
+        </div>
+        <hr />
+
+        <div class="col-md-12">
+          <h4>Réponses des associations</h4>
+          <table
+            class="table table-striped table-hover sortTable w-100"
+            id="assoListOk"
+          >
+            <caption>
+              Liste des associations
+            </caption>
+            <thead>
+              <tr class="text-center">
+                <th scope="col">Code asso</th>
+                <th scope="col">Association</th>
+                <th scope="col">Date de réponse</th>
+                <th scope="col">A renseigné le questionnaire</th>
+                <th scope="col">Texte personnalisé</th>
+                <th scope="col">
+                  Texte personnalisé campagne {{ campain.oldcampain.libelle }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for campainAssociation in campainAssociations %} {% if
+              (campainAssociation.statut == 'updated') %}
+              <tr>
+                <td>{{ campainAssociation.association.code }}</td>
+                <td>
+                  <a
+                    href="{{
+                      path('asso_show', {
+                        id: campainAssociation.association.id
+                      })
+                    }}"
+                    title="Visualiser"
+                    alt="lien vers l'association"
+                  >
+                    {{ campainAssociation.association.libelle }}
+                  </a>
+                </td>
+                <td>
+                  {{ campainAssociation.updatedTextAt 
+                    ? 
+                    campainAssociation.updatedTextAt|date('d/m/Y H:i') 
+                    : ' - '
+                  }}
+                </td>
+                <td>
+                  {{
+                    campainAssociation.updatedby
+                      ? campainAssociation.updatedby == "referent"
+                        ? "référent"
+                        : "administrateur"
+                      : ""
+                  }}
+                </td>
+                <td class="text-center align-middle">
+                    <p class="d-inline-flex gap-1">
+                      <a href="#new{{ campainAssociation.id }}" 
+                      class="btn" 
+                      data-bs-target="#new{{ campainAssociation.id }}" 
+                      data-bs-toggle="modal">
+                        <i class="fa fa-eye"></i>
+                      </a>
+                      <div class="modal fade" id="new{{ campainAssociation.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="modalLabelNew{{ campain.id }}"> {{ campain.libelle }}</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-start">
+                              {{ campainAssociation.textepersonnalise | raw }}
+                            </div>
+                            
+                          </div>
+                        </div>
+                      </div>
+                    </p>
+                </td>
+                <td class="text-center align-middle">
+                  {% for oldCampainAssociation in oldCampainAssociations %} {%
+                  if oldCampainAssociation.association ==
+                  campainAssociation.association %} {% if
+                  oldCampainAssociation.textepersonnalise is not empty %}
+
+                  
+                  <p class="d-inline-flex gap-1">
+                    <a href="#old{{ oldCampainAssociation.id }}"
+                      data-bs-target="#old{{ oldCampainAssociation.id }}" 
+                      class="btn" 
+                      data-bs-toggle="modal">
+                      <i class="fa fa-eye"></i>
+                    </a>
+                    <div class="modal fade" 
+                      id="old{{ oldCampainAssociation.id }}" 
+                      aria-labelledby="modalLabelOld{{ oldCampainAssociation.id }}" 
+                      aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-scrollable">
+                        <div class="modal-content ">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="modalLabelOld{{ oldCampainAssociation.id }}"> {{ campain.oldcampain.libelle }}</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                    
+                          <div class="modal-body text-start">
+                            {{ oldCampainAssociation.textepersonnalise | raw }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </p>
+                  {% else %} Non renseigné {%endif%} {% endif %} {% endfor %}
+                </td>
+                <td>
+                  <a
+                    href="{{
+                      path('asso_editTextePersonnalise', {
+                        id: campainAssociation.id
+                      })
+                    }}"
+                    class="flex-grow-1 mx-2"
+                    title="Lien pour association"
+                    ><i class="fas fa-pencil-alt"></i
+                  ></a>
+                </td>
+              </tr>
+              {% endif %} {% endfor %}
+            </tbody>
+          </table>
+          <div class="row mt-3">
+            <div class="d-flex justify-content-between col">
+              <a
+                href="{{ path('campains_index') }}"
+                class="btn btn-primary flex-grow-1 mx-2"
+                >Retour à la liste</a
+              >
+              {% if campain.valid == true %}
+              <a
+                href="{{
+                  path('asso_editAllTextePersonnalise', {
+                    id: campain.id
+                  })
+                }}"
+                class="btn btn-primary flex-grow-1 mx-2"
+                >Modifier tous les textes</a
+              >
+
+              {% endif %}
+            </div>
+          </div>
+          <script>
+            $(document).ready(function () {
+              $("#assoListOk").DataTable({
+                order: [2, "asc"],
+                searching: true,
+                info: false,
+                paging: false,
+                language: {
+                  sSearch: "<i class='fas fa-search'></i>",
+                },
+                columns: [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  { orderable: false },
+                ],
+              });
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

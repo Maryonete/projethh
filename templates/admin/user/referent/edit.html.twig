@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %} {% block title %}Edit Referent{% endblock %} {%
+block body %}
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <div class="row g-5">
+        {% if referent.user is not empty %}
+        <h1>Mise à jour référent(e)</h1>
+        {% else %}
+        <h1>Création référent(e)</h1>
+        {% endif %}
+        <div class="col-md-6">
+          {{ form_start(form) }}
+          <div class="row mb-1">
+            <div class="col-md-6">
+              <div class="form-group">
+                {{ form_label(form.user.lastname) }}
+                {{ form_widget(form.user.lastname) }}
+                <div class="invalid-feedback">
+                  {{ form_errors(form.user.lastname) }}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                {{ form_label(form.user.firstname) }}
+                {{ form_widget(form.user.firstname) }}
+                <div class="invalid-feedback">
+                  {{ form_errors(form.user.firstname) }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group mb-1">
+            {{ form_label(form.user.email) }}
+            {{ form_widget(form.user.email) }}
+            <div class="invalid-feedback">
+              {{ form_errors(form.user.email) }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <div class="form-group">
+                {{ form_label(form.tel) }}
+                {{ form_widget(form.tel) }}
+                <div class="invalid-feedback">
+                  {{ form_errors(form.tel) }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn">{{ button_label|default('Save') }}</button>
+
+          <div class="row mt-5">
+            <div class="col-12">
+              <div class="d-flex justify-content-between">
+                <a href="{{ path('user') }}" class="btn btn-primary"
+                  >Retour à la liste</a
+                >
+                <button type="submit" class="btn btn-primary">
+                  Enregistrer
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {{ form_end(form) }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends 'base.html.twig' %} {% block title %}Association{% endblock %} {%
+block body %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="container">
+        <div class="row mt-3">
+          <div class="col-12">
+            <div class="d-flex mb-3 justify-content-between">
+              <a href="{{ path('asso_list') }}" class="btn btn-primary"
+                >Retour à la liste</a
+              >
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <h1>Association {{ association.libelle }}</h1>
+      <div class="card">
+        <div class="card-body">
+          <div class="row p-2 mb-4 bg-light rounded-3">
+            <div class="col-1">
+              <strong>Code asso:</strong>
+            </div>
+            <div class="col-1">
+              {{ association.code }}
+            </div>
+            <div class="col-10 text-end">
+              <a
+                href="{{ path('asso_edit', { id: association.id }) }}"
+                class="btn btn-primary"
+                >Modifier</a
+              >
+            </div>
+          </div>
+          <div class="row p-2 mb-4 bg-light rounded-3">
+            <h2 class="mb-3">Coordonnées</h2>
+            <div class="row mb-3">
+              <div class="col-md-1">
+                <strong>Adresse:</strong>
+              </div>
+              <div class="col-md-9">
+                {{ association.adress }}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-1">
+                <strong>CP:</strong>
+              </div>
+              <div class="col-md-9">
+                {{ association.cp }}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-1">
+                <strong>Ville:</strong>
+              </div>
+              <div class="col-md-9">
+                {{ association.city }}
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-1">
+                <strong>Tel:</strong>
+              </div>
+              <div class="col-md-9">
+                {{ association.tel }}
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-1">
+                <strong>Email:</strong>
+              </div>
+              <div class="col-md-9">
+                {{ association.email }}
+              </div>
+            </div>
+          </div>
+          <div class="row p-2 mb-4 bg-light rounded-3">
+            <h2 class="mb-3">Membres</h2>
+            <div class="col-md-2">
+              <strong>Président(e):</strong>
+              <br /><a
+                href="{{
+                  path('president_show', { id: association.president.id })
+                }}"
+                ><i class="fa-solid fa-eye"></i
+              ></a>
+              <a
+                href="{{
+                  path('president_edit', { id: association.president.id })
+                }}"
+                ><i class="fa-solid fa-pen"></i
+              ></a>
+            </div>
+            <div class="col-md-9">
+              {{ association.president.user.firstname }}
+              {{ association.president.user.lastname }}
+              <br />
+              {{ association.president.fonction }}
+              <br />
+              {{ association.president.user.email }}
+            </div>
+
+            {% if association.referent is not empty %}
+            <div class="row my-3">
+              <div class="col-md-2">
+                <strong>Référent(e):</strong>
+                <br /><a
+                  href="{{
+                    path('referent_show', { id: association.referent.id })
+                  }}"
+                  ><i class="fa-solid fa-eye"></i
+                ></a>
+                <a
+                  href="{{
+                    path('referent_edit', { id: association.referent.id })
+                  }}"
+                  ><i class="fa-solid fa-pen"></i
+                ></a>
+              </div>
+              <div class="col-md-9">
+                {{ association.referent.user.firstname }}
+                {{ association.referent.user.lastname }}
+                <br />{{ association.referent.user.email }}
+                {% if association.referent.tel is not empty %} -
+                {{ association.referent.tel }}
+                {% endif %}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% for campain in campains %}
+<div class="container my-5">
+  <div class="p-5 bg-body-tertiary rounded-3">
+    <h3 class="text-body-emphasis">{{ campain.campains }}</h3>
+    <h4>
+      {% if campain.updatedTextAt is not empty %}
+      {{ campain.updatedTextAt 
+      ? 
+      campain.updatedTextAt|date('d/m/Y à H:i') : ''
+      }}
+      {% endif %}
+    </h4>
+    <p class="lead">
+      <div class="card bg-light">
+        <div class="card-body text-justify">
+      {{ campain.textepersonnalise | raw }}
+      </div></div>
+    </p>
+  </div>
+</div>
+
+{% endfor %} {% endblock %}

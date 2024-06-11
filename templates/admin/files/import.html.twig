@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %} {% block title %}Habitat et Humanisme{% endblock
+%} {% block body %}
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-10 border rounded-3 p-5 shadow">
+      <h2 class="mb-4">
+        Importer la liste des associations à partir d'un fichier XLSX
+      </h2>
+
+      {{ form_start(form) }}
+
+      <div class="mb-3">
+        <label for="form_file" class="form-label fs-5">
+          Fichier XLSX
+          <i class="fas fa-file-excel ms-2"></i>
+        </label>
+        {{ form_widget(form.file, {'attr': {'class': 'form-control-file'}}) }}
+        <div class="form-errors">{{ form_errors(form.file) }}</div>
+      </div>
+      <div class="text-center">
+        {# Bouton de soumission #}
+        {{
+          form_row(form.save, {
+            attr: {
+              class: "btn btn-primary mt-3"
+            }
+          })
+        }}
+      </div>
+      {{ form_end(form) }}
+      <p class="card-text text-danger mt-3 text-center">
+        <i class="fas fa-exclamation-triangle fa-3x text-danger"></i>
+        Cette action supprimera <b>toutes les données actuelles</b> de la base
+        de données
+      </p>
+      <div class="card mt-5 bg-light">
+        <div class="card-body">
+          <h2 class="card-title fs-4">Préparation du fichier XLSX</h2>
+          <h6 class="card-subtitle my-2 text-muted">
+            Assurez-vous que le fichier XLSX contienne les informations
+            nécessaires sur les associations, avec les colonnes suivantes
+            <b>dans l'ordre indiqué</b> :
+          </h6>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">colonne 0 : Code association</li>
+            <li class="list-group-item">colonne 1 : Libellé association</li>
+            <li class="list-group-item">colonne 2 : Adresse association</li>
+            <li class="list-group-item">colonne 3 : Code Postal association</li>
+            <li class="list-group-item">colonne 4 : Ville association</li>
+            <li class="list-group-item">colonne 5 : Téléphone association</li>
+            <li class="list-group-item">colonne 6 : Email association</li>
+            <li class="list-group-item">colonne 7 : Prénom du président</li>
+            <li class="list-group-item">colonne 8 : Nom du président</li>
+            <li class="list-group-item">colonne 9 : Fonction du président</li>
+            <li class="list-group-item">colonne 10 : Email du président</li>
+            <li class="list-group-item">colonne 11 : Prénom du référent</li>
+            <li class="list-group-item">colonne 12 : Nom du référent</li>
+            <li class="list-group-item">colonne 13 : Email du référent</li>
+            <li class="list-group-item">colonne 14 : Téléphone du référent</li>
+            <li class="list-group-item">
+              colonne 15 : Texte utilisé lors du précédent appel aux dons
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

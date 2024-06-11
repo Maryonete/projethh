@@ -1,0 +1,60 @@
+<h1 class="pb-2 border-bottom d-flex justify-content-between">
+  Référents
+  <a href="{{ path('referent_new') }}"><i class="fas fa-plus"></i></a>
+</h1>
+
+<table class="table table-striped table-hover sortTable" id="referentList">
+  <thead>
+    <tr>
+      <th>Code_asso</th>
+      <th>Association</th>
+      <th>Prénom Nom</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for referent in referents %}
+    <tr>
+      <td>
+        {% if referent.association is not empty %}
+        {{ referent.association.code }}
+        {% endif %}
+      </td>
+      <td>
+        {% if referent.association is not empty %}
+        {{ referent.association.libelle }}
+        {% endif %}
+      </td>
+      <td>{{ referent.user.firstname }} {{ referent.user.lastname }}</td>
+      <td>
+        <a href="{{ path('referent_show', { id: referent.id }) }}"
+          ><i class="fa-solid fa-eye"></i
+        ></a>
+      </td>
+      <td>
+        <a href="{{ path('referent_edit', { id: referent.id }) }}"
+          ><i class="fa-solid fa-pen"></i
+        ></a>
+      </td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="4">pas de référent</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<script>
+  $(document).ready(function () {
+    $("#referentList").DataTable({
+      order: [0, "asc"],
+      searching: true,
+      info: false,
+      paging: false,
+      language: {
+        sSearch: "<i class='fas fa-search'></i>",
+      },
+      columns: [null, null, null, { orderable: false }, { orderable: false }],
+      // searchDelay: 300, // Délai avant la prise en compte de la recherche pour éviter un filtrage excessif
+    });
+  });
+</script>

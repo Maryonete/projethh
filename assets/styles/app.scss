@@ -1,0 +1,147 @@
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/assets/fonts/Ubuntu-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+// the ~ allows you to reference things in node_modules
+@import "~bootstrap/scss/bootstrap";
+
+/* Define base colors */
+$primary: #009ee0;
+$secondary: #253a6d;
+$tertiary: #ec751a;
+
+/* Global styles */
+body {
+}
+
+/* Headings */
+h1,
+h2 {
+  font-family: "Ubuntu", sans-sherif;
+}
+h1 {
+  color: #00a0e9;
+  size: 2rem !important;
+}
+h2 {
+  color: #253a6d;
+  size: 1.5rem !important;
+}
+
+/* Utility classes */
+.bordercolor {
+  border: $tertiary solid 1px;
+}
+.bg-custom-light-red {
+  background-color: #ffcccc;
+}
+.ml-5 {
+  display: flex; /* Enable flexbox layout */
+  margin-left: 1rem;
+  margin-bottom: 10px; /* Optional margin below */
+}
+
+.ml-5 input[type="checkbox"] {
+  margin-right: 5px; /* Spacing between checkboxes */
+}
+
+.required::after {
+  content: " *";
+  color: red;
+}
+
+/* Buttons */
+a {
+  text-decoration: none;
+}
+a.btn,
+button.btn {
+  color: white;
+}
+a.btn.btn-light,
+button.btn.btn-light {
+  color: #253a6d;
+  border: #253a6d 1px solid;
+}
+
+.btn.btn-primary {
+  color: #fff; /* Text color */
+  background-color: $primary; /* Background color */
+  border-color: $primary; /* Border color */
+}
+
+.btn.btn-primary:hover,
+.btn.btn-primary:focus {
+  color: #fff;
+  background-color: #0056b3;
+  border-color: #0041a2;
+}
+/* Couleur de texte des liens "btn-outline-primary" au survol */
+a.btn.btn-outline-primary:hover,
+button.btn.btn-outline-primary:hover {
+  color: white !important;
+}
+
+/* Form styles */
+.form-widget-wrapper {
+  margin-top: 10px; /* Add top margin */
+}
+/* Accordion */
+.accordion-button::after {
+  filter: invert(100%); /* Invert the colors of the icon */
+  font-weight: bold;
+}
+
+/* Error styles */
+.form-errors {
+  color: white;
+  font-size: 14px;
+  background-color: #ffcccc;
+}
+
+.form-errors li {
+  list-style-type: none; /* Remove bullets */
+  margin-bottom: 5px; /* Space between errors */
+}
+
+.field-errors,
+.form-error-message {
+  color: red;
+  font-size: 14px;
+}
+
+.field-errors li {
+  list-style-type: none; /* Remove bullets */
+}
+.bg-red-100 {
+  background-color: #fee2e2; /* Valeur correspondante à bg-red-100 dans Tailwind CSS */
+}
+.fa-eye,
+.fa-redo,
+.fa-trash-alt,
+.fa-archive,
+.fa-undo {
+  color: blue; /* Couleur bleue pour l'icône */
+}
+
+.modal-content {
+  background-color: white; /* Fond blanc pour le contenu de la modal */
+}
+
+.dashboard-card {
+  transition: transform 0.3s ease;
+}
+/* Dashborad admin */
+.dashboard-card:hover {
+  transform: scale(1.05);
+}
+
+.dashboard-icon {
+  font-size: 3rem;
+}
+
+.card-title {
+  margin-bottom: 0;
+}

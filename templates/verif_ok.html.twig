@@ -1,0 +1,58 @@
+{% extends 'base.public.html.twig' %} {% block title %}Habitat Humanisme{%
+endblock %} {% block body %} {% if app.session.flashbag is not empty %}
+<div class="container">
+  {% for messages in app.session.flashbag.all() %} {% for message in messages %}
+
+  <div class="alert alert-warning">
+    {{ message }}
+  </div>
+
+  {% endfor %} {% endfor %}
+</div>
+{% endif %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="p-5 text-center bg-body-tertiary rounded-3">
+        <img
+          src="{{ asset('build/images/logo.svg') }}"
+          alt="Logo HH"
+          height="40"
+          class=" mb-3"
+        />
+        <h1 class="text-body-emphasis">{{ campAsso.campains.libelle }}</h1>
+        <p class="col-lg-8 mx-auto fs-5 text-muted my-4">
+          {% if campAsso.statut == 'updated' %} Fiche validée le
+          {{  campAsso.updatedTextAt|date('d/m/Y') }}
+          à {{  campAsso.updatedTextAt|date('H:i') }} {% endif %} 
+          {% if campAsso.updatedBy == "referent" %}
+            {% if campAsso.association.referent is not empty %}
+              par {{ campAsso.association.referent.user.firstname}} {{ campAsso.association.referent.user.lastname}}
+            {% endif %}
+
+          {% elseif campAsso.statut == 'declined' %}
+          Nous avons bien enregistré votre décision de ne pas participer à cette campagne
+          {% endif %}
+
+
+        </p>
+        <div class=" gap-2 mb-5">
+            <div class="mb-2"><strong> Pour tous changements, merci de contacter</strong></div>
+          <div>
+            <a
+              href="mailto:marketing@habitat-humanisme.org"
+              class="btn btn-primary btn-lg px-4 rounded-pill"
+            >
+              <i class="fas fa-envelope me-2"></i>
+              marketing@habitat-humanisme.org
+            </a>
+          </div>
+          </div>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

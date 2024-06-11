@@ -1,0 +1,12 @@
+<form
+  method="post"
+  action="{{ path('referent_delete', { id: referent.id }) }}"
+  onsubmit="return confirm('Etes vous sur de vouloir supprimer ce référent?');"
+>
+  <input
+    type="hidden"
+    name="_token"
+    value="{{ csrf_token('delete' ~ referent.id) }}"
+  />
+  <button class="btn btn-primary">Supression</button>
+</form>

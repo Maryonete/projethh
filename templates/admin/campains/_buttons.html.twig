@@ -1,0 +1,17 @@
+<div class="row mt-3">
+  <div class="d-flex justify-content-between col">
+    <a
+      href="{{ path('campains_index') }}"
+      class="btn btn-primary flex-grow-1 mx-2"
+      >Retour à la liste</a
+    >
+    {% if campain.valid == true %}
+    <a
+      href="{{ path('campains_edit', { id: campain.id }) }}"
+      class="btn btn-primary flex-grow-1 mx-2"
+      >Modifier</a
+    >
+
+    {% endif %}
+  </div>
+</div>

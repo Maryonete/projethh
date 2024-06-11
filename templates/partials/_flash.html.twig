@@ -1,0 +1,11 @@
+{% for label, messages in app.flashes %}
+<div class="container">
+  {% for message in messages %}
+
+  <div class="alert alert-{{ label }} alert-dismissible">
+    {{ message | raw }}
+  </div>
+
+  {% endfor %}
+</div>
+{% endfor %}

@@ -1,0 +1,145 @@
+{% extends 'base.html.twig' %} {% block title %}Edit Campains{% endblock %} {%
+block javascripts %}
+
+<script src="/bundles/tinymce/ext/tinymce/tinymce.min.js"></script>
+{{ parent() }}
+<script>
+  tinymce.init({
+    selector: "textarea#campains_texte_email",
+    plugins: "image lists link anchor charmap ",
+    toolbar:
+      "blocks | bold italic bullist numlist | link image charmap | custombutton",
+    menubar: false,
+
+    setup: function (editor) {
+      // Définir le bouton personnalisé
+      editor.ui.registry.addButton("custombutton", {
+        text: "Ajouter le lien personnalisé",
+        icon: "link",
+        onAction: function (_) {
+          // Ajoutez votre fonctionnalité de bouton personnalisé ici
+          editor.insertContent("[Lien_personnalisé_ici_ne_pas_modifier]");
+        },
+        style: "background-color: #007bff; color: #fff; padding: 5px 10px;", // Inline styles
+      });
+    },
+  });
+</script>
+{% endblock %} {% block body %}
+
+<div class="container">
+  {% if campain.libelle is not empty %}
+  <h1>Mise à jour de la campagne</h1>
+  {% else %}
+  <h1>Création d'une campagne</h1>
+  {% endif %}
+  <div class="container">
+    <div class="card">
+      <div class="card-body">
+        <div class="row g-5">
+          <div class="col-md-10">
+            {{ form_start(form) }}
+
+            <div class="form-group mb-3">
+              {{ form_label(form.libelle) }}
+              {{ form_widget(form.libelle) }}
+              <div class="form-errors">{{ form_errors(form.libelle) }}</div>
+            </div>
+            <div class="form-group row mb-3">
+              <div class="col-md-4">
+                {{ form_label(form.date) }}
+              </div>
+              <div class="col-md-3">
+                {{ form_widget(form.date) }}
+                <div class="form-errors">
+                  {{ form_errors(form.date) }}
+                </div>
+              </div>
+            </div>
+            <div class="form-group row mb-3">
+              <div class="col-md-3">
+                {{ form_label(form.oldcampain) }}
+              </div>
+              <div class="col-md-9">
+                {{ form_widget(form.oldcampain) }}
+                <i
+                  >Texte personnalisé visible par les associations pour
+                  exemple</i
+                >
+                <div class="form-errors">
+                  {{ form_errors(form.oldcampain) }}
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row mb-3">
+              <div class="col-md-3">
+                {{ form_label(form.destinataire) }}
+              </div>
+              <div class="col-md-8">
+                {{ form_widget(form.destinataire) }}
+                <div class="form-errors">
+                  {{ form_errors(form.destinataire) }}
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <div class="col-md-3">
+                {{ form_label(form.email_from) }}
+              </div>
+              <div class="col-md-5">
+                {{ form_widget(form.email_from) }}
+                <div class="form-errors">
+                  {{ form_errors(form.email_from) }}
+                </div>
+              </div>
+            </div>
+            <div class="form-group mb-3">
+              <div class="col-md-3">
+                {{ form_label(form.email_cc) }}
+              </div>
+              <div class="col-md-5">
+                {{ form_widget(form.email_cc) }}
+                <div class="form-errors">{{ form_errors(form.email_cc) }}</div>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              {{ form_label(form.objet_email) }}
+              {{ form_widget(form.objet_email) }}
+              <div class="form-errors">{{ form_errors(form.objet_email) }}</div>
+            </div>
+
+            <div class="form-group mb-3">
+              {{ form_label(form.texte_email) }}
+              {{ form_widget(form.texte_email) }}
+              <div class="form-errors">{{ form_errors(form.texte_email) }}</div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="row mt-3">
+                <div class="col-12">
+                  <div class="d-flex justify-content-between">
+                    <a
+                      href="{{ path('campains_index') }}"
+                      class="btn btn-primary"
+                      >Retour à la liste</a
+                    >
+                    <button type="submit" class="btn btn-primary">
+                      Enregistrer
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {{ form_end(form) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

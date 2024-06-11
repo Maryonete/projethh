@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %} {% block title %}President{% endblock %} {% block
+body %}
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <h1>President(e)</h1>
+
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>Id</th>
+                <td>{{ president.id }}</td>
+              </tr>
+              <tr>
+                <th>Prénom Nom</th>
+                <td>
+                  {{ president.user.firstname }} {{ president.user.lastname }}
+                </td>
+              </tr>
+              {% if president.user.email is not empty %}
+              <tr>
+                <th>Email</th>
+                <td>
+                  {{ president.user.email }}
+                </td>
+              </tr>
+              {% endif %}
+              <tr>
+                <th>Fonction</th>
+                <td>{{ president.fonction }}</td>
+              </tr>
+              {% if president.association is not empty %}
+              <tr>
+                <th>Association</th>
+                <td>
+                  {{ president.association.libelle }}
+                </td>
+              </tr>
+              {% endif %}
+              {{
+                include("admin/user/_history.html.twig")
+              }}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-6">
+          <div class="d-flex justify-content-between">
+            <a href="{{ path('user') }}" class="btn btn-primary"
+              >Retour à la liste</a
+            >
+            <a
+              href="{{ path('president_edit', { id: president.id }) }}"
+              class="btn btn-primary"
+              >Modifier</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
