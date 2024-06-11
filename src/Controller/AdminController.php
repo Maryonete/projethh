@@ -89,10 +89,10 @@ class AdminController extends AbstractController
         $form = $this->createForm(AdminPasswordType::class);
         $form->handleRequest($request);
         // $session = $request->getSession();
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $errors = $form->getErrors(true, false);
-            dump($errors);
-        }
+        // if ($form->isSubmitted() && !$form->isValid()) {
+        //     $errors = $form->getErrors(true, false);
+        //     dump($errors);
+        // }
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var User $admin */
             $admin = $userRepository->findOneByRole('ROLE_ADMIN');
