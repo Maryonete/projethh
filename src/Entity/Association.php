@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AssociationRepository::class)]
 class Association
@@ -50,10 +49,10 @@ class Association
     private Collection $campainAssociations;
 
     /**
-     * @var Collection<int, History>
+     * @var Collection<int, Traces>
      */
-    #[ORM\OneToMany(targetEntity: History::class, mappedBy: 'association', orphanRemoval: true)]
-    private Collection $histories;
+    #[ORM\OneToMany(targetEntity: Traces::class, mappedBy: 'association', orphanRemoval: true)]
+    private Collection $traces;
 
     // Par défaut, l'association est active
     #[ORM\Column(length: 255)]
@@ -62,7 +61,7 @@ class Association
     public function __construct()
     {
         $this->campainAssociations = new ArrayCollection();
-        $this->histories = new ArrayCollection();
+        $this->traces = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -204,27 +203,27 @@ class Association
 
 
     /**
-     * @return Collection<int, History>
+     * @return Collection<int, Traces>
      */
-    public function getHistories(): Collection
+    public function getTraces(): Collection
     {
-        return $this->histories;
+        return $this->traces;
     }
 
-    public function addHistory(History $history): static
+    public function addTraces(Traces $traces): static
     {
-        if (!$this->histories->contains($history)) {
-            $this->histories->add($history);
-            $history->setAssociation($this);
+        if (!$this->traces->contains($traces)) {
+            $this->traces->add($traces);
+            $traces->setAssociation($this);
         }
 
         return $this;
     }
 
-    public function removeHistory(History $history): static
+    public function removeTraces(Traces $traces): static
     {
-        if ($this->histories->removeElement($history) && $history->getAssociation() === $this) {
-            $history->setAssociation(null);
+        if ($this->traces->removeElement($traces) && $traces->getAssociation() === $this) {
+            $traces->setAssociation(null);
         }
 
         return $this;

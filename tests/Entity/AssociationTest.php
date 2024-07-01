@@ -3,13 +3,12 @@
 namespace Tests\Unit\Entity;
 
 use ReflectionClass;
-use App\Entity\History;
+use App\Entity\Traces;
 use App\Entity\Referent;
 use App\Entity\President;
 use App\Entity\Association;
 use PHPUnit\Framework\TestCase;
 use App\Entity\CampainAssociation;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -270,61 +269,61 @@ final class AssociationTest extends TestCase
     public function testGetHistories()
     {
         $association = new Association();
-        $history1 = $this->createMock(History::class);
-        $history2 = $this->createMock(History::class);
+        $traces1 = $this->createMock(Traces::class);
+        $traces2 = $this->createMock(Traces::class);
 
-        $association->addHistory($history1);
-        $association->addHistory($history2);
+        $association->addTraces($traces1);
+        $association->addTraces($traces2);
 
-        $histories = $association->getHistories();
+        $histories = $association->getTraces();
 
         $this->assertInstanceOf(ArrayCollection::class, $histories);
         $this->assertCount(2, $histories);
-        $this->assertTrue($histories->contains($history1));
-        $this->assertTrue($histories->contains($history2));
+        $this->assertTrue($histories->contains($traces1));
+        $this->assertTrue($histories->contains($traces2));
     }
 
-    public function testAddHistory()
+    public function testAddTraces()
     {
         $association = new Association();
-        $history = $this->createMock(History::class);
+        $traces = $this->createMock(Traces::class);
 
-        $this->assertCount(0, $association->getHistories());
+        $this->assertCount(0, $association->getTraces());
 
-        $history->expects($this->once())
+        $traces->expects($this->once())
             ->method('setAssociation')
             ->with($association);
 
-        $association->addHistory($history);
+        $association->addTraces($traces);
 
-        $this->assertCount(1, $association->getHistories());
-        $this->assertTrue($association->getHistories()->contains($history));
+        $this->assertCount(1, $association->getTraces());
+        $this->assertTrue($association->getTraces()->contains($traces));
     }
-    public function testAddHistoryDoesntAddDuplicate()
+    public function testAddTracesDoesntAddDuplicate()
     {
         $association = new Association();
-        $historyMock = $this->createMock(History::class);
+        $tracesMock = $this->createMock(Traces::class);
 
-        $association->addHistory($historyMock);
-        $association->addHistory($historyMock); // This shouldn't be added again
+        $association->addTraces($tracesMock);
+        $association->addTraces($tracesMock); // This shouldn't be added again
 
-        $this->assertTrue($association->getHistories()->count() === 1);
+        $this->assertTrue($association->getTraces()->count() === 1);
     }
-    public function testRemoveHistory()
+    public function testRemoveTraces()
     {
         $association = new Association();
-        $history = new History();
-        $association->addHistory($history);
+        $traces = new Traces();
+        $association->addTraces($traces);
 
         // Vérifie que l'histoire est initialement associée à l'association
-        $this->assertSame($association, $history->getAssociation());
+        $this->assertSame($association, $traces->getAssociation());
 
         // Supprime l'histoire de l'association
-        $association->removeHistory($history);
+        $association->removeTraces($traces);
 
         // Vérifie que l'histoire a été correctement supprimée de l'association
-        $this->assertCount(0, $association->getHistories());
-        $this->assertNull($history->getAssociation());
+        $this->assertCount(0, $association->getTraces());
+        $this->assertNull($traces->getAssociation());
     }
     public function testGetReferent(): void
     {

@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Entity\{Association, Campains, President, Referent, User};
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use ZipArchive;
 
 class FileService
 {
@@ -65,7 +66,7 @@ class FileService
         $this->entityManager->createQuery('DELETE FROM App\Entity\Referent')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\President')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\Association')->execute();
-        $this->entityManager->createQuery('DELETE FROM App\Entity\History')->execute();
+        $this->entityManager->createQuery('DELETE FROM App\Entity\Traces')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\Campains')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\CampainAssociation')->execute();
         $this->entityManager->flush();

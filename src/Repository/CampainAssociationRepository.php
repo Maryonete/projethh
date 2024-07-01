@@ -22,6 +22,12 @@ class CampainAssociationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, CampainAssociation::class);
     }
+    /**
+     * Trouve les entités associées à une campagne donnée.
+     *
+     * @param Campains $campain La campagne pour laquelle trouver les entités associées.
+     * @return array Les entités trouvées.
+     */
     public function findByCampains(Campains $campain): array
     {
         return $this->createQueryBuilder('ca')

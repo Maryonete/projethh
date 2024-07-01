@@ -4,7 +4,7 @@ namespace Tests\Unit\Entity;
 
 use App\Entity\User;
 use ReflectionClass;
-use App\Entity\History;
+use App\Entity\Traces;
 use App\Entity\President;
 use PHPUnit\Framework\TestCase;
 use Doctrine\Common\Collections\Collection;
@@ -225,26 +225,26 @@ final class UserTest extends TestCase
         $property->setValue($this->user, $expected);
         self::assertSame($expected, $this->user->getHistories());
     }
-    public function testAddAndRemoveHistory()
+    public function testAddAndRemoveTraces()
     {
         // Crée une instance de la classe User
         $user = new User();
 
-        // Crée une instance de la classe History
-        $history = new History();
+        // Crée une instance de la classe Traces
+        $traces = new Traces();
 
         // Ajoute l'historique à l'utilisateur
-        $user->addHistory($history);
+        $user->addTraces($traces);
 
         // Vérifie que l'historique a été ajouté avec succès à l'utilisateur
         $this->assertCount(1, $user->getHistories());
-        $this->assertSame($user, $history->getUser());
+        $this->assertSame($user, $traces->getUser());
 
         // Supprime l'historique de l'utilisateur
-        $user->removeHistory($history);
+        $user->removeTraces($traces);
 
         // Vérifie que l'historique a été supprimé avec succès de l'utilisateur
         $this->assertCount(0, $user->getHistories());
-        $this->assertNull($history->getUser());
+        $this->assertNull($traces->getUser());
     }
 }

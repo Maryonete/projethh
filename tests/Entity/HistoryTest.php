@@ -3,20 +3,20 @@
 namespace Tests\Unit\Entity;
 
 use App\Entity\Association;
-use App\Entity\History;
+use App\Entity\Traces;
 use App\Entity\User;
 
 use ReflectionClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class HistoryTest.
+ * Class TracesTest.
  *
- * @covers \App\Entity\History
+ * @covers \App\Entity\Traces
  */
-final class HistoryTest extends TestCase
+final class TracesTest extends TestCase
 {
-    private History $history;
+    private Traces $traces;
 
     /**
      * {@inheritdoc}
@@ -26,7 +26,7 @@ final class HistoryTest extends TestCase
         parent::setUp();
 
         /** @todo Correctly instantiate tested object to use it. */
-        $this->history = new History();
+        $this->traces = new Traces();
     }
 
     /**
@@ -36,97 +36,97 @@ final class HistoryTest extends TestCase
     {
         parent::tearDown();
 
-        unset($this->history);
+        unset($this->traces);
     }
 
     public function testGetId(): void
     {
         $expected = 42;
-        $property = (new ReflectionClass(History::class))
+        $property = (new ReflectionClass(Traces::class))
             ->getProperty('id');
-        $property->setValue($this->history, $expected);
-        self::assertSame($expected, $this->history->getId());
+        $property->setValue($this->traces, $expected);
+        self::assertSame($expected, $this->traces->getId());
     }
 
     public function testGetStartDate(): void
     {
         $expected = new \DateTime();
-        $property = (new ReflectionClass(History::class))
+        $property = (new ReflectionClass(Traces::class))
             ->getProperty('startDate');
-        $property->setValue($this->history, $expected);
-        self::assertSame($expected, $this->history->getStartDate());
+        $property->setValue($this->traces, $expected);
+        self::assertSame($expected, $this->traces->getStartDate());
     }
 
     public function testSetStartDate(): void
     {
         $expected = new \DateTime();
-        $property = (new ReflectionClass(History::class))
+        $property = (new ReflectionClass(Traces::class))
             ->getProperty('startDate');
-        $this->history->setStartDate($expected);
-        self::assertSame($expected, $property->getValue($this->history));
+        $this->traces->setStartDate($expected);
+        self::assertSame($expected, $property->getValue($this->traces));
     }
 
     public function testGetEndDate(): void
     {
         $expected = new \DateTime();
-        $property = (new ReflectionClass(History::class))
+        $property = (new ReflectionClass(Traces::class))
             ->getProperty('endDate');
-        $property->setValue($this->history, $expected);
-        self::assertSame($expected, $this->history->getEndDate());
+        $property->setValue($this->traces, $expected);
+        self::assertSame($expected, $this->traces->getEndDate());
     }
 
     public function testSetEndDate(): void
     {
         $expected = new \DateTime();
-        $property = (new ReflectionClass(History::class))
+        $property = (new ReflectionClass(Traces::class))
             ->getProperty('endDate');
-        $this->history->setEndDate($expected);
-        self::assertSame($expected, $property->getValue($this->history));
+        $this->traces->setEndDate($expected);
+        self::assertSame($expected, $property->getValue($this->traces));
     }
 
     public function testGetAssociation(): void
     {
         $expected = $this->createMock(Association::class);
-        $property = (new ReflectionClass(History::class))
+        $property = (new ReflectionClass(Traces::class))
             ->getProperty('association');
-        $property->setValue($this->history, $expected);
-        self::assertSame($expected, $this->history->getAssociation());
+        $property->setValue($this->traces, $expected);
+        self::assertSame($expected, $this->traces->getAssociation());
     }
 
     public function testSetAssociation(): void
     {
         $expected = $this->createMock(Association::class);
-        $property = (new ReflectionClass(History::class))
+        $property = (new ReflectionClass(Traces::class))
             ->getProperty('association');
-        $this->history->setAssociation($expected);
-        self::assertSame($expected, $property->getValue($this->history));
+        $this->traces->setAssociation($expected);
+        self::assertSame($expected, $property->getValue($this->traces));
     }
 
     public function testGetUser(): void
     {
         $expected = $this->createMock(User::class);
-        $property = (new ReflectionClass(History::class))
+        $property = (new ReflectionClass(Traces::class))
             ->getProperty('user');
-        $property->setValue($this->history, $expected);
-        self::assertSame($expected, $this->history->getUser());
+        $property->setValue($this->traces, $expected);
+        self::assertSame($expected, $this->traces->getUser());
     }
 
     public function testSetUser(): void
     {
         $expected = $this->createMock(User::class);
-        $property = (new ReflectionClass(History::class))
+        $property = (new ReflectionClass(Traces::class))
             ->getProperty('user');
-        $this->history->setUser($expected);
-        self::assertSame($expected, $property->getValue($this->history));
+        $this->traces->setUser($expected);
+        self::assertSame($expected, $property->getValue($this->traces));
     }
 
     public function testRoleGetterAndSetter()
     {
         $expectedRole = 'referent';
 
-        $history = new History();
-        $history->setRole($expectedRole);
+        $traces = new Traces();
+        $traces->setRole($expectedRole);
 
-        $this->assertSame($expectedRole, $history->getRole());
+        $this->assertSame($expectedRole, $traces->getRole());
     }
 }

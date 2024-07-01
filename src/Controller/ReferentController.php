@@ -4,14 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Referent;
 use App\Form\ReferentType;
-use App\Repository\HistoryRepository;
+use App\Repository\TracesRepository;
 use App\Repository\ReferentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 #[Route('/referent', name: 'referent_')]
 class ReferentController extends AbstractController
@@ -24,10 +24,17 @@ class ReferentController extends AbstractController
      * @return Response
      */
     public function show(
-        Referent $referent,
-        HistoryRepository $histoRepo
+        TracesRepository $histoRepo,
+        Request $request,
+        Referent $referent = null
     ): Response {
 
+        if (null === $referent) {
+            $this->addFlash('error', 'Le référent fourni est invalide.');
+            // Redirection vers la page précédente
+            $referer = $request->headers->get('referer');
+            return $this->redirect($referer ?: $this->generateUrl('asso_home'));
+        }
         return $this->render('admin/user/referent/show.html.twig', [
             'referent' => $referent,
             'historiesRef' => $histoRepo->findBy(
@@ -54,6 +61,7 @@ class ReferentController extends AbstractController
     public function edit(
         Request $request,
         EntityManagerInterface $entityManager,
+        ReferentRepository $referentRepository,
         Referent $referent = null
     ): Response {
         if (null === $referent) {

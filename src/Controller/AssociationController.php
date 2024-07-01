@@ -16,6 +16,12 @@ use Symfony\Component\Form\FormFactoryInterface;
 class AssociationController extends AbstractController
 {
     #[Route('', name: 'list')]
+    /**
+     * Affiche la liste des associations.
+     *
+     * @param AssociationRepository $assoRepo Le repository des associations.
+     * @return Response La réponse HTTP contenant la vue listant les associations.
+     */
     public function listAsso(AssociationRepository $assoRepo): Response
     {
         return $this->render('admin/association/list.html.twig', [

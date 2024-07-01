@@ -2,19 +2,15 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Form\UserType;
 use App\Entity\President;
 use App\Form\PresidentType;
 use App\Repository\PresidentRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\AssociationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use App\Repository\HistoryRepository;
+use App\Repository\TracesRepository;
 
 #[Route('/president', name: 'president_')]
 class PresidentController extends AbstractController
@@ -35,8 +31,17 @@ class PresidentController extends AbstractController
      * @param President $president
      * @return Response
      */
-    public function show(President $president,  HistoryRepository $histoRepo): Response
-    {
+    public function show(
+        TracesRepository $histoRepo,
+        Request $request,
+        President $president = null
+    ): Response {
+        if (null === $president) {
+            $this->addFlash('error', 'Le président fourni est invalide.');
+            // Redirection vers la page précédente
+            $referer = $request->headers->get('referer');
+            return $this->redirect($referer ?: $this->generateUrl('asso_home'));
+        }
         return $this->render('admin/user/president/show.html.twig', [
             'president' => $president,
             'historiesRef' => $histoRepo->findBy(

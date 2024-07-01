@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\HistoryRepository;
+use App\Repository\TracesRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: HistoryRepository::class)]
-class History
+#[ORM\Entity(repositoryClass: TracesRepository::class)]
+class Traces
 {
     public const CREATED = 'CREATED';
     public const DELETED = 'DELETED';

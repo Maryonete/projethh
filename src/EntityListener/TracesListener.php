@@ -2,7 +2,7 @@
 
 namespace App\EntityListener;
 
-use App\Entity\History;
+use App\Entity\Traces;
 use App\Entity\Referent;
 use App\Entity\President;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,7 +12,7 @@ use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 
 #[AsDoctrineListener(Events::postPersist)]
 #[AsDoctrineListener(Events::postUpdate)]
-class HistoryListener
+class TracesListener
 {
     public function __construct(private EntityManagerInterface $entityManager)
     {
@@ -28,11 +28,11 @@ class HistoryListener
             $oldEntity = null;
             $role = "";
             if ($entity instanceof President) {
-                $role = History::ROLE_PRESIDENT;
+                $role = Traces::ROLE_PRESIDENT;
             } elseif ($entity instanceof Referent) {
-                $role = History::ROLE_REFERENT;
+                $role = Traces::ROLE_REFERENT;
             }
-            $oldEntity = $this->entityManager->getRepository(History::class)->findOneBy([
+            $oldEntity = $this->entityManager->getRepository(Traces::class)->findOneBy([
                 'role'    => $role,
                 'user'        =>  $entity->getUser(),
                 'endDate'       => null,
@@ -45,14 +45,14 @@ class HistoryListener
             }
             $association = $entity->getAssociation();
             if ($association) {
-                // Crée une nouvelle instance de l'entité History
-                $history = new History();
-                $history->setRole($role);
-                $history->setStartDate(new \DateTime()); // Enregistrer la date de création
-                $history->setUser($entity->getUser());
-                $history->setAssociation($association);
-                // Enregistre l'entité History dans la base de données
-                $this->entityManager->persist($history);
+                // Crée une nouvelle instance de l'entité Traces
+                $traces = new Traces();
+                $traces->setRole($role);
+                $traces->setStartDate(new \DateTime()); // Enregistrer la date de création
+                $traces->setUser($entity->getUser());
+                $traces->setAssociation($association);
+                // Enregistre l'entité Traces dans la base de données
+                $this->entityManager->persist($traces);
                 $this->entityManager->flush();
             }
         }
@@ -71,11 +71,11 @@ class HistoryListener
             $oldEntity = null;
             $role = "";
             if ($entity instanceof President) {
-                $role = History::ROLE_PRESIDENT;
+                $role = Traces::ROLE_PRESIDENT;
             } elseif ($entity instanceof Referent) {
-                $role = History::ROLE_REFERENT;
+                $role = Traces::ROLE_REFERENT;
             }
-            $oldEntity = $this->entityManager->getRepository(History::class)->findOneBy([
+            $oldEntity = $this->entityManager->getRepository(Traces::class)->findOneBy([
                 'association' => $association,
                 'role' => $role,
                 'endDate' => null
@@ -86,14 +86,14 @@ class HistoryListener
                 $this->entityManager->persist($oldEntity);
             }
             if ($association) {
-                // Crée une nouvelle instance de l'entité History
-                $history = new History();
-                $history->setRole($role);
-                $history->setStartDate(new \DateTime()); // Enregistrer la date de création
-                $history->setUser($entity->getUser());
-                $history->setAssociation($association);
-                // Enregistre l'entité History dans la base de données
-                $this->entityManager->persist($history);
+                // Crée une nouvelle instance de l'entité Traces
+                $traces = new Traces();
+                $traces->setRole($role);
+                $traces->setStartDate(new \DateTime()); // Enregistrer la date de création
+                $traces->setUser($entity->getUser());
+                $traces->setAssociation($association);
+                // Enregistre l'entité Traces dans la base de données
+                $this->entityManager->persist($traces);
                 $this->entityManager->flush();
             }
         }

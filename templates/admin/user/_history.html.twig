@@ -2,12 +2,12 @@
 <tr>
   <th>Président :</th>
   <td>
-    {% for history in historiesPres %} Association
-    {{ history.association.libelle }}
-    {% if history.startDate is not empty %} du
-    {{ history.startDate|date('d-m-Y')  }}
-    {% endif %} {% if history.endDate is not empty %} au
-    {{ history.endDate|date('d-m-Y')  }}
+    {% for traces in historiesPres %} Association
+    {{ traces.association.libelle }}
+    {% if traces.startDate is not empty %} du
+    {{ traces.startDate|date('d-m-Y')  }}
+    {% endif %} {% if traces.endDate is not empty %} au
+    {{ traces.endDate|date('d-m-Y')  }}
     {% endif %} <br />
     {% endfor %}
   </td>
@@ -16,12 +16,12 @@
 <tr>
   <th>Référent :</th>
   <td>
-    {% for history in historiesRef %} Association
-    {{ history.association.libelle }}
-    {% if history.startDate is not empty %} du
-    {{ history.startDate|date('d-m-Y')  }}
-    {% endif %} {% if history.endDate is not empty %} au
-    {{ history.endDate|date('d-m-Y')  }}
+    {% for traces in historiesRef %} Association
+    {{ traces.association.libelle }}
+    {% if traces.startDate is not empty %} du
+    {{ traces.startDate|date('d-m-Y')  }}
+    {% endif %} {% if traces.endDate is not empty %} au
+    {{ traces.endDate|date('d-m-Y')  }}
     {% endif %}<br />
     {% endfor %}
   </td>
